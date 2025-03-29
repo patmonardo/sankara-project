@@ -1,0 +1,31 @@
+┌─────────────────────────────────────────────────────────────┐
+│ SANKARA CORPUS EXPLORER                                     │
+├────────────┬────────────┬────────────┬────────────┐         │
+│ TEXTS      │ CONCEPTS   │ RELATIONS  │ CONTEXTS   │         │
+├────────────┴────────────┴────────────┴────────────┘         │
+│                                                             │
+│ ┌─────────────────────┐  ┌─────────────────────────────┐    │
+│ │ CONCEPT NETWORK     │  │ RECENT EXPLORATIONS         │    │
+│ │                     │  │ • Advaita and Maya          │    │
+│ │  [Interactive       │  │ • Brahman concepts          │    │
+│ │   concept map       │  │ • Self-knowledge analysis   │    │
+│ │   visualization]    │  │ • Vedantic interpretations  │    │
+│ └─────────────────────┘  └─────────────────────────────┘    │
+│                                                             │
+│ ┌─────────────────────────────────────────────────────┐     │
+│ │ TEXT CORPUS ANALYSIS                                │     │
+│ │ [Timeline visualization of works with frequency     │     │
+│ │  of key concepts highlighted]                       │     │
+│ │                                                     │     │
+│ │                                                     │     │
+│ └─────────────────────────────────────────────────────┘     │
+│                                                             │
+│ ┌─────────────────────┐  ┌─────────────────────────────┐    │
+│ │ CONCEPT FREQUENCY   │  │ CONTEXTUAL REFERENCES       │    │
+│ │                     │  │                             │    │
+│ │ [Bar chart showing  │  │ [Heat map of relationships  │    │
+│ │  frequency of top   │  │  between concepts and       │    │
+│ │  philosophical      │  │  contextual elements]       │    │
+│ │  concepts]          │  │                             │    │
+│ └─────────────────────┘  └─────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘

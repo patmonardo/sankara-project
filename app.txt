@@ -1,0 +1,259 @@
+app
+├── (controller)
+│   ├── customers
+│   │   ├── actions
+│   │   │   ├── cancel.tsx
+│   │   │   ├── create.tsx
+│   │   │   ├── delete.tsx
+│   │   │   └── update.tsx
+│   │   ├── create
+│   │   │   └── page.tsx
+│   │   ├── error.tsx
+│   │   ├── [id]
+│   │   │   ├── delete
+│   │   │   │   └── page.tsx
+│   │   │   └── edit
+│   │   │       ├── not-found.tsx
+│   │   │       └── page.tsx
+│   │   └── page.tsx
+│   ├── dashboard
+│   │   ├── loading.tsx
+│   │   └── page.tsx
+│   ├── inner
+│   │   ├── customer.tsx
+│   │   ├── dashboard.tsx
+│   │   ├── invoice.tsx
+│   │   └── revenue.tsx
+│   ├── invoices
+│   │   ├── actions
+│   │   │   ├── cancel.tsx
+│   │   │   ├── create.tsx
+│   │   │   ├── delete.tsx
+│   │   │   └── update.tsx
+│   │   ├── create
+│   │   │   └── page.tsx
+│   │   ├── error.tsx
+│   │   ├── [id]
+│   │   │   ├── delete
+│   │   │   │   └── page.tsx
+│   │   │   └── edit
+│   │   │       ├── not-found.tsx
+│   │   │       └── page.tsx
+│   │   ├── page.tsx
+│   │   └── status.tsx
+│   └── layout.tsx
+├── core
+│   ├── being
+│   │   ├── base.test.ts
+│   │   ├── base.ts
+│   │   ├── context.test.ts
+│   │   ├── context.ts
+│   │   ├── entity.test.ts
+│   │   ├── entity.ts
+│   │   ├── membra.ts
+│   │   ├── registry.test.ts
+│   │   ├── registry.ts
+│   │   ├── relation.test.ts
+│   │   ├── relation.ts
+│   │   └── schema
+│   │       ├── base.test.ts
+│   │       ├── base.ts
+│   │       ├── context.test.ts
+│   │       ├── context.ts
+│   │       ├── entity.test.ts
+│   │       ├── entity.ts
+│   │       ├── membra.ts
+│   │       ├── registry.test.ts
+│   │       ├── registry.ts
+│   │       ├── relation.test.ts
+│   │       └── relation.ts
+│   ├── concept
+│   ├── design
+│   │   ├── being.md
+│   │   ├── concept.md
+│   │   ├── essence.md
+│   │   ├── principles.md
+│   │   ├── prompt.txt
+│   │   └── table.ts
+│   ├── essence
+│   │   ├── codex.ts
+│   │   ├── essence.ts
+│   │   ├── ground.ts
+│   │   ├── reflection.ts
+│   │   ├── schema
+│   │   │   ├── codex.ts
+│   │   │   ├── ground.ts
+│   │   │   ├── reflection.ts
+│   │   │   ├── shine.tsx
+│   │   │   ├── thing.ts
+│   │   │   └── world.ts
+│   │   ├── thing.ts
+│   │   └── world.ts
+│   ├── organon.ts
+│   └── system
+│       ├── graph.ts
+│       ├── membra.ts
+│       ├── property.ts
+│       ├── registry.ts
+│       └── syllogism.ts
+├── layout.tsx
+├── lib
+│   ├── data
+│   │   ├── client.ts
+│   │   ├── matter.ts
+│   │   ├── prisma
+│   │   │   ├── generator.test.ts
+│   │   │   └── generator.ts
+│   │   └── schema
+│   │       ├── base.test.ts
+│   │       ├── base.ts
+│   │       ├── customer.test.ts
+│   │       ├── customer.ts
+│   │       ├── dashboard.ts
+│   │       ├── invoice.test.ts
+│   │       ├── invoice.ts
+│   │       ├── revenue.test.ts
+│   │       ├── revenue.ts
+│   │       ├── schema.test.ts
+│   │       └── schema.ts
+│   ├── model
+│   │   ├── base.ts
+│   │   ├── customer.test.ts
+│   │   ├── customer.ts
+│   │   ├── dashboard.ts
+│   │   ├── index.ts
+│   │   ├── invoice.test.ts
+│   │   ├── invoice.ts
+│   │   ├── revenue.test.ts
+│   │   ├── revenue.ts
+│   │   ├── test
+│   │   │   ├── parser
+│   │   │   │   ├── textbaseparsermodel.test.ts
+│   │   │   │   ├── textdataparsermodel.test.ts
+│   │   │   │   └── textmetaparsermodel.test.ts
+│   │   │   ├── ref
+│   │   │   │   ├── testbaserefmodel.test.ts
+│   │   │   │   ├── textdatarefmodel.test.ts
+│   │   │   │   └── textmetarefmodel.test.ts
+│   │   │   ├── text
+│   │   │   │   ├── textbasemodel.test.ts
+│   │   │   │   ├── textdatamodel.test.ts
+│   │   │   │   └── textmetamodel.test.ts
+│   │   │   └── utils
+│   │   │       ├── setup.ts
+│   │   │       └── testUtils.ts
+│   │   ├── textbase.model.ts
+│   │   ├── textbaseparsermodel.ts
+│   │   ├── textbaserefmodel.ts
+│   │   ├── textdatamodel.ts
+│   │   ├── textdataparsermodel.ts
+│   │   ├── textdatarefmodel.ts
+│   │   ├── textmetamodel.ts
+│   │   ├── textmetaparsermodel.ts
+│   │   └── textmetarefmodel.ts
+│   └── schema
+│       ├── textdata.schema.ts
+│       ├── textdata.ts
+│       ├── textmeta.schema.ts
+│       ├── textmeta.ts
+│       ├── textparser.ts
+│       ├── textref.schema.ts
+│       └── textref.ts
+├── page.tsx
+└── ui
+    ├── graphics
+    │   ├── adapter
+    │   │   ├── html.test.ts
+    │   │   ├── html.ts
+    │   │   ├── index.ts
+    │   │   ├── json.ts
+    │   │   ├── jsx.test.tsx
+    │   │   ├── jsx.tsx
+    │   │   └── xml.ts
+    │   ├── button
+    │   │   ├── adapter.tsx
+    │   │   ├── button.test.tsx
+    │   │   ├── button.tsx
+    │   │   ├── customer.test.tsx
+    │   │   ├── customer.tsx
+    │   │   ├── invoice.tsx
+    │   │   ├── renderer.test.tsx
+    │   │   └── renderer.tsx
+    │   ├── card
+    │   │   ├── card.tsx
+    │   │   └── invoice.tsx
+    │   ├── chart
+    │   │   └── revenue.tsx
+    │   ├── font
+    │   │   ├── inter.ts
+    │   │   └── lusitana.ts
+    │   ├── form
+    │   │   ├── customer.test.ts
+    │   │   ├── customer.ts
+    │   │   ├── dashboard.ts
+    │   │   ├── form.test.ts
+    │   │   ├── form.ts
+    │   │   ├── invoice.test.ts
+    │   │   ├── invoice.ts
+    │   │   └── revenue.ts
+    │   ├── image
+    │   │   ├── avatar.ts
+    │   │   ├── customer.ts
+    │   │   └── image.ts
+    │   ├── list
+    │   │   ├── breadcrumbs.tsx
+    │   │   ├── customer.test.ts
+    │   │   ├── customer.ts
+    │   │   ├── invoice.ts
+    │   │   ├── link.test.tsx
+    │   │   ├── link.tsx
+    │   │   ├── list.test.tsx
+    │   │   ├── list.tsx
+    │   │   ├── navlinks.tsx
+    │   │   ├── pagination.tsx
+    │   │   ├── render.tsx
+    │   │   └── sidenav.tsx
+    │   ├── report
+    │   ├── schema
+    │   │   ├── button.ts
+    │   │   ├── chart.ts
+    │   │   ├── customer.test.ts
+    │   │   ├── customer.ts
+    │   │   ├── dashboard.ts
+    │   │   ├── font.ts
+    │   │   ├── form.test.ts
+    │   │   ├── form.ts
+    │   │   ├── image.ts
+    │   │   ├── invoice.ts
+    │   │   ├── link.ts
+    │   │   ├── list.ts
+    │   │   ├── revenue.ts
+    │   │   ├── table.ts
+    │   │   └── visualization.ts
+    │   ├── search
+    │   │   └── search.tsx
+    │   ├── style
+    │   │   ├── global.css
+    │   │   ├── home.module.css
+    │   │   ├── logo.tsx
+    │   │   └── skeletons.tsx
+    │   └── table
+    │       ├── adapter.tsx
+    │       ├── customer.test.tsx
+    │       ├── customer.tsx
+    │       ├── invoice.test.tsx
+    │       ├── invoice.tsx
+    │       ├── renderer.test.tsx
+    │       ├── renderer.tsx
+    │       ├── table.test.tsx
+    │       └── table.tsx
+    └── view
+        ├── customer.test.ts
+        ├── customer.ts
+        ├── dashboard.ts
+        ├── form.ts
+        ├── invoice.test.ts
+        ├── invoice.ts
+        └── revenue.ts
+
+51 directories, 206 files

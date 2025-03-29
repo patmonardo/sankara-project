@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "sqlite" for development
+  url      = env("DATABASE_URL")
+}
+
+// Core corpus text model
+model SankaraText {
+  id          String   @id @default(cuid())
+  title       String
+  originalId  String?  // Original ID from corpus
+  content     String   @db.Text
+  sourceHtml  String   @db.Text
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  sections    TextSection[]
+  concepts    TextConcept[]
+  references  Reference[]
+}
+
+// Text sections (paragraphs, verses, etc.)
+model TextSection {
+  id          String   @id @default(cuid())
+  sectionId   String   // Original section ID
+  content     String   @db.Text
+  sourceHtml  String   @db.Text
+  position    Int      // Order in the text
+
+  // Relationships
+  textId      String
+  text        SankaraText @relation(fields: [textId], references: [id])
+  concepts    SectionConcept[]
+}
+
+// Philosophical concepts
+model Concept {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  category    String?  // Ontological category
+
+  // Relationships
+  textConcepts    TextConcept[]
+  sectionConcepts SectionConcept[]
+  relationsFrom   ConceptRelation[] @relation("RelationFrom")
+  relationsTo     ConceptRelation[] @relation("RelationTo")
+}
+
+// Many-to-many relation between texts and concepts
+model TextConcept {
+  text        SankaraText @relation(fields: [textId], references: [id])
+  textId      String
+  concept     Concept     @relation(fields: [conceptId], references: [id])
+  conceptId   String
+  frequency   Int         @default(1)
+
+  @@id([textId, conceptId])
+}
+
+// Many-to-many relation between sections and concepts
+model SectionConcept {
+  section     TextSection @relation(fields: [sectionId], references: [id])
+  sectionId   String
+  concept     Concept     @relation(fields: [conceptId], references: [id])
+  conceptId   String
+
+  @@id([sectionId, conceptId])
+}
+
+// Relationships between concepts
+model ConceptRelation {
+  id          String   @id @default(cuid())
+  type        String   // e.g., "implies", "contradicts", "elaborates"
+  description String?
+  strength    Float?   // Optional quantification of relationship strength
+
+  // Relationships
+  fromConcept Concept  @relation("RelationFrom", fields: [fromId], references: [id])
+  fromId      String
+  toConcept   Concept  @relation("RelationTo", fields: [toId], references: [id])
+  toId        String
+
+  @@unique([fromId, toId, type])
+}
+
+// External references (citations, commentaries)
+model Reference {
+  id          String   @id @default(cuid())
+  source      String
+  citation    String
+  description String?  @db.Text
+  url         String?
+
+  // Relationships
+  textId      String
+  text        SankaraText @relation(fields: [textId], references: [id])
+}
+
+// For tracking user research "explorations"
+model Exploration {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  userId      String
+  createdAt   DateTime @default(now())
+
+  // Add appropriate relationships to concepts, texts, etc.
+}

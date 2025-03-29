@@ -1,0 +1,16 @@
+{
+  "name": "Dashboard V2",
+  "short_name": "DashV2",
+  "description": "Modern dashboard with Next.js and tRPC",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0066cc",
+  "icons": [
+    {
+      "src": "/icons/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ]
+}
