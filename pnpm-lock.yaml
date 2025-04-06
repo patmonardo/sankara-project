@@ -47,6 +47,12 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      react-icons:
+        specifier: ^5.5.0
+        version: 5.5.0(react@19.0.0)
+      recharts:
+        specifier: ^2.15.1
+        version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       superjson:
         specifier: ^1.12.4
         version: 1.13.3
@@ -114,12 +120,6 @@ importers:
       prisma:
         specifier: ^6.5.0
         version: 6.5.0(typescript@5.7.3)
-      react-icons:
-        specifier: ^5.5.0
-        version: 5.5.0(react@19.0.0)
-      recharts:
-        specifier: ^2.15.1
-        version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17

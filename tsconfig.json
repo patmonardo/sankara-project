@@ -40,10 +40,10 @@
   },
   "include": [
     "app/**/*",
-    ".next/types/**/*.ts"
-, "test-fixtures/TestFixtureApp.tsx", "test-fixtures/index.tsx", ".next/test-fixtures"  ],
+    ".next/types/**/*.ts", "core/bridge",
+  ],
   "exclude": [
     "node_modules",
-    "app/core/**/*"
+    "app/logic/**/*",
   ]
 }

@@ -1,0 +1,64 @@
+core
+├── action-bridge-integration.tsx
+├── action-bridge.tsx
+├── bridge-client.tsx
+├── event-system.tsx
+├── graph.test.ts
+├── graph.ts
+├── index.tsx
+├── integrations
+│   └── next-adapter.tsx
+├── matrix-compute.tsx
+├── matrix-core.tsx
+├── matrix-message-adapter.tsx
+├── matrix-protocol.tsx
+├── matrix-trpc.ts
+├── message-service.tsx
+├── property.ts
+└── registry.ts
+
+2 directories, 16 files
+
+sankara/
+├── core/                      # Top-level core systems
+│   ├── dcom/                  # Distributed Component Object Model
+│   │   ├── matrix/            # Matrix protocol implementation
+│   │   │   ├── events.ts      # Event system
+│   │   │   ├── rooms.ts       # Room management
+│   │   │   └── consensus.ts   # Consensus system
+│   │   ├── router/            # Procedure routing
+│   │   │   ├── router.ts      # Core router
+│   │   │   └── trpc.ts        # TRPC integration
+│   │   └── bridge/            # Communication bridges
+│   │       ├── action-bridge.ts # Action system
+│   │       └── service-bridge.ts # Service communication
+│   └── types/                 # Core type definitions
+│       ├── dcom-types.ts      # DCOM type definitions
+│       └── matrix-types.ts    # Matrix protocol types
+├── app/
+│   ├── ui/
+│   │   ├── graphics/
+│   │   │   └── morph/
+│   │   │       └── matrix/    # Matrix-specific UI components
+│   │   │           ├── MatrixFormProvider.tsx # Form provider
+│   │   │           ├── MatrixForm.tsx         # Form component
+│   │   │           └── MatrixFormBuilder.tsx  # Form builder
+│   │   └── components/        # Shared UI components
+│   │       ├── forms/         # Form components
+│   │       │   └── index.ts   # Form component exports
+│   │       └── debug/         # Debug components
+│   │           └── matrix-debugger.tsx # Matrix debug panel
+│   └── hooks/                 # Application hooks
+│       └── matrix/
+│           ├── use-matrix-form.ts # Form hooks
+│           └── use-matrix-core.ts # Core matrix hooks
+├── logic/                     # Business logic (moved from core)
+│   └── bec/                   # Binary Encephalon Complex
+├── system/                    # System integration
+│   ├── matrix-mode/           # Matrix mode implementation
+│   │   ├── form-engine.tsx    # Form engine 
+│   │   └── controller-engine.tsx # Controller engine
+│   └── adapters/              # System adapters
+│       └── bec-adapter.tsx    # BEC adapter
+└── types/                     # Shared type definitions
+    └── component-types.ts     # Component type definitions
