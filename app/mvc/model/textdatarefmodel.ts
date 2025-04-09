@@ -9,8 +9,8 @@ import {
   TextVerse,
   TextWord,
   TextComment,
-} from "@/lib/data/schema/textdata.js";
-import { TextBaseRefModel } from "@/lib/model/textbaserefmodel.js";
+} from "@/data/schema/textdata.js";
+import { TextBaseRefModel } from "@/mvc/model/textbaserefmodel.js";
 
 export class TextDataRefModel
   extends TextBaseRefModel<TextDataRef>

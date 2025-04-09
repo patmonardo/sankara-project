@@ -1,0 +1,329 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-universal-concept-ontology#> .
+
+# Classes
+:UniversalConcept rdf:type owl:Class ;
+    rdfs:label "Universal Concept"@en ;
+    rdfs:comment "The absolute power and self-referring negativity that differentiates itself into a relation of substances."@en .
+
+:Substance rdf:type owl:Class ;
+    rdfs:label "Substance"@en ;
+    rdfs:comment "A fundamental element in the relation differentiated by the Universal Concept."@en .
+
+:PassiveSubstance rdfs:subClassOf :Substance ;
+    rdfs:label "Passive Substance"@en ;
+    rdfs:comment "The originariness of the simple in-itself, powerless to posit itself."@en .
+
+:ActiveSubstance rdfs:subClassOf :Substance ;
+    rdfs:label "Active Substance"@en ;
+    rdfs:comment "Self-referring negativity that posits itself as an other and refers to it."@en .
+
+:Cause rdf:type owl:Class ;
+    rdfs:label "Cause"@en ;
+    rdfs:comment "The active substance that brings about an effect."@en .
+
+:Effect rdf:type owl:Class ;
+    rdfs:label "Effect"@en ;
+    rdfs:comment "The result of the cause's action, entering the passive substance."@en .
+
+# Object Properties
+:differentiatesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "differentiates into"@en ;
+    rdfs:comment "Indicates that the subject differentiates itself into the object."@en ;
+    rdfs:domain :UniversalConcept ;
+    rdfs:range :Substance .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:comment "Expresses that the subject presupposes or assumes the object as its condition."@en ;
+    rdfs:domain :ActiveSubstance ;
+    rdfs:range :PassiveSubstance .
+
+:sublates rdf:type owl:ObjectProperty ;
+    rdfs:label "sublates"@en ;
+    rdfs:comment "Denotes that the subject negates, preserves, and elevates the object in a dialectical process."@en ;
+    rdfs:domain :ActiveSubstance ;
+    rdfs:range owl:Thing .
+
+:bringsAbout rdf:type owl:ObjectProperty ;
+    rdfs:label "brings about"@en ;
+    rdfs:comment "Indicates that the subject causes or produces the object."@en ;
+    rdfs:domain :Cause ;
+    rdfs:range :Effect .
+
+:entersInto rdf:type owl:ObjectProperty ;
+    rdfs:label "enters into"@en ;
+    rdfs:comment "Expresses that the subject enters or becomes part of the object."@en ;
+    rdfs:domain :Effect ;
+    rdfs:range :PassiveSubstance .
+
+:positsItselfAs rdf:type owl:ObjectProperty ;
+    rdfs:label "posits itself as"@en ;
+    rdfs:comment "Denotes that the subject establishes itself as or in the form of the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isAbsolutePower rdf:type owl:DatatypeProperty ;
+    rdfs:label "is absolute power"@en ;
+    rdfs:comment "Indicates whether the subject represents absolute power."@en ;
+    rdfs:domain :UniversalConcept ;
+    rdfs:range xsd:boolean .
+
+:isSelfReferringNegativity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is self-referring negativity"@en ;
+    rdfs:comment "Denotes whether the subject is characterized by self-referring negativity."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isPowerlessToPositItself rdf:type owl:DatatypeProperty ;
+    rdfs:label "is powerless to posit itself"@en ;
+    rdfs:comment "Indicates whether the subject is unable to establish or posit itself."@en ;
+    rdfs:domain :PassiveSubstance ;
+    rdfs:range xsd:boolean .
+
+:maintainsIdentityInOpposition rdf:type owl:DatatypeProperty ;
+    rdfs:label "maintains identity in opposition"@en ;
+    rdfs:comment "Denotes whether the subject maintains its identity while becoming its opposite."@en ;
+    rdfs:domain :Substance ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:universalConcept rdf:type :UniversalConcept .
+:passiveSubstance rdf:type :PassiveSubstance .
+:activeSubstance rdf:type :ActiveSubstance .
+:cause rdf:type :Cause .
+:effect rdf:type :Effect .
+
+# Relationships
+:universalConcept :differentiatesInto :passiveSubstance, :activeSubstance .
+:activeSubstance :presupposes :passiveSubstance ;
+                :sublates :passiveSubstance ;
+                :positsItselfAs :cause .
+:cause :bringsAbout :effect .
+:effect :entersInto :passiveSubstance .
+
+# Properties
+:universalConcept :isAbsolutePower "true"^^xsd:boolean ;
+                  :isSelfReferringNegativity "true"^^xsd:boolean .
+:passiveSubstance :isPowerlessToPositItself "true"^^xsd:boolean .
+:activeSubstance :isSelfReferringNegativity "true"^^xsd:boolean .
+:passiveSubstance :maintainsIdentityInOpposition "true"^^xsd:boolean .
+:activeSubstance :maintainsIdentityInOpposition "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-particular-concept-ontology#> .
+
+# Classes
+:ParticularConcept rdf:type owl:Class ;
+    rdfs:label "Particular Concept"@en ;
+    rdfs:comment "The concept posited as determinate and distinct from other concepts."@en .
+
+:UniversalConcept rdf:type owl:Class ;
+    rdfs:label "Universal Concept"@en ;
+    rdfs:comment "The concept in its universal form, from which the particular is derived."@en .
+
+:SingularConcept rdf:type owl:Class ;
+    rdfs:label "Singular Concept"@en ;
+    rdfs:comment "The result of the dialectical movement of the particular concept."@en .
+
+:Determinateness rdf:type owl:Class ;
+    rdfs:label "Determinateness"@en ;
+    rdfs:comment "The quality of being determinate, associated with the particular concept."@en .
+
+:Totality rdf:type owl:Class ;
+    rdfs:label "Totality"@en ;
+    rdfs:comment "The comprehensive whole that the particular concept represents."@en .
+
+# Object Properties
+:isDerivedFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "is derived from"@en ;
+    rdfs:comment "Indicates that the subject is derived or originates from the object."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range :UniversalConcept .
+
+:transitionsTo rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions to"@en ;
+    rdfs:comment "Expresses that the subject undergoes a transition or change into the object."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range :SingularConcept .
+
+:comprehends rdf:type owl:ObjectProperty ;
+    rdfs:label "comprehends"@en ;
+    rdfs:comment "Denotes that the subject includes or encompasses the object within itself."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range owl:Thing .
+
+:posits rdf:type owl:ObjectProperty ;
+    rdfs:label "posits"@en ;
+    rdfs:comment "Indicates that the subject establishes or affirms the object."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range :UniversalConcept .
+
+:represents rdf:type owl:ObjectProperty ;
+    rdfs:label "represents"@en ;
+    rdfs:comment "Expresses that the subject embodies or stands for the object."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range :Totality .
+
+# Data Properties
+:isDeterminate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is determinate"@en ;
+    rdfs:comment "Indicates whether the subject is determinate or specific."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range xsd:boolean .
+
+:isSelfDetermining rdf:type owl:DatatypeProperty ;
+    rdfs:label "is self-determining"@en ;
+    rdfs:comment "Denotes whether the subject determines itself."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range xsd:boolean .
+
+:hasNormOfSelfIdentity rdf:type owl:DatatypeProperty ;
+    rdfs:label "has norm of self-identity"@en ;
+    rdfs:comment "Indicates whether the subject possesses a norm of self-identity."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range xsd:boolean .
+
+:involvesDialecticalMovement rdf:type owl:DatatypeProperty ;
+    rdfs:label "involves dialectical movement"@en ;
+    rdfs:comment "Denotes whether the subject involves a dialectical movement in its development."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range xsd:boolean .
+
+:isImmediatelySingular rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediately singular"@en ;
+    rdfs:comment "Indicates whether the subject is immediately singular in nature."@en ;
+    rdfs:domain :ParticularConcept ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:particularConcept rdf:type :ParticularConcept .
+:universalConcept rdf:type :UniversalConcept .
+:singularConcept rdf:type :SingularConcept .
+:determinateness rdf:type :Determinateness .
+:totality rdf:type :Totality .
+
+# Relationships
+:particularConcept :isDerivedFrom :universalConcept ;
+                   :transitionsTo :singularConcept ;
+                   :comprehends :determinateness ;
+                   :posits :universalConcept ;
+                   :represents :totality .
+
+# Properties
+:particularConcept :isDeterminate "true"^^xsd:boolean ;
+                   :isSelfDetermining "true"^^xsd:boolean ;
+                   :hasNormOfSelfIdentity "true"^^xsd:boolean ;
+                   :involvesDialecticalMovement "true"^^xsd:boolean ;
+                   :isImmediatelySingular "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-singular-concept-ontology#> .
+
+# Classes
+:SingularConcept rdf:type owl:Class ;
+    rdfs:label "Singular Concept"@en ;
+    rdfs:comment "The concept reflecting itself out of difference into absolute negativity, marking the transition to judgment."@en .
+
+:Judgment rdf:type owl:Class ;
+    rdfs:label "Judgment"@en ;
+    rdfs:comment "The result of the singular concept stepping out of its identity into otherness."@en .
+
+:Determinateness rdf:type owl:Class ;
+    rdfs:label "Determinateness"@en ;
+    rdfs:comment "The quality of being determinate, associated with the singular concept."@en .
+
+:Otherness rdf:type owl:Class ;
+    rdfs:label "Otherness"@en ;
+    rdfs:comment "The state or quality of being different or other, into which the singular concept steps."@en .
+
+# Object Properties
+:reflectsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "reflects into"@en ;
+    rdfs:comment "Indicates that the subject reflects or transforms into the object."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range :Determinateness .
+
+:transitionsTo rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions to"@en ;
+    rdfs:comment "Expresses that the subject undergoes a transition or change into the object."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range :Judgment .
+
+:stepsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "steps into"@en ;
+    rdfs:comment "Denotes that the subject moves or develops into the object."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range :Otherness .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:comment "Indicates that the subject assumes or requires the existence of the object."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range :SingularConcept .
+
+:maintainsNegativeReferenceTo rdf:type owl:ObjectProperty ;
+    rdfs:label "maintains negative reference to"@en ;
+    rdfs:comment "Expresses that the subject holds a negative or opposing relation to the object."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range :SingularConcept .
+
+# Data Properties
+:isAbsoluteNegativity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is absolute negativity"@en ;
+    rdfs:comment "Indicates whether the subject represents absolute negativity."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range xsd:boolean .
+
+:isSelfReferringNegativity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is self-referring negativity"@en ;
+    rdfs:comment "Denotes whether the subject is characterized by self-referring negativity."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range xsd:boolean .
+
+:existsForItself rdf:type owl:DatatypeProperty ;
+    rdfs:label "exists for itself"@en ;
+    rdfs:comment "Indicates whether the subject exists independently or for its own sake."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range xsd:boolean .
+
+:isQualitativeOne rdf:type owl:DatatypeProperty ;
+    rdfs:label "is qualitative one"@en ;
+    rdfs:comment "Denotes whether the subject is characterized as a qualitative 'one' or 'this'."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range xsd:boolean .
+
+:isExclusive rdf:type owl:DatatypeProperty ;
+    rdfs:label "is exclusive"@en ;
+    rdfs:comment "Indicates whether the subject is exclusive with respect to others."@en ;
+    rdfs:domain :SingularConcept ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:singularConcept rdf:type :SingularConcept .
+:judgment rdf:type :Judgment .
+:determinateness rdf:type :Determinateness .
+:otherness rdf:type :Otherness .
+
+# Relationships
+:singularConcept :reflectsInto :determinateness ;
+                 :transitionsTo :judgment ;
+                 :stepsInto :otherness ;
+                 :presupposes :singularConcept ;
+                 :maintainsNegativeReferenceTo :singularConcept .
+
+# Properties
+:singularConcept :isAbsoluteNegativity "true"^^xsd:boolean ;
+                 :isSelfReferringNegativity "true"^^xsd:boolean ;
+                 :existsForItself "true"^^xsd:boolean ;
+                 :isQualitativeOne "true"^^xsd:boolean ;
+                 :isExclusive "true"^^xsd:boolean .

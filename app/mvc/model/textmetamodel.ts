@@ -1,6 +1,6 @@
-import { TextMetaRef } from '@/lib/data/schema/textmeta';
-import { TextMetaRefModel } from '@/lib/model/textmetarefmodel';
-import { TextBaseModel } from '@/lib/model/textbase.model';
+import { TextMetaRef } from '@/data/schema/textmeta';
+import { TextMetaRefModel } from '@/mvc/model/textmetarefmodel';
+import { TextBaseModel } from '@/mvc/model/textbase.model';
 
 export class TextMetaModel extends TextBaseModel {
   private metaModel: TextMetaRefModel;

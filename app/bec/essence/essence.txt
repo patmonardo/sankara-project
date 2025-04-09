@@ -1,0 +1,596 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The truth of being, involving reflection and mediation."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The immediate form of existence, which essence transcends."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of infinite self-contained movement within essence."@en .
+
+:Essentiality rdf:type owl:Class ;
+    rdfs:label "Essentiality"@en ;
+    rdfs:comment "The determined form of essence."@en .
+
+:SimpleReference rdf:type owl:Class ;
+    rdfs:subClassOf :Essence ;
+    rdfs:label "Simple Self-Reference"@en ;
+    rdfs:comment "The first stage of essence, involving pure identity."@en .
+
+:SpecifyingDetermination rdf:type owl:Class ;
+    rdfs:subClassOf :Essence ;
+    rdfs:label "Specifying Determination"@en ;
+    rdfs:comment "The second stage of essence, involving difference and diversity."@en .
+
+:Contradiction rdf:type owl:Class ;
+    rdfs:subClassOf :Essence ;
+    rdfs:label "Contradiction"@en ;
+    rdfs:comment "The third stage of essence, leading to ground."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The result of contradiction in essence."@en .
+
+:transcends rdf:type owl:ObjectProperty ;
+    rdfs:label "transcends"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Being .
+
+:involvesProcess rdf:type owl:ObjectProperty ;
+    rdfs:label "involves process"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Reflection .
+
+:hasDeterminedForm rdf:type owl:ObjectProperty ;
+    rdfs:label "has determined form"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Essentiality .
+
+:progressesThrough rdf:type owl:ObjectProperty ;
+    rdfs:label "progresses through"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range owl:Class .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:domain :Contradiction ;
+    rdfs:range :Ground .
+
+:Essence
+    :transcends :Being ;
+    :involvesProcess :Reflection ;
+    :hasDeterminedForm :Essentiality ;
+    :progressesThrough :SimpleReference, :SpecifyingDetermination, :Contradiction .
+
+:Contradiction
+    :resultsIn :Ground .
+
+:Essence rdfs:comment """Key characteristics of Essence:
+1. Truth of being
+2. Mediated knowledge
+3. Involves reflection
+4. Progresses through stages
+5. Results in ground through contradiction"""@en .
+
+:Reflection rdfs:comment """Nature of Reflection in Essence:
+1. Infinite self-contained movement
+2. Absolute mediation
+3. Shining within itself
+4. Involves moments as determinations reflected into themselves"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The truth of being, involving reflection and mediation."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The immediate form of existence, which essence transcends."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of infinite self-contained movement within essence."@en .
+
+:Essentiality rdf:type owl:Class ;
+    rdfs:label "Essentiality"@en ;
+    rdfs:comment "The determined form of essence."@en .
+
+:SimpleReference rdf:type owl:Class ;
+    rdfs:subClassOf :Essence ;
+    rdfs:label "Simple Self-Reference"@en ;
+    rdfs:comment "The first stage of essence, involving pure identity."@en .
+
+:SpecifyingDetermination rdf:type owl:Class ;
+    rdfs:subClassOf :Essence ;
+    rdfs:label "Specifying Determination"@en ;
+    rdfs:comment "The second stage of essence, involving difference and diversity."@en .
+
+:Contradiction rdf:type owl:Class ;
+    rdfs:subClassOf :Essence ;
+    rdfs:label "Contradiction"@en ;
+    rdfs:comment "The third stage of essence, leading to ground."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The result of contradiction in essence."@en .
+
+:transcends rdf:type owl:ObjectProperty ;
+    rdfs:label "transcends"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Being .
+
+:involvesProcess rdf:type owl:ObjectProperty ;
+    rdfs:label "involves process"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Reflection .
+
+:hasDeterminedForm rdf:type owl:ObjectProperty ;
+    rdfs:label "has determined form"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Essentiality .
+
+:progressesThrough rdf:type owl:ObjectProperty ;
+    rdfs:label "progresses through"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range owl:Class .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:domain :Contradiction ;
+    rdfs:range :Ground .
+
+:truthOf rdf:type owl:ObjectProperty ;
+    rdfs:label "truth of"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Being ;
+    rdfs:comment "Represents the relation where an Essence concept is the truth of a Being concept."@en .
+
+:sublates rdf:type owl:ObjectProperty ;
+    rdfs:label "sublates"@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing ;
+    rdfs:comment "Represents the Hegelian process of sublation, where a concept is both preserved and transcended."@en .
+
+:Essence
+    :transcends :Being ;
+    :involvesProcess :Reflection ;
+    :hasDeterminedForm :Essentiality ;
+    :progressesThrough :SimpleReference, :SpecifyingDetermination, :Contradiction ;
+    :truthOf :Being .
+
+:Contradiction
+    :resultsIn :Ground .
+
+:Ground
+    :sublates :Contradiction .
+
+:Essence rdfs:comment """Key characteristics of Essence:
+1. Truth of being
+2. Mediated knowledge
+3. Involves reflection
+4. Progresses through stages
+5. Results in ground through contradiction
+6. Stands in 'truth of' relation to Being
+7. Participates in sublation process"""@en .
+
+:Reflection rdfs:comment """Nature of Reflection in Essence:
+1. Infinite self-contained movement
+2. Absolute mediation
+3. Shining within itself
+4. Involves moments as determinations reflected into themselves"""@en .
+
+:truthOf rdfs:comment """Usage of truthOf relation:
+For each concept in Being, there should be a corresponding concept in Essence that stands in the 'truthOf' relation to it."""@en .
+
+:sublates rdfs:comment """Usage of sublates relation:
+Represents the dialectical process where a concept is both preserved and transcended in its negation, leading to a higher synthesis."""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Shine rdf:type owl:Class ;
+    rdfs:label "Shine"@en ;
+    rdfs:comment "The first moment of Essence, representing the nothingness or lack of essence that shines within essence itself."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The underlying reality that posits Shine as its own self-manifestation."@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The process or state of denial or negation, central to the concept of Shine."@en .
+
+:ImmediateNonExistence rdf:type owl:Class ;
+    rdfs:subClassOf :Shine ;
+    rdfs:label "Immediate Non-Existence"@en ;
+    rdfs:comment "The state of Shine as immediate non-existence, existing only in its negation."@en .
+
+:ReflectedImmediacy rdf:type owl:Class ;
+    rdfs:subClassOf :Shine ;
+    rdfs:label "Reflected Immediacy"@en ;
+    rdfs:comment "The form of immediacy in Shine that is reflected and mediated through negation."@en .
+
+:shinesWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "shines within"@en ;
+    rdfs:domain :Shine ;
+    rdfs:range :Essence .
+
+:posits rdf:type owl:ObjectProperty ;
+    rdfs:label "posits"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Shine .
+
+:embodiesNegation rdf:type owl:ObjectProperty ;
+    rdfs:label "embodies negation"@en ;
+    rdfs:domain :Shine ;
+    rdfs:range :Negation .
+
+:existsThrough rdf:type owl:ObjectProperty ;
+    rdfs:label "exists through"@en ;
+    rdfs:domain :Shine ;
+    rdfs:range :Negation .
+
+:hasCharacteristic rdf:type owl:ObjectProperty ;
+    rdfs:label "has characteristic"@en ;
+    rdfs:domain :Shine ;
+    rdfs:range owl:Class .
+
+:Shine
+    :shinesWithin :Essence ;
+    :embodiesNegation :Negation ;
+    :existsThrough :Negation ;
+    :hasCharacteristic :ImmediateNonExistence, :ReflectedImmediacy .
+
+:Essence
+    :posits :Shine .
+
+:Shine rdfs:comment """Key characteristics of Shine:
+1. Nothingness or lack of essence
+2. Essence's own shining
+3. Self-referring negation
+4. Non-self-subsistent
+5. Dialectical tension between being and non-being
+6. First moment in the triad of Essence"""@en .
+
+:Negation rdfs:comment """Role of Negation in Shine:
+1. Central to the existence of Shine
+2. Enables Shine to exist through its own negation
+3. Creates the dialectical tension in Shine"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Shine rdf:type owl:Class ;
+    rdfs:label "Shine"@en ;
+    rdfs:comment "The manifestation of being within essence, characterized by its nothingness and negation."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The fundamental concept of existence, which becomes shine in the context of essence."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The underlying reality within which shine exists and has its nothingness."@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The process or state of denial central to the concept of shine."@en .
+
+:ImmediateNonExistence rdf:type owl:Class ;
+    rdfs:subClassOf :Shine ;
+    rdfs:label "Immediate Non-Existence"@en ;
+    rdfs:comment "The state of shine as immediate non-existence, existing only in its negation."@en .
+
+:ReflectedImmediacy rdf:type owl:Class ;
+    rdfs:subClassOf :Shine ;
+    rdfs:label "Reflected Immediacy"@en ;
+    rdfs:comment "The form of immediacy in shine that is reflected and mediated through negation."@en .
+
+:existsWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "exists within"@en ;
+    rdfs:domain :Shine ;
+    rdfs:range :Essence .
+
+:becomesShine rdf:type owl:ObjectProperty ;
+    rdfs:label "becomes shine"@en ;
+    rdfs:domain :Being ;
+    rdfs:range :Shine .
+
+:isPosited rdf:type owl:ObjectProperty ;
+    rdfs:label "is posited"@en ;
+    rdfs:domain :Negation ;
+    rdfs:range :Shine .
+
+:hasGround rdf:type owl:ObjectProperty ;
+    rdfs:label "has ground"@en ;
+    rdfs:domain :Negation ;
+    rdfs:range :Negation .
+
+:hasCharacteristic rdf:type owl:ObjectProperty ;
+    rdfs:label "has characteristic"@en ;
+    rdfs:domain :Shine ;
+    rdfs:range owl:Class .
+
+:Shine
+    :existsWithin :Essence ;
+    :hasCharacteristic :ImmediateNonExistence, :ReflectedImmediacy .
+
+:Being
+    :becomesShine :Shine .
+
+:Negation
+    :isPosited :Shine ;
+    :hasGround :Negation .
+
+:Shine rdfs:comment """Key characteristics of Shine in CITI:
+1. Being of shine is the sublatedness of being
+2. Exists as nothingness within essence
+3. Negative posited as negative
+4. Essential rather than transient determinateness
+5. Immediate non-existence in the determinateness of being
+6. Exists only with reference to another, in its non-existence
+7. Reflected immediacy"""@en .
+
+:Essence rdfs:comment "Essence is the context within which shine exists and has its nothingness. Shine cannot exist apart from essence."@en .
+
+:Negation rdfs:comment """Role of Negation in Shine:
+1. Negation is posited as shine
+2. Negation has negatedness as its ground
+3. Central to the existence and nature of shine"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of essence shining within itself, characterized by immediacy and internal movement."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The underlying reality that engages in reflection and self-determination."@en .
+
+:Shine rdf:type owl:Class ;
+    rdfs:label "Shine"@en ;
+    rdfs:comment "The immediate manifestation of essence, which becomes internalized in reflection."@en .
+
+:Moment rdf:type owl:Class ;
+    rdfs:label "Moment"@en ;
+    rdfs:comment "A distinct phase or aspect within the movement of reflection."@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The quality of being direct or unmediated, characteristic of reflection."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of indirect relation or connection within reflection."@en .
+
+:shinesWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "shines within"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Reflection .
+
+:involvesMovement rdf:type owl:ObjectProperty ;
+    rdfs:label "involves movement"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :Moment .
+
+:hasCharacteristic rdf:type owl:ObjectProperty ;
+    rdfs:label "has characteristic"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range owl:Class .
+
+:dialecticallyRelates rdf:type owl:ObjectProperty ;
+    rdfs:label "dialectically relates"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range owl:Class .
+
+:Reflection
+    :shinesWithin :Essence ;
+    :involvesMovement :Moment ;
+    :hasCharacteristic :Immediacy, :Mediation ;
+    :dialecticallyRelates :Shine .
+
+:Essence
+    :shinesWithin :Reflection .
+
+:Reflection rdfs:comment """Key characteristics of Reflection:
+1. Essence shining within itself
+2. Involves movement across distinct moments
+3. Characterized by immediacy and mediation
+4. Represents internalized shine
+5. Embodies essence's self-determination
+6. Third moment in the triad of Essence"""@en .
+
+:Moment rdfs:comment "Moments in Reflection are distinct yet reflected into themselves, representing the internal differentiation of essence."@en .
+
+:Immediacy rdfs:comment "In Reflection, immediacy is both preserved from shine and transformed through internalization."@en .
+
+:Mediation rdfs:comment "Mediation in Reflection represents the self-relation of essence, enabling its self-determination."@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:PositingReflection rdf:type owl:Class ;
+    rdfs:subClassOf :Reflection ;
+    rdfs:label "Positing Reflection"@en ;
+    rdfs:comment "A form of reflection characterized by the movement of nothing to nothing, resulting in negation coinciding with itself."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The overarching concept of essence's self-relation and internal movement."@en .
+
+:SelfReferringNegativity rdf:type owl:Class ;
+    rdfs:label "Self-Referring Negativity"@en ;
+    rdfs:comment "The process of negation that refers back to itself, central to positing reflection."@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The quality of being direct or unmediated, achieved through the process of positing reflection."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of indirect relation or connection that leads to immediacy in positing reflection."@en .
+
+:involvesMovement rdf:type owl:ObjectProperty ;
+    rdfs:label "involves movement"@en ;
+    rdfs:domain :PositingReflection ;
+    rdfs:range :SelfReferringNegativity .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:domain :PositingReflection ;
+    rdfs:range :Immediacy .
+
+:achievesThrough rdf:type owl:ObjectProperty ;
+    rdfs:label "achieves through"@en ;
+    rdfs:domain :Immediacy ;
+    rdfs:range :Mediation .
+
+:dialecticallyRelates rdf:type owl:ObjectProperty ;
+    rdfs:label "dialectically relates"@en ;
+    rdfs:domain :PositingReflection ;
+    rdfs:range owl:Class .
+
+:PositingReflection
+    :involvesMovement :SelfReferringNegativity ;
+    :resultsIn :Immediacy ;
+    :dialecticallyRelates :Negation, :SelfIdentity .
+
+:Immediacy
+    :achievesThrough :Mediation .
+
+:PositingReflection rdfs:comment """Key characteristics of Positing Reflection:
+1. Movement of nothing to nothing
+2. Negation coinciding with itself
+3. Results in simple equality with itself (immediacy)
+4. Involves self-referring negativity
+5. Achieves immediacy through mediation
+6. First specific form of reflection within the broader category"""@en .
+
+:SelfReferringNegativity rdfs:comment "In Positing Reflection, negation refers back to itself, creating a unique form of self-relation central to essence's self-determination."@en .
+
+:Immediacy rdfs:comment "Immediacy in Positing Reflection is not a given state but a result of the movement of reflection, achieved through mediation."@en .
+
+:Mediation rdfs:comment "Mediation in Positing Reflection is the process through which immediacy is achieved, representing the paradoxical nature of this form of reflection."@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:ExternalReflection rdf:type owl:Class ;
+    rdfs:subClassOf :Reflection ;
+    rdfs:label "External Reflection"@en ;
+    rdfs:comment "A form of reflection that presupposes itself as sublated and relates to an apparent externality or otherness."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The overarching concept of essence's self-relation and internal movement."@en .
+
+:Presupposition rdf:type owl:Class ;
+    rdfs:label "Presupposition"@en ;
+    rdfs:comment "The immediate starting point that external reflection assumes and then sublates."@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The quality of being direct or unmediated, which external reflection presupposes and then negates."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of indirect relation or connection through which external reflection relates to its presupposition."@en .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:domain :ExternalReflection ;
+    rdfs:range :Presupposition .
+
+:sublates rdf:type owl:ObjectProperty ;
+    rdfs:label "sublates"@en ;
+    rdfs:domain :ExternalReflection ;
+    rdfs:range :Presupposition .
+
+:relatesTo rdf:type owl:ObjectProperty ;
+    rdfs:label "relates to"@en ;
+    rdfs:domain :ExternalReflection ;
+    rdfs:range :Immediacy .
+
+:involvesProcess rdf:type owl:ObjectProperty ;
+    rdfs:label "involves process"@en ;
+    rdfs:domain :ExternalReflection ;
+    rdfs:range :Mediation .
+
+:dialecticallyRelates rdf:type owl:ObjectProperty ;
+    rdfs:label "dialectically relates"@en ;
+    rdfs:domain :ExternalReflection ;
+    rdfs:range owl:Class .
+
+:ExternalReflection
+    :presupposes :Presupposition ;
+    :sublates :Presupposition ;
+    :relatesTo :Immediacy ;
+    :involvesProcess :Mediation ;
+    :dialecticallyRelates :Immediacy, :Mediation .
+
+:Presupposition
+    :hasCharacteristic :Immediacy .
+
+:ExternalReflection rdfs:comment """Key characteristics of External Reflection:
+1. Presupposes itself as sublated
+2. Relates to an apparent externality or otherness
+3. Involves a doubling of presupposition and negative self-reference
+4. Starts from and returns to its presupposition through negation
+5. Embodies tension between immediate and mediated
+6. Second specific form of reflection within the broader category"""@en .
+
+:Presupposition rdfs:comment "In External Reflection, the presupposition is both the starting point and what is sublated, representing the paradoxical nature of this form of reflection."@en .
+
+:Immediacy rdfs:comment "Immediacy in External Reflection is presupposed as an other, but is then negated and mediated through the process of reflection."@en .
+
+:Mediation rdfs:comment "Mediation in External Reflection involves the process of relating to and sublating the presupposed immediacy, demonstrating the dialectical movement of this form of reflection."@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:truthOf rdf:type owl:ObjectProperty ;
+    rdfs:label "truth of"@en ;
+    rdfs:comment "Represents the relation where an Essence concept is the truth of a Being concept."@en .
+
+:Being rdfs:subClassOf :BeingSphereCategory .
+:Nothing rdfs:subClassOf :BeingSphereCategory .
+:Becoming rdfs:subClassOf :BeingSphereCategory .
+
+:Cit rdfs:subClassOf :EssenceSphereCategory .
+:Citi rdfs:subClassOf :EssenceSphereCategory .
+:Citta rdfs:subClassOf :EssenceSphereCategory .
+
+:Cit :truthOf :Being .
+:Citi :truthOf :Nothing .
+:Citta :truthOf :Becoming .
+
+:EssenceSphereCategory rdfs:comment "Categories in the sphere of Essence represent a more developed, reflective stage of Hegel's dialectic."@en .
+:BeingSphereCategory rdfs:comment "Categories in the sphere of Being represent the initial, immediate stage of Hegel's dialectic."@en .
+
+:truthOf rdfs:comment "The 'truth of' relation indicates that the Essence category more fully expresses the dialectical nature hinted at by the corresponding Being category."@en .

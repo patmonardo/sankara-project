@@ -1,6 +1,6 @@
-//@/lib/model/base.ts
+//@/mvc/model/base.ts
 import { z } from 'zod'
-import type { Base, BaseState, BaseShape } from '@/lib/data/schema/base'
+import type { Base, BaseState, BaseShape } from '@/data/schema/base'
 
 export abstract class BaseModel<T extends BaseShape> {
   constructor(

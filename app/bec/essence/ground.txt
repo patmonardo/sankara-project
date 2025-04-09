@@ -1,0 +1,1120 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ground-ontology#> .
+
+# Classes
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The fundamental nature or substance that determines itself as ground."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The foundation or basis from which essence emerges and which mediates essence with itself."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The immediate existence that resolves itself into essence."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of self-reference central to the concept of ground."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of connecting or reconciling different elements within the dialectical process."@en .
+
+:AbsoluteGround rdf:type owl:Class ;
+    rdfs:subClassOf :Ground ;
+    rdfs:label "Absolute Ground"@en ;
+    rdfs:comment "A more comprehensive understanding of the ground-essence relationship."@en .
+
+# Subclasses
+:PositingReflection rdf:type owl:Class ;
+    rdfs:subClassOf :Reflection ;
+    rdfs:label "Positing Reflection"@en ;
+    rdfs:comment "Reflection that establishes or posits determinations."@en .
+
+:PresupposingReflection rdf:type owl:Class ;
+    rdfs:subClassOf :Reflection ;
+    rdfs:label "Presupposing Reflection"@en ;
+    rdfs:comment "Reflection that assumes or presupposes certain conditions."@en .
+
+:PureMediation rdf:type owl:Class ;
+    rdfs:subClassOf :Mediation ;
+    rdfs:label "Pure Mediation"@en ;
+    rdfs:comment "Abstract or general form of mediation."@en .
+
+:RealMediation rdf:type owl:Class ;
+    rdfs:subClassOf :Mediation ;
+    rdfs:label "Real Mediation"@en ;
+    rdfs:comment "Concrete mediation associated with ground."@en .
+
+# Object Properties
+:determinesItselfAs rdf:type owl:ObjectProperty ;
+    rdfs:label "determines itself as"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Ground .
+
+:resolvesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "resolves into"@en ;
+    rdfs:domain :Being ;
+    rdfs:range :Essence .
+
+:mediates rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates"@en ;
+    rdfs:domain :Ground ;
+    rdfs:range :Essence .
+
+:constitutes rdf:type owl:ObjectProperty ;
+    rdfs:label "constitutes"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :Ground .
+
+:involvesUnityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "involves unity of"@en ;
+    rdfs:domain :Ground ;
+    rdfs:range :Reflection .
+
+# Data Properties
+:isSelfDetermined rdf:type owl:DatatypeProperty ;
+    rdfs:label "is self-determined"@en ;
+    rdfs:domain :Ground ;
+    rdfs:range xsd:boolean .
+
+:isMediating rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediating"@en ;
+    rdfs:domain :Ground ;
+    rdfs:range xsd:boolean .
+
+:isReflective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is reflective"@en ;
+    rdfs:domain :Ground ;
+    rdfs:range xsd:boolean .
+
+:isNegative rdf:type owl:DatatypeProperty ;
+    rdfs:label "is negative"@en ;
+    rdfs:domain :Ground ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:essence rdf:type :Essence .
+:ground rdf:type :Ground .
+:being rdf:type :Being .
+:reflection rdf:type :Reflection .
+:mediation rdf:type :Mediation .
+:absoluteGround rdf:type :AbsoluteGround .
+
+# Relationships
+:essence :determinesItselfAs :ground .
+:being :resolvesInto :essence .
+:ground :mediates :essence .
+:reflection :constitutes :ground .
+:ground :involvesUnityOf :reflection .
+
+# Properties of Ground
+:ground :isSelfDetermined "true"^^xsd:boolean ;
+         :isMediating "true"^^xsd:boolean ;
+         :isReflective "true"^^xsd:boolean ;
+         :isNegative "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-absolute-ground-ontology#> .
+
+# Classes
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The determined essence or essentiality, characterized by negative simplicity and absolute self-mediation."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The determined reflection through which essence shines within itself."@en .
+
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "A determination of essence that stands over against matter and content."@en .
+
+:Matter rdf:type owl:Class ;
+    rdfs:label "Matter"@en ;
+    rdfs:comment "A determination of essence that, along with form, gives essence content."@en .
+
+:Content rdf:type owl:Class ;
+    rdfs:label "Content"@en ;
+    rdfs:comment "The unity of form and matter, characterized as informed matter."@en .
+
+:AbsoluteGround rdf:type owl:Class ;
+    rdfs:label "Absolute Ground"@en ;
+    rdfs:comment "The unity of form and matter that constitutes the absolute ground."@en .
+
+# Object Properties
+:shinesWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "shines within"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Essence ;
+    rdfs:comment "Describes how essence shines within itself through reflection."@en .
+
+:determinesItselfAs rdf:type owl:ObjectProperty ;
+    rdfs:label "determines itself as"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range owl:Class ;
+    rdfs:comment "Indicates how essence determines itself as form and matter."@en .
+
+:standsOverAgainst rdf:type owl:ObjectProperty ;
+    rdfs:label "stands over against"@en ;
+    rdfs:domain :Form ;
+    rdfs:range owl:Class ;
+    rdfs:comment "Describes the opposition of form to matter and content."@en .
+
+:unitesWith rdf:type owl:ObjectProperty ;
+    rdfs:label "unites with"@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Matter ;
+    rdfs:comment "Indicates the unity of form and matter in content."@en .
+
+:constitutes rdf:type owl:ObjectProperty ;
+    rdfs:label "constitutes"@en ;
+    rdfs:domain :Content ;
+    rdfs:range :AbsoluteGround ;
+    rdfs:comment "Describes how the unity of form and matter constitutes the absolute ground."@en .
+
+# Data Properties
+:isNegativeSimplicity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is negative simplicity"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Indicates whether essence is characterized by negative simplicity."@en .
+
+:isAbsoluteSelfMediation rdf:type owl:DatatypeProperty ;
+    rdfs:label "is absolute self-mediation"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Indicates whether essence is characterized by absolute self-mediation."@en .
+
+:isInformedMatter rdf:type owl:DatatypeProperty ;
+    rdfs:label "is informed matter"@en ;
+    rdfs:domain :Content ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Indicates whether content is characterized as informed matter."@en .
+
+# Instances
+:essence rdf:type :Essence .
+:reflection rdf:type :Reflection .
+:form rdf:type :Form .
+:matter rdf:type :Matter .
+:content rdf:type :Content .
+:absoluteGround rdf:type :AbsoluteGround .
+
+# Relationships
+:essence :shinesWithin :essence ;
+         :determinesItselfAs :Form ;
+         :determinesItselfAs :Matter .
+
+:form :standsOverAgainst :Matter ;
+      :standsOverAgainst :Content ;
+      :unitesWith :matter .
+
+:content :constitutes :absoluteGround .
+
+# Properties
+:essence :isNegativeSimplicity "true"^^xsd:boolean ;
+         :isAbsoluteSelfMediation "true"^^xsd:boolean .
+
+:content :isInformedMatter "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-form-matter-ontology#> .
+
+# Classes
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "A determination of essence that shapes and structures matter."@en .
+
+:Matter rdf:type owl:Class ;
+    rdfs:label "Matter"@en ;
+    rdfs:comment "The substrate or base for form, characterized by simple identity and lack of distinction."@en .
+
+:AbsoluteGround rdf:type owl:Class ;
+    rdfs:label "Absolute Ground"@en ;
+    rdfs:comment "The unity of form and matter that constitutes the foundation of essence."@en .
+
+:GroundConnection rdf:type owl:Class ;
+    rdfs:label "Ground Connection"@en ;
+    rdfs:comment "The essential relationship between form and matter within the absolute ground."@en .
+
+# Object Properties
+:isEssentialTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is essential to"@en ;
+    rdfs:comment "Indicates that the subject is a crucial component of the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range :GroundConnection .
+
+:isMomentOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is moment of"@en ;
+    rdfs:comment "Denotes that the subject is a distinct aspect or phase of the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range :AbsoluteGround .
+
+:isOtherOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is other of"@en ;
+    rdfs:comment "Expresses the dialectical opposition between two concepts."@en ;
+    rdfs:domain :Matter ;
+    rdfs:range :Form .
+
+:servesAsSubstrateFor rdf:type owl:ObjectProperty ;
+    rdfs:label "serves as substrate for"@en ;
+    rdfs:comment "Indicates that the subject provides the underlying basis for the object."@en ;
+    rdfs:domain :Matter ;
+    rdfs:range :Form .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:comment "Denotes that the subject assumes or requires the existence of the object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Matter .
+
+:isIndifferentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is indifferent to"@en ;
+    rdfs:comment "Expresses a lack of essential connection or influence between the subject and object."@en ;
+    rdfs:domain :Matter ;
+    rdfs:range :Form .
+
+:formsUnityWith rdf:type owl:ObjectProperty ;
+    rdfs:label "forms unity with"@en ;
+    rdfs:comment "Indicates that the subject combines with the object to create a unified whole."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:passesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "passes into"@en ;
+    rdfs:comment "Denotes a transformation or transition from the subject into the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:reciprocallyPresupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "reciprocally presupposes"@en ;
+    rdfs:comment "Expresses a mutual dependence or assumption between the subject and object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:determines rdf:type owl:ObjectProperty ;
+    rdfs:label "determines"@en ;
+    rdfs:comment "Indicates that the subject shapes or defines the nature of the object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Matter .
+
+# Data Properties
+:isSimpleIdentity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is simple identity"@en ;
+    rdfs:comment "Indicates whether the subject is characterized by simple, undifferentiated identity."@en ;
+    rdfs:domain :Matter ;
+    rdfs:range xsd:boolean .
+
+:isVoidOfDistinction rdf:type owl:DatatypeProperty ;
+    rdfs:label "is void of distinction"@en ;
+    rdfs:comment "Denotes whether the subject lacks internal differentiation or distinction."@en ;
+    rdfs:domain :Matter ;
+    rdfs:range xsd:boolean .
+
+:constitutesAbsoluteGround rdf:type owl:DatatypeProperty ;
+    rdfs:label "constitutes absolute ground"@en ;
+    rdfs:comment "Indicates whether the subject forms part of the absolute ground."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:form rdf:type :Form .
+:matter rdf:type :Matter .
+:absoluteGround rdf:type :AbsoluteGround .
+:groundConnection rdf:type :GroundConnection .
+
+# Relationships
+:form :isEssentialTo :groundConnection ;
+      :isMomentOf :absoluteGround ;
+      :presupposes :matter ;
+      :formsUnityWith :matter ;
+      :passesInto :matter ;
+      :reciprocallyPresupposes :matter ;
+      :determines :matter .
+
+:matter :isEssentialTo :groundConnection ;
+        :isMomentOf :absoluteGround ;
+        :isOtherOf :form ;
+        :servesAsSubstrateFor :form ;
+        :isIndifferentTo :form ;
+        :formsUnityWith :form ;
+        :passesInto :form ;
+        :reciprocallyPresupposes :form .
+
+# Properties
+:matter :isSimpleIdentity "true"^^xsd:boolean ;
+        :isVoidOfDistinction "true"^^xsd:boolean .
+
+:form :constitutesAbsoluteGround "true"^^xsd:boolean .
+:matter :constitutesAbsoluteGround "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-form-content-ontology#> .
+
+# Classes
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "The structure or appearance that shapes content, standing over against it while being unessential compared to it."@en .
+
+:Content rdf:type owl:Class ;
+    rdfs:label "Content"@en ;
+    rdfs:comment "The unity of form and matter, representing the determined essence and the simple identity of ground and grounded."@en .
+
+:Matter rdf:type owl:Class ;
+    rdfs:label "Matter"@en ;
+    rdfs:comment "The substrate or material aspect that, along with form, constitutes content."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The foundation or basis from which content emerges and with which it maintains identity."@en .
+
+:GroundConnection rdf:type owl:Class ;
+    rdfs:label "Ground Connection"@en ;
+    rdfs:comment "The relationship between ground and content, present within the content itself."@en .
+
+# Object Properties
+:isUnityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is unity of"@en ;
+    rdfs:comment "Indicates that the subject is a unification or synthesis of the objects."@en ;
+    rdfs:domain :Content ;
+    rdfs:range owl:Thing .
+
+:standsOverAgainst rdf:type owl:ObjectProperty ;
+    rdfs:label "stands over against"@en ;
+    rdfs:comment "Expresses a relationship of opposition or contrast between the subject and object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Content .
+
+:isIndifferentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is indifferent to"@en ;
+    rdfs:comment "Denotes a lack of essential connection or influence between the subject and object."@en ;
+    rdfs:domain :Content ;
+    rdfs:range :Form .
+
+:constitutesSubstrateOf rdf:type owl:ObjectProperty ;
+    rdfs:label "constitutes substrate of"@en ;
+    rdfs:comment "Indicates that the subject forms the underlying basis or foundation for the object."@en ;
+    rdfs:domain :Content ;
+    rdfs:range :Form .
+
+:hasIdentityWith rdf:type owl:ObjectProperty ;
+    rdfs:label "has identity with"@en ;
+    rdfs:comment "Expresses a relationship of sameness or unity between the subject and object."@en ;
+    rdfs:domain :Content ;
+    rdfs:range :Ground .
+
+:sublates rdf:type owl:ObjectProperty ;
+    rdfs:label "sublates"@en ;
+    rdfs:comment "Indicates that the subject negates, preserves, and elevates the object in a dialectical process."@en ;
+    rdfs:domain :Content ;
+    rdfs:range :Form .
+
+:isPresentIn rdf:type owl:ObjectProperty ;
+    rdfs:label "is present in"@en ;
+    rdfs:comment "Denotes that the subject exists or is contained within the object."@en ;
+    rdfs:domain :GroundConnection ;
+    rdfs:range :Content .
+
+# Data Properties
+:isUnessential rdf:type owl:DatatypeProperty ;
+    rdfs:label "is unessential"@en ;
+    rdfs:comment "Indicates whether the subject is non-essential or secondary in nature."@en ;
+    rdfs:domain :Form ;
+    rdfs:range xsd:boolean .
+
+:isDeterminedEssence rdf:type owl:DatatypeProperty ;
+    rdfs:label "is determined essence"@en ;
+    rdfs:comment "Denotes whether the subject represents a specific, determined form of essence."@en ;
+    rdfs:domain :Content ;
+    rdfs:range xsd:boolean .
+
+:isWholeForm rdf:type owl:DatatypeProperty ;
+    rdfs:label "is whole form"@en ;
+    rdfs:comment "Indicates whether the subject encompasses the entirety of form."@en ;
+    rdfs:domain :GroundConnection ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:form rdf:type :Form .
+:content rdf:type :Content .
+:matter rdf:type :Matter .
+:ground rdf:type :Ground .
+:groundConnection rdf:type :GroundConnection .
+
+# Relationships
+:content :isUnityOf :Form ;
+         :isUnityOf :Matter ;
+         :isIndifferentTo :form ;
+         :constitutesSubstrateOf :form ;
+         :hasIdentityWith :ground ;
+         :sublates :form .
+
+:form :standsOverAgainst :content .
+
+:groundConnection :isPresentIn :content .
+
+# Properties
+:form :isUnessential "true"^^xsd:boolean .
+:content :isDeterminedEssence "true"^^xsd:boolean .
+:groundConnection :isWholeForm "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-formal-ground-ontology#> .
+
+# Classes
+:FormalGround rdf:type owl:Class ;
+    rdfs:label "Formal Ground"@en ;
+    rdfs:comment "A specific form of ground involving a ground and a grounded with the same content but different forms."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The basis or foundation that provides an explanation for the grounded."@en .
+
+:Grounded rdf:type owl:Class ;
+    rdfs:label "Grounded"@en ;
+    rdfs:comment "That which is explained or based upon the ground."@en .
+
+:Content rdf:type owl:Class ;
+    rdfs:label "Content"@en ;
+    rdfs:comment "The substance or matter that is shared between the ground and the grounded, indifferent to their form."@en .
+
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "The structure or appearance that distinguishes between ground and grounded, external to their content."@en .
+
+# Object Properties
+:hasGround rdf:type owl:ObjectProperty ;
+    rdfs:label "has ground"@en ;
+    rdfs:comment "Indicates that the subject is grounded in or explained by the object."@en ;
+    rdfs:domain :Grounded ;
+    rdfs:range :Ground .
+
+:sharesContentWith rdf:type owl:ObjectProperty ;
+    rdfs:label "shares content with"@en ;
+    rdfs:comment "Denotes that the subject has the same content as the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:isIndifferentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is indifferent to"@en ;
+    rdfs:comment "Expresses a lack of essential connection or influence between the subject and object."@en ;
+    rdfs:domain :Content ;
+    rdfs:range :Form .
+
+:distinguishesBetween rdf:type owl:ObjectProperty ;
+    rdfs:label "distinguishes between"@en ;
+    rdfs:comment "Indicates that the subject creates a distinction or difference between the objects."@en ;
+    rdfs:domain :Form ;
+    rdfs:range owl:Thing .
+
+:servesAsBaseFor rdf:type owl:ObjectProperty ;
+    rdfs:label "serves as base for"@en ;
+    rdfs:comment "Denotes that the subject provides the foundation or basis for the object."@en ;
+    rdfs:domain :Content ;
+    rdfs:range :FormalGround .
+
+:isExternalTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is external to"@en ;
+    rdfs:comment "Expresses that the subject is separate from or not intrinsic to the object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Content .
+
+# Data Properties
+:hasDeterminateContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "has determinate content"@en ;
+    rdfs:comment "Indicates whether the subject has specific, defined content."@en ;
+    rdfs:domain :Ground ;
+    rdfs:range xsd:boolean .
+
+:isEmptyTautologicalRelation rdf:type owl:DatatypeProperty ;
+    rdfs:label "is empty tautological relation"@en ;
+    rdfs:comment "Denotes whether the subject represents a redundant or circular explanation."@en ;
+    rdfs:domain :FormalGround ;
+    rdfs:range xsd:boolean .
+
+:providesSufficientExplanation rdf:type owl:DatatypeProperty ;
+    rdfs:label "provides sufficient explanation"@en ;
+    rdfs:comment "Indicates whether the subject offers an adequate or satisfactory explanation."@en ;
+    rdfs:domain :FormalGround ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:formalGround rdf:type :FormalGround .
+:ground rdf:type :Ground .
+:grounded rdf:type :Grounded .
+:content rdf:type :Content .
+:form rdf:type :Form .
+
+# Relationships
+:grounded :hasGround :ground .
+:ground :sharesContentWith :grounded .
+:content :isIndifferentTo :form ;
+         :servesAsBaseFor :formalGround .
+:form :distinguishesBetween :ground, :grounded ;
+      :isExternalTo :content .
+
+# Properties
+:ground :hasDeterminateContent "true"^^xsd:boolean .
+:formalGround :isEmptyTautologicalRelation "true"^^xsd:boolean ;
+              :providesSufficientExplanation "false"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-real-ground-ontology#> .
+
+# Classes
+:RealGround rdf:type owl:Class ;
+    rdfs:label "Real Ground"@en ;
+    rdfs:comment "A concrete form of ground involving a ground and a grounded with different contents, connected through a mediated relationship."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The basis or foundation that provides an explanation for the grounded, containing its determination."@en .
+
+:Grounded rdf:type owl:Class ;
+    rdfs:label "Grounded"@en ;
+    rdfs:comment "That which is explained or based upon the ground, with content that may include unessential elements."@en .
+
+:Content rdf:type owl:Class ;
+    rdfs:label "Content"@en ;
+    rdfs:comment "The substance or matter that differs between the ground and the grounded, forming a unity of different determinations."@en .
+
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "The structure that connects and mediates between the diverse contents of ground and grounded."@en .
+
+# Object Properties
+:hasGround rdf:type owl:ObjectProperty ;
+    rdfs:label "has ground"@en ;
+    rdfs:comment "Indicates that the subject is grounded in or explained by the object."@en ;
+    rdfs:domain :Grounded ;
+    rdfs:range :Ground .
+
+:hasDifferentContentFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "has different content from"@en ;
+    rdfs:comment "Denotes that the subject has content that differs from the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:containsDeterminationOf rdf:type owl:ObjectProperty ;
+    rdfs:label "contains determination of"@en ;
+    rdfs:comment "Expresses that the subject includes the defining characteristics or essence of the object."@en ;
+    rdfs:domain :Ground ;
+    rdfs:range :Grounded .
+
+:mediatesBetween rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates between"@en ;
+    rdfs:comment "Indicates that the subject acts as an intermediary or connecting element between the objects."@en ;
+    rdfs:domain :Form ;
+    rdfs:range owl:Thing .
+
+:isInternalTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is internal to"@en ;
+    rdfs:comment "Denotes that the subject is an inherent or intrinsic part of the object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Content .
+
+:isExternalTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is external to"@en ;
+    rdfs:comment "Expresses that the subject is separate from or not intrinsic to the object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Content .
+
+# Data Properties
+:hasEssentialContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "has essential content"@en ;
+    rdfs:comment "Indicates whether the subject's content is fundamental or necessary to its nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:hasUnessentialElements rdf:type owl:DatatypeProperty ;
+    rdfs:label "has unessential elements"@en ;
+    rdfs:comment "Denotes whether the subject includes elements that are not fundamental to its nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isContingentConnection rdf:type owl:DatatypeProperty ;
+    rdfs:label "is contingent connection"@en ;
+    rdfs:comment "Indicates whether the connection between ground and grounded is not necessarily determined."@en ;
+    rdfs:domain :RealGround ;
+    rdfs:range xsd:boolean .
+
+:fullyExplainsNecessity rdf:type owl:DatatypeProperty ;
+    rdfs:label "fully explains necessity"@en ;
+    rdfs:comment "Denotes whether the subject provides a complete explanation of the necessary relationship between ground and grounded."@en ;
+    rdfs:domain :RealGround ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:realGround rdf:type :RealGround .
+:ground rdf:type :Ground .
+:grounded rdf:type :Grounded .
+:content rdf:type :Content .
+:form rdf:type :Form .
+
+# Relationships
+:grounded :hasGround :ground ;
+          :hasDifferentContentFrom :ground .
+:ground :containsDeterminationOf :grounded .
+:form :mediatesBetween :ground, :grounded ;
+      :isInternalTo :content ;
+      :isExternalTo :content .
+
+# Properties
+:ground :hasEssentialContent "true"^^xsd:boolean .
+:grounded :hasUnessentialElements "true"^^xsd:boolean .
+:realGround :isContingentConnection "true"^^xsd:boolean ;
+            :fullyExplainsNecessity "false"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-complete-ground-ontology#> .
+
+# Classes
+:CompleteGround rdf:type owl:Class ;
+    rdfs:label "Complete Ground"@en ;
+    rdfs:comment "A synthesis of formal and real ground, containing both the form-connection and real ground within itself, providing a comprehensive explanation."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The basis or foundation that provides a comprehensive explanation for the grounded, containing the full content of both itself and the grounded."@en .
+
+:Grounded rdf:type owl:Class ;
+    rdfs:label "Grounded"@en ;
+    rdfs:comment "That which is explained by the ground, having a comprehensive unity with it in both formal identity and real difference."@en .
+
+:Content rdf:type owl:Class ;
+    rdfs:label "Content"@en ;
+    rdfs:comment "The substance or matter that encompasses both the identical and different aspects of ground and grounded, unifying formal and real determinations."@en .
+
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "The total reflection of the ground-connection, mediating between the formal and real aspects of the ground."@en .
+
+:FormalGround rdf:type owl:Class ;
+    rdfs:label "Formal Ground"@en ;
+    rdfs:comment "A type of ground based on formal identity between ground and grounded."@en .
+
+:RealGround rdf:type owl:Class ;
+    rdfs:label "Real Ground"@en ;
+    rdfs:comment "A type of ground based on real difference between ground and grounded."@en .
+
+# Object Properties
+:synthesizes rdf:type owl:ObjectProperty ;
+    rdfs:label "synthesizes"@en ;
+    rdfs:comment "Indicates that the subject combines and integrates the objects into a higher unity."@en ;
+    rdfs:domain :CompleteGround ;
+    rdfs:range owl:Thing .
+
+:hasGround rdf:type owl:ObjectProperty ;
+    rdfs:label "has ground"@en ;
+    rdfs:comment "Indicates that the subject is grounded in or explained by the object."@en ;
+    rdfs:domain :Grounded ;
+    rdfs:range :Ground .
+
+:containsFullContentOf rdf:type owl:ObjectProperty ;
+    rdfs:label "contains full content of"@en ;
+    rdfs:comment "Expresses that the subject encompasses the entire content of the object."@en ;
+    rdfs:domain :Ground ;
+    rdfs:range owl:Thing .
+
+:mediatesBetween rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates between"@en ;
+    rdfs:comment "Indicates that the subject acts as an intermediary or connecting element between the objects."@en ;
+    rdfs:domain :Form ;
+    rdfs:range owl:Thing .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Denotes that the subject brings together or combines the objects into a coherent whole."@en ;
+    rdfs:domain :Content ;
+    rdfs:range owl:Thing .
+
+:isInternalTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is internal to"@en ;
+    rdfs:comment "Expresses that the subject is an inherent or intrinsic part of the object."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Content .
+
+# Data Properties
+:providesComprehensiveExplanation rdf:type owl:DatatypeProperty ;
+    rdfs:label "provides comprehensive explanation"@en ;
+    rdfs:comment "Indicates whether the subject offers a complete and thorough explanation of the grounded."@en ;
+    rdfs:domain :CompleteGround ;
+    rdfs:range xsd:boolean .
+
+:resolvesPriorLimitations rdf:type owl:DatatypeProperty ;
+    rdfs:label "resolves prior limitations"@en ;
+    rdfs:comment "Denotes whether the subject overcomes the shortcomings of previous forms of ground."@en ;
+    rdfs:domain :CompleteGround ;
+    rdfs:range xsd:boolean .
+
+:representsHigherDialecticalStage rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents higher dialectical stage"@en ;
+    rdfs:comment "Indicates whether the subject represents a more advanced stage in the dialectical development of the concept of ground."@en ;
+    rdfs:domain :CompleteGround ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:completeGround rdf:type :CompleteGround .
+:ground rdf:type :Ground .
+:grounded rdf:type :Grounded .
+:content rdf:type :Content .
+:form rdf:type :Form .
+:formalGround rdf:type :FormalGround .
+:realGround rdf:type :RealGround .
+
+# Relationships
+:completeGround :synthesizes :formalGround, :realGround .
+:grounded :hasGround :ground .
+:ground :containsFullContentOf :ground, :grounded .
+:form :mediatesBetween :formalGround, :realGround ;
+      :isInternalTo :content .
+:content :unifies :formalGround, :realGround .
+
+# Properties
+:completeGround :providesComprehensiveExplanation "true"^^xsd:boolean ;
+                :resolvesPriorLimitations "true"^^xsd:boolean ;
+                :representsHigherDialecticalStage "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-relatively-unconditioned-ontology#> .
+
+# Classes
+:RelativelyUnconditioned rdf:type owl:Class ;
+    rdfs:label "Relatively Unconditioned"@en ;
+    rdfs:comment "A synthesis of ground and condition, representing a higher stage in the dialectical development of ground, combining immediacy and mediation."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "The mediating factor in the relatively unconditioned, containing both itself and condition, representing the totality of the form-connection."@en .
+
+:Condition rdf:type owl:Class ;
+    rdfs:label "Condition"@en ;
+    rdfs:comment "The immediate existence for the ground, both essential and non-essential to it, representing the unessential side of ground."@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The quality of being direct or unmediated, represented by the condition in the relatively unconditioned."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of connecting or reconciling through an intermediary, represented by the ground in the relatively unconditioned."@en .
+
+# Object Properties
+:synthesizes rdf:type owl:ObjectProperty ;
+    rdfs:label "synthesizes"@en ;
+    rdfs:comment "Indicates that the subject combines and integrates the objects into a higher unity."@en ;
+    rdfs:domain :RelativelyUnconditioned ;
+    rdfs:range owl:Thing .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:comment "Expresses that the subject assumes or requires the existence of the object as a precondition."@en ;
+    rdfs:domain :Ground ;
+    rdfs:range :Condition .
+
+:isDependentOn rdf:type owl:ObjectProperty ;
+    rdfs:label "is dependent on"@en ;
+    rdfs:comment "Denotes that the subject relies on or is determined by the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:comment "Indicates that the subject includes or encompasses the object within itself."@en ;
+    rdfs:domain :Ground ;
+    rdfs:range owl:Thing .
+
+:represents rdf:type owl:ObjectProperty ;
+    rdfs:label "represents"@en ;
+    rdfs:comment "Expresses that the subject embodies or stands for the object in the context of the relatively unconditioned."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isImmediate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediate"@en ;
+    rdfs:comment "Indicates whether the subject has the quality of being direct or unmediated."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isMediated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediated"@en ;
+    rdfs:comment "Denotes whether the subject is connected or reconciled through an intermediary process."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isEssentialToGround rdf:type owl:DatatypeProperty ;
+    rdfs:label "is essential to ground"@en ;
+    rdfs:comment "Indicates whether the subject is fundamental or necessary to the nature of ground."@en ;
+    rdfs:domain :Condition ;
+    rdfs:range xsd:boolean .
+
+:isNonEssentialToGround rdf:type owl:DatatypeProperty ;
+    rdfs:label "is non-essential to ground"@en ;
+    rdfs:comment "Denotes whether the subject is not fundamental or necessary to the nature of ground."@en ;
+    rdfs:domain :Condition ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:relativelyUnconditioned rdf:type :RelativelyUnconditioned .
+:ground rdf:type :Ground .
+:condition rdf:type :Condition .
+:immediacy rdf:type :Immediacy .
+:mediation rdf:type :Mediation .
+
+# Relationships
+:relativelyUnconditioned :synthesizes :ground, :condition .
+:ground :presupposes :condition ;
+        :contains :ground, :condition ;
+        :represents :mediation .
+:condition :represents :immediacy .
+:ground :isDependentOn :condition .
+:condition :isDependentOn :ground .
+
+# Properties
+:relativelyUnconditioned :isImmediate "true"^^xsd:boolean ;
+                         :isMediated "true"^^xsd:boolean .
+:condition :isImmediate "true"^^xsd:boolean ;
+           :isEssentialToGround "true"^^xsd:boolean ;
+           :isNonEssentialToGround "true"^^xsd:boolean .
+:ground :isMediated "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-absolutely-unconditioned-ontology#> .
+
+# Classes
+:AbsolutelyUnconditioned rdf:type owl:Class ;
+    rdfs:label "Absolutely Unconditioned"@en ;
+    rdfs:comment "The highest unity of ground and condition, representing the true unconditioned reality that transcends the relatively unconditioned."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "One of the fundamental elements unified within the absolutely unconditioned, containing condition within itself."@en .
+
+:Condition rdf:type owl:Class ;
+    rdfs:label "Condition"@en ;
+    rdfs:comment "One of the fundamental elements unified within the absolutely unconditioned, containing ground within itself."@en .
+
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "The structure or appearance that is unified with content in the absolutely unconditioned."@en .
+
+:Content rdf:type owl:Class ;
+    rdfs:label "Content"@en ;
+    rdfs:comment "The substance or matter that is unified with form in the absolutely unconditioned."@en .
+
+:RelativelyUnconditioned rdf:type owl:Class ;
+    rdfs:label "Relatively Unconditioned"@en ;
+    rdfs:comment "The precursor to the absolutely unconditioned, representing a lower stage in the dialectical development."@en .
+
+# Object Properties
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Indicates that the subject brings together or combines the objects into a coherent whole."@en ;
+    rdfs:domain :AbsolutelyUnconditioned ;
+    rdfs:range owl:Thing .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:comment "Expresses that the subject includes or encompasses the object within itself."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:transcends rdf:type owl:ObjectProperty ;
+    rdfs:label "transcends"@en ;
+    rdfs:comment "Denotes that the subject goes beyond or surpasses the object in a dialectical movement."@en ;
+    rdfs:domain :AbsolutelyUnconditioned ;
+    rdfs:range :RelativelyUnconditioned .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Indicates that the subject arises or develops from the object through a dialectical process."@en ;
+    rdfs:domain :AbsolutelyUnconditioned ;
+    rdfs:range :RelativelyUnconditioned .
+
+:resolves rdf:type owl:ObjectProperty ;
+    rdfs:label "resolves"@en ;
+    rdfs:comment "Expresses that the subject reconciles or brings to a resolution the opposition or contradiction in the object."@en ;
+    rdfs:domain :AbsolutelyUnconditioned ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isSelfSubsistent rdf:type owl:DatatypeProperty ;
+    rdfs:label "is self-subsistent"@en ;
+    rdfs:comment "Indicates whether the subject is self-sustaining or independent in its existence."@en ;
+    rdfs:domain :AbsolutelyUnconditioned ;
+    rdfs:range xsd:boolean .
+
+:isSelfDetermining rdf:type owl:DatatypeProperty ;
+    rdfs:label "is self-determining"@en ;
+    rdfs:comment "Denotes whether the subject determines its own nature or characteristics."@en ;
+    rdfs:domain :AbsolutelyUnconditioned ;
+    rdfs:range xsd:boolean .
+
+:isUnifiedWithContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "is unified with content"@en ;
+    rdfs:comment "Indicates whether the subject is integrated or combined with content in the absolutely unconditioned."@en ;
+    rdfs:domain :Form ;
+    rdfs:range xsd:boolean .
+
+:isUnifiedWithForm rdf:type owl:DatatypeProperty ;
+    rdfs:label "is unified with form"@en ;
+    rdfs:comment "Denotes whether the subject is integrated or combined with form in the absolutely unconditioned."@en ;
+    rdfs:domain :Content ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:absolutelyUnconditioned rdf:type :AbsolutelyUnconditioned .
+:ground rdf:type :Ground .
+:condition rdf:type :Condition .
+:form rdf:type :Form .
+:content rdf:type :Content .
+:relativelyUnconditioned rdf:type :RelativelyUnconditioned .
+
+# Relationships
+:absolutelyUnconditioned :unifies :ground, :condition ;
+                         :contains :form, :content ;
+                         :transcends :relativelyUnconditioned ;
+                         :emergesFrom :relativelyUnconditioned ;
+                         :resolves :ground, :condition .
+:ground :contains :condition .
+:condition :contains :ground .
+
+# Properties
+:absolutelyUnconditioned :isSelfSubsistent "true"^^xsd:boolean ;
+                         :isSelfDetermining "true"^^xsd:boolean .
+:form :isUnifiedWithContent "true"^^xsd:boolean .
+:content :isUnifiedWithForm "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-fact-existence-ontology#> .
+
+# Classes
+:Fact rdf:type owl:Class ;
+    rdfs:label "Fact"@en ;
+    rdfs:comment "The unity of ground and condition, representing the absolute ground that is identical with its condition and the immediate, truly essential reality."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "One of the fundamental elements unified within the fact, representing the basis or foundation."@en .
+
+:Condition rdf:type owl:Class ;
+    rdfs:label "Condition"@en ;
+    rdfs:comment "One of the fundamental elements unified within the fact, representing the necessary circumstances or prerequisites."@en .
+
+:ConcreteExistence rdf:type owl:Class ;
+    rdfs:label "Concrete Existence"@en ;
+    rdfs:comment "The actualization of the fact in the world, emerging from the fact and representing the unity of unconditioned ground and its conditions."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The underlying nature or true substance of something, from which existence emerges."@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The state of being actualized in the world, emerging from essence through the fact."@en .
+
+# Object Properties
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Indicates that the subject brings together or combines the objects into a coherent whole."@en ;
+    rdfs:domain :Fact ;
+    rdfs:range owl:Thing .
+
+:proceedsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "proceeds into"@en ;
+    rdfs:comment "Expresses that the subject develops or moves into the object through a dialectical process."@en ;
+    rdfs:domain :Fact ;
+    rdfs:range :ConcreteExistence .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Denotes that the subject arises or comes into being from the object."@en ;
+    rdfs:domain :ConcreteExistence ;
+    rdfs:range :Fact .
+
+:givesRiseTo rdf:type owl:ObjectProperty ;
+    rdfs:label "gives rise to"@en ;
+    rdfs:comment "Indicates that the subject is the source or origin of the object."@en ;
+    rdfs:domain :Fact ;
+    rdfs:range :Existence .
+
+:transitionsTo rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions to"@en ;
+    rdfs:comment "Expresses that the subject undergoes a transformation or change into the object."@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Existence .
+
+# Data Properties
+:isImmediate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediate"@en ;
+    rdfs:comment "Indicates whether the subject has the quality of being direct or unmediated."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isMediated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediated"@en ;
+    rdfs:comment "Denotes whether the subject is connected or reconciled through an intermediary process."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isIdenticalWithCondition rdf:type owl:DatatypeProperty ;
+    rdfs:label "is identical with condition"@en ;
+    rdfs:comment "Indicates whether the subject is fundamentally the same as its condition."@en ;
+    rdfs:domain :Fact ;
+    rdfs:range xsd:boolean .
+
+:involvesSublationOfMediation rdf:type owl:DatatypeProperty ;
+    rdfs:label "involves sublation of mediation"@en ;
+    rdfs:comment "Denotes whether the subject's process includes the overcoming and preservation of mediation."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:fact rdf:type :Fact .
+:ground rdf:type :Ground .
+:condition rdf:type :Condition .
+:concreteExistence rdf:type :ConcreteExistence .
+:essence rdf:type :Essence .
+:existence rdf:type :Existence .
+
+# Relationships
+:fact :unifies :ground, :condition ;
+      :proceedsInto :concreteExistence ;
+      :givesRiseTo :existence .
+:concreteExistence :emergesFrom :fact .
+:essence :transitionsTo :existence .
+
+# Properties
+:fact :isImmediate "true"^^xsd:boolean ;
+      :isMediated "true"^^xsd:boolean ;
+      :isIdenticalWithCondition "true"^^xsd:boolean ;
+      :involvesSublationOfMediation "true"^^xsd:boolean .
+:concreteExistence :isImmediate "true"^^xsd:boolean ;
+                   :isMediated "true"^^xsd:boolean .

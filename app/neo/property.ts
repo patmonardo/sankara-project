@@ -1,4 +1,4 @@
-import { DialecticalProtocol, EntityId, SpaceId } from "./dialectic";
+import { NeoProtocol, NeoEntityId, NeoSpaceId } from "./dialectic";
 
 /**
  * Property definition interface
@@ -30,19 +30,19 @@ export interface PropertyDefinition {
  * Specialized property operations that extend the Dialectical Protocol
  * Implements attribute-focused methods on top of the One Node architecture
  */
-export class NeoPropertySystem {
-  private propertySpace: SpaceId;
+export class NeoProperty {
+  private propertySpace: NeoSpaceId;
 
   constructor(
-    private protocol: DialecticalProtocol,
-    options: { propertySpaceId?: SpaceId } = {}
+    private protocol: NeoProtocol,
+    options: { propertySpaceId?: NeoSpaceId } = {}
   ) {
     // Set property space
-    this.propertySpace = options.propertySpaceId || 'properties';
-    
+    this.propertySpace = options.propertySpaceId || "properties";
+
     // Listen for property events from protocol
-    this.protocol.onEvent('property', (event) => {
-      if (event.subtype === 'define') {
+    this.protocol.onEvent("property", (event) => {
+      if (event.subtype === "define") {
         this.handlePropertyDefinitionEvent(event.content);
       }
     });
@@ -50,12 +50,12 @@ export class NeoPropertySystem {
 
   /**
    * Handle property definition event
-   * 
+   *
    * This is called when a property definition event is received
    */
   private handlePropertyDefinitionEvent(content: any): void {
     if (content.definition) {
-      this.defineProperty(content.definition).catch(err => {
+      this.defineProperty(content.definition).catch((err) => {
         console.error("Failed to process property definition:", err);
       });
     }
@@ -64,7 +64,7 @@ export class NeoPropertySystem {
   /**
    * Define a property type
    */
-  async defineProperty(definition: PropertyDefinition): Promise<EntityId> {
+  async defineProperty(definition: PropertyDefinition): Promise<NeoEntityId> {
     // Create property definition entity
     const propertyId = this.protocol.createEntity({
       type: "property:definition",
@@ -125,7 +125,7 @@ export class NeoPropertySystem {
   /**
    * Set a property value on an entity
    */
-  setPropertyValue(entityId: EntityId, propertyName: string, value: any): void {
+  setPropertyValue(entityId: NeoEntityId, propertyName: string, value: any): void {
     const entity = this.protocol.getEntity(entityId);
     if (!entity) {
       throw new Error(`Entity not found: ${entityId}`);
@@ -164,7 +164,7 @@ export class NeoPropertySystem {
   /**
    * Get a property value from an entity
    */
-  getPropertyValue(entityId: EntityId, propertyName: string): any {
+  getPropertyValue(entityId: NeoEntityId, propertyName: string): any {
     const entity = this.protocol.getEntity(entityId);
     if (!entity) {
       return undefined;
@@ -176,7 +176,7 @@ export class NeoPropertySystem {
   /**
    * Delete a property from an entity
    */
-  deleteProperty(entityId: EntityId, propertyName: string): void {
+  deleteProperty(entityId: NeoEntityId, propertyName: string): void {
     const entity = this.protocol.getEntity(entityId);
     if (!entity) {
       throw new Error(`Entity not found: ${entityId}`);
@@ -333,8 +333,8 @@ export class NeoPropertySystem {
   findByProperty(
     propertyName: string,
     value: any,
-    spaceId?: SpaceId
-  ): EntityId[] {
+    spaceId?: NeoSpaceId
+  ): NeoEntityId[] {
     const entities = this.protocol.findEntities({
       spaceId,
       properties: {
@@ -462,9 +462,9 @@ export class NeoPropertySystem {
 /**
  * Create a Neo Property System
  */
-export function createNeoPropertySystem(
-  protocol: DialecticalProtocol,
-  options?: { propertySpaceId?: SpaceId }
-): NeoPropertySystem {
-  return new NeoPropertySystem(protocol, options);
+export function createNeoProperty(
+  protocol: NeoProtocol,
+  options?: { propertySpaceId?: NeoSpaceId }
+): NeoProperty {
+  return new NeoProperty(protocol, options);
 }

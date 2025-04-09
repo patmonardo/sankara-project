@@ -1,570 +1,592 @@
-import { NeoComponentId } from "./dialectic";
-import { NeoProtocol, createNeoProtocol } from "./dialectic";
-import { NeoDialectics, createNeoDialectics } from "./dialectic";
-import { NeoGraphSystem, createNeoGraphSystem } from "./graph";
-import { NeoPropertySystem, createNeoPropertySystem } from "./property";
-import { EventEmitter } from "events";
-import { v4 as uuidv4 } from "uuid";
+import EventEmitter from "events";
+import { NeoEvent } from "./event";
+import {
+  NeoComponentId,
+  NeoExtension,
+  NeoProtocol,
+  NeoMessage,
+  NeoDialectic
+} from "./dialectic";
+import { NeoGraph } from "./graph";
+import { NeoProperty } from "./property";
 
 /**
- * Neo Extension Interface
+ * NeoCore - The unified implementation of the Neo architecture
  *
- * Defines how an extension manifests the Neo Core into a specific domain.
- */
-export interface NeoExtension {
-  /**
-   * Unique identifier for this extension
-   */
-  id: string;
-
-  /**
-   * Extension type
-   */
-  type: string;
-
-  /**
-   * Capabilities provided by this extension
-   */
-  capabilities?: string[];
-
-  /**
-   * Initialize this extension with the Neo Core
-   */
-  initialize(core: NeoCore): void;
-
-  /**
-   * Handle events directed to this extension
-   */
-  handleEvent(event: any): void;
-
-  /**
-   * Transform entities between Neo and domain formats
-   */
-  transformEntity?(entity: any, direction: "toDomain" | "toNeo"): any;
-}
-
-/**
- * Neo Core - The One Node Implementation
- *
- * The unified implementation of the Neo Dialectic architecture
- * that represents the One Node manifesting through different aspects.
+ * Integrates:
+ * - NeoDialectic (dialectical movement)
+ * - NeoExtension (domain-specific implementations)
+ * - NeoGraph (relational structure)
+ * - NeoProperty (attributional structure)
  */
 export class NeoCore {
   // Core systems - manifestations of the One Node
-  readonly dialectic: NeoProtocol;
-  readonly neo: NeoDialectics;
-  readonly graph: NeoGraphSystem;
-  readonly property: NeoPropertySystem;
+  readonly protocol: NeoProtocol;
+  readonly dialectic: NeoDialectic;
+  readonly graph: NeoGraph;
+  readonly property: NeoProperty;
 
   // Extension system
-  private extensions: Map<string, NeoExtension> = new Map();
+  private extensions: Map<NeoComponentId, NeoExtension> = new Map();
   private systemEmitter: EventEmitter = new EventEmitter();
 
+  // Component identity
+  private componentId: NeoComponentId;
+
+  // System state
+  private initialized: boolean = false;
+
+  /**
+   * Create a new NeoCore instance
+   */
   constructor(
     componentId: NeoComponentId,
     options: {
       extensions?: NeoExtension[];
     } = {}
   ) {
-    // Initialize the Dialectical Protocol core - The One Node
-    this.dialectic = createNeoProtocol(componentId);
+    this.componentId = componentId;
+
+    // Initialize the Dialectical Protocol core
+    this.protocol = this.createNeoProtocol(componentId);
 
     // Initialize Neo Dialectics higher level operations
-    this.neo = createNeoDialectics(this.dialectic);
+    this.dialectic = this.createNeoDialectic(this.protocol);
 
-    // Initialize Graph system - Relational manifestation
-    this.graph = createNeoGraphSystem(this.dialectic);
+    // Initialize Graph system
+    this.graph = this.createNeoGraph(this.protocol);
 
-    // Initialize Property system - Attributional manifestation
-    this.property = createNeoPropertySystem(this.dialectic);
+    // Initialize Property system
+    this.property = this.createNeoProperty(this.protocol);
 
-    // Set up system events
-    this.setupSystemEvents();
-
-    // Register extensions
+    // Initialize provided extensions
     if (options.extensions) {
-      for (const extension of options.extensions) {
-        this.registerExtension(extension);
-      }
+      options.extensions.forEach((ext) => this.registerExtension(ext));
     }
 
-    // Announce Neo Core initialization
-    this.dialectic.emit({
-      type: "system",
-      subtype: "neo-core-initialized",
-      spaceId: "system",
-      content: {
-        componentId,
-        version: "1.0.0",
+    // Set up internal event handlers
+    this.setupEventHandlers();
+  }
+
+  /**
+   * Initialize the NeoCore system and all extensions
+   */
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      return;
+    }
+
+    try {
+      // Initialize core systems
+      await Promise.all([
+        this.initializeSystem("protocol", this.protocol),
+        this.initializeSystem("graph", this.graph),
+        this.initializeSystem("property", this.property),
+      ]);
+
+      // Initialize extensions
+      const extensionPromises = Array.from(this.extensions.values()).map(
+        (extension) => this.initializeExtension(extension)
+      );
+
+      await Promise.all(extensionPromises);
+
+      // Mark as initialized
+      this.initialized = true;
+
+      // Emit initialization complete event
+      this.protocol.emit({
+        id: `system:${Date.now()}`,
+        type: "system",
+        subtype: "initialized",
+        source: this.componentId,
         timestamp: Date.now(),
-      },
+        content: {
+          componentId: this.componentId,
+          extensions: Array.from(this.extensions.keys()),
+        },
+      });
+    } catch (error) {
+      // Emit initialization failed event
+      this.protocol.emit({
+        id: `system:${Date.now()}`,
+        type: "system",
+        subtype: "initialization-failed",
+        source: this.componentId,
+        timestamp: Date.now(),
+        content: {
+          componentId: this.componentId,
+          error: error,
+        },
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Initialize a core system
+   */
+  private async initializeSystem(name: string, system: any): Promise<void> {
+    if (system && typeof system.initialize === "function") {
+      try {
+        await system.initialize();
+
+        // Emit system initialized event
+        this.protocol.emit({
+          id: `system:${Date.now()}`,
+          type: "system",
+          subtype: `${name}-initialized`,
+          source: this.componentId,
+          timestamp: Date.now(),
+          content: { system: name },
+        });
+      } catch (error) {
+        // Emit system initialization failed event
+        this.protocol.emit({
+          id: `system:${Date.now()}`,
+          type: "system",
+          subtype: `${name}-initialization-failed`,
+          source: this.componentId,
+          timestamp: Date.now(),
+          content: {
+            system: name,
+            error: error,
+          },
+        });
+
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Initialize an extension
+   */
+  private async initializeExtension(extension: NeoExtension): Promise<void> {
+    try {
+      // Initialize the extension
+      extension.initialize(this);
+
+      // Emit extension initialized event
+      this.protocol.emit({
+        id: `extension:${Date.now()}`,
+        type: "extension",
+        subtype: "initialized",
+        source: this.componentId,
+        timestamp: Date.now(),
+        content: {
+          extension: extension.id,
+          type: extension.type,
+          capabilities: extension.capabilities,
+        },
+      });
+    } catch (error) {
+      // Emit extension initialization failed event
+      this.protocol.emit({
+        id: `extension:${Date.now()}`,
+        type: "extension",
+        subtype: "initialization-failed",
+        source: this.componentId,
+        timestamp: Date.now(),
+        content: {
+          extension: extension.id,
+          error: error,
+        },
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Set up internal event handlers
+   */
+  private setupEventHandlers(): void {
+    // Listen for extension-targeted events
+    this.protocol.on("extension", (event) => {
+      // Find the target extension
+      if (event.target && this.extensions.has(event.target)) {
+        const extension = this.extensions.get(event.target);
+        if (extension) {
+          // Forward the event to the extension
+          extension.handleEvent(event);
+        }
+      }
+    });
+
+    // Listen for system events
+    this.protocol.on("system", (event) => {
+      // Handle system-level events
+      this.handleSystemEvent(event);
     });
   }
 
   /**
-   * Register a Neo extension
+   * Handle system events
+   */
+  private handleSystemEvent(event: NeoEvent): void {
+    switch (event.subtype) {
+      case "extension-request":
+        // Handle request for extension capabilities
+        if (
+          event.content?.extensionId &&
+          this.extensions.has(event.content.extensionId)
+        ) {
+          const extension = this.extensions.get(event.content.extensionId);
+
+          this.protocol.emit({
+            id: `system:${Date.now()}`,
+            type: "system",
+            subtype: "extension-info",
+            source: this.componentId,
+            timestamp: Date.now(),
+            content: {
+              requestId: event.id,
+              extension: {
+                id: extension?.id,
+                type: extension?.type,
+                capabilities: extension?.capabilities,
+              },
+            },
+          });
+        }
+        break;
+
+      case "extensions-query":
+        // Return list of registered extensions
+        const extensionsList = Array.from(this.extensions.values()).map(
+          (ext) => ({
+            id: ext.id,
+            type: ext.type,
+            capabilities: ext.capabilities,
+          })
+        );
+
+        this.protocol.emit({
+          id: `system:${Date.now()}`,
+          type: "system",
+          subtype: "extensions-list",
+          source: this.componentId,
+          target: event.source,
+          timestamp: Date.now(),
+          content: {
+            requestId: event.id,
+            extensions: extensionsList,
+          },
+        });
+        break;
+    }
+  }
+
+  /**
+   * Register an extension with NeoCore
    */
   registerExtension(extension: NeoExtension): void {
-    // Store extension
+    if (this.extensions.has(extension.id)) {
+      throw new Error(
+        `Extension with ID ${extension.id} is already registered`
+      );
+    }
+
+    // Register the extension
     this.extensions.set(extension.id, extension);
 
-    // Initialize extension
-    extension.initialize(this);
-
-    // Announce extension registration
-    this.dialectic.emit({
-      type: "system",
-      subtype: "extension-registered",
-      spaceId: "system",
+    // Emit extension registered event
+    this.protocol.emit({
+      id: `extension:${Date.now()}`,
+      type: "extension",
+      subtype: "registered",
+      source: this.componentId,
+      timestamp: Date.now(),
       content: {
-        extensionId: extension.id,
-        extensionType: extension.type,
+        extension: extension.id,
+        type: extension.type,
         capabilities: extension.capabilities,
       },
     });
 
-    // Subscribe to relevant system events
-    this.dialectic.onEvent(`extension:${extension.id}:event`, (event) => {
-      extension.handleEvent(event);
-    });
-  }
-
-  /**
-   * Get a registered extension by ID
-   */
-  getExtension<T extends NeoExtension>(id: string): T | undefined {
-    return this.extensions.get(id) as T | undefined;
-  }
-
-  /**
-   * Get all registered extensions
-   */
-  getExtensions(): NeoExtension[] {
-    return Array.from(this.extensions.values());
-  }
-
-  /**
-   * Get extensions by capability
-   */
-  getExtensionsByCapability(capability: string): NeoExtension[] {
-    return this.getExtensions().filter((ext) =>
-      ext.capabilities?.includes(capability)
-    );
-  }
-
-  /**
-   * Send an event to an extension
-   */
-  sendToExtension(
-    extensionId: string,
-    eventType: string,
-    content: any
-  ): boolean {
-    const extension = this.getExtension(extensionId);
-    if (!extension) return false;
-
-    extension.handleEvent({
-      id: uuidv4(),
-      type: eventType,
-      timestamp: Date.now(),
-      content,
-      metadata: {
-        targetExtension: extensionId,
-      },
-    });
-    return true;
-  }
-
-  /**
-   * Broadcast an event to all extensions with a specific capability
-   */
-  broadcastToExtensions(event: any, requiredCapability?: string): void {
-    for (const [id, extension] of this.extensions.entries()) {
-      // Skip extensions without required capability
-      if (
-        requiredCapability &&
-        (!extension.capabilities ||
-          !extension.capabilities.includes(requiredCapability))
-      ) {
-        continue;
-      }
-
-      // Send event to extension
-      extension.handleEvent({
-        ...event,
-        metadata: {
-          ...(event.metadata || {}),
-          targetExtension: id,
-        },
+    // Initialize if Core is already initialized
+    if (this.initialized) {
+      this.initializeExtension(extension).catch((error) => {
+        console.error(`Failed to initialize extension ${extension.id}:`, error);
       });
     }
   }
 
   /**
-   * Set up system events
+   * Get an extension by ID
    */
-  private setupSystemEvents(): void {
-    // Listen for core events
-    this.dialectic.onEvent("event", (event) => {
-      // Emit the system event
-      this.systemEmitter.emit("event", event);
-      this.systemEmitter.emit(`event:${event.type}`, event);
+  getExtension(id: NeoComponentId): NeoExtension | undefined {
+    return this.extensions.get(id);
+  }
 
-      if (event.subtype) {
-        this.systemEmitter.emit(`event:${event.type}:${event.subtype}`, event);
-      }
+  /**
+   * Get all extensions of a specific type
+   */
+  getExtensionsByType(type: string): NeoExtension[] {
+    return Array.from(this.extensions.values()).filter(
+      (ext) => ext.type === type
+    );
+  }
 
-      // Delegate to relevant extensions
-      if (event.type === "extension") {
-        const targetExtension = event.content?.targetExtension;
-        if (targetExtension && this.extensions.has(targetExtension)) {
-          this.extensions.get(targetExtension)!.handleEvent(event);
-        }
-      }
+  /**
+   * Check if an extension is registered
+   */
+  hasExtension(id: NeoComponentId): boolean {
+    return this.extensions.has(id);
+  }
+
+  /**
+   * Send a message to a specific extension
+   */
+  sendToExtension(
+    extensionId: NeoComponentId,
+    messageType: string,
+    content: any
+  ): void {
+    this.protocol.emit({
+      id: `message:${Date.now()}`,
+      type: "extension",
+      subtype: messageType,
+      source: this.componentId,
+      target: extensionId,
+      timestamp: Date.now(),
+      content,
     });
   }
 
   /**
-   * Listen for system events
+   * Register an event listener
    */
-  on(pattern: string, callback: (event: any) => void): () => void {
-    this.systemEmitter.on(pattern, callback);
-    return () => {
-      this.systemEmitter.off(pattern, callback);
-    };
+  on(eventType: string, handler: (event: NeoEvent) => void): () => void {
+    return this.protocol.on(eventType, handler);
   }
 
   /**
-   * Create a model entity with properties in a space
+   * Create entity in the Neo system
    */
-  createModel(options: {
-    type: string;
-    properties: Record<string, any>;
-    spaceId?: string;
-    metadata?: Record<string, any>;
-  }): string {
-    // Create entity in dialectical core
-    const entityId = this.dialectic.createEntity({
-      type: options.type,
-      spaceId: options.spaceId || "default",
-      properties: options.properties,
-      metadata: {
-        ...options.metadata,
-        isModel: true,
-        modelType: options.type,
-      },
+  createEntity(entity: any): string {
+    // Generate entity ID if not provided
+    const entityId =
+      entity.id ||
+      `entity:${Date.now()}:${Math.random().toString(36).substring(2, 7)}`;
+
+    // Create the entity using the graph system
+    this.protocol.createEntity({
+      ...entity,
+      id: entityId,
+      createdBy: this.componentId,
+      createdAt: Date.now(),
     });
 
     return entityId;
   }
 
   /**
-   * Create a relation between two models
+   * Update entity in the Neo system
    */
-  createRelation(options: {
-    source: string;
-    target: string;
-    type: string;
-    properties?: Record<string, any>;
-    metadata?: Record<string, any>;
-  }): void {
-    // Create relation in dialectical core
-    this.dialectic.createRelation(
-      options.source,
-      options.target,
-      options.type,
-      options.properties || {}
-    );
-  }
-
-  /**
-   * Set property on a model
-   */
-  setProperty(entityId: string, key: string, value: any): void {
-    const entity = this.dialectic.getEntity(entityId);
-    if (!entity) {
-      throw new Error(`Entity not found: ${entityId}`);
-    }
-
-    // Delegate to PropertySystem for validation and setting
-    this.property.setPropertyValue(entityId, key, value);
-
-    // Emit additional model-specific events if needed
-    this.dialectic.emit({
-      type: "model",
-      subtype: "property-updated",
-      spaceId: entity.spaceId || "default",
-      content: {
-        entityId,
-        modelType: entity.type,
-        propertyName: key,
-        value,
-      },
+  updateEntity(entityId: string, updates: any): void {
+    // Update the entity using the graph system
+    this.protocol.updateEntity(entityId, {
+      ...updates,
+      updatedBy: this.componentId,
+      updatedAt: Date.now(),
     });
   }
 
   /**
-   * Find models by type and properties
+   * Delete entity from the Neo system
    */
-  findModels(criteria: {
-    type?: string;
-    properties?: Record<string, any>;
-    spaceId?: string;
-  }): any[] {
-    return this.dialectic.findEntities({
-      type: criteria.type,
-      properties: criteria.properties,
-      spaceId: criteria.spaceId,
-    });
+  deleteEntity(entityId: string): void {
+    // Delete the entity using the graph system
+    this.protocol.deleteEntity(entityId);
   }
 
   /**
-   * Create a universal entity that exists across multiple spaces
+   * Create Neo Protocol implementation
    */
-  createUniversalEntity(options: {
-    type: string;
-    properties: Record<string, any>;
-    spaces: string[];
-    metadata?: Record<string, any>;
-  }): { universal: string; projections: Record<string, string> } {
-    const { entityId, projectionIds } = this.neo.createUniversalEntity(
-      {
-        type: options.type,
-        properties: {
-          ...options.properties,
-          isUniversal: true,
-        },
-        metadata: {
-          ...options.metadata,
-          isUniversalEntity: true,
-        },
-      },
-      options.spaces
-    );
-
+  private createNeoProtocol(componentId: NeoComponentId): NeoProtocol {
     return {
-      universal: entityId,
-      projections: projectionIds,
-    };
-  }
+      emit: (event: NeoEvent) => {
+        // Ensure event has required properties
+        const completeEvent = {
+          ...event,
+          id: event.id || `event:${Date.now()}`,
+          source: event.source || componentId,
+          timestamp: event.timestamp || Date.now(),
+        };
 
-  /**
-   * Create a dialectical triad (thesis-antithesis-synthesis)
-   */
-  createTriad(options: {
-    thesis: { type: string; properties: Record<string, any> };
-    antithesis: { type: string; properties: Record<string, any> };
-    synthesis: { type: string; properties: Record<string, any> };
-    spaceId?: string;
-  }): { thesis: string; antithesis: string; synthesis: string } {
-    const spaceId = options.spaceId || "dialectic";
-    const triadId = uuidv4(); // Generate a unique ID for the triad
-
-    // Create the three entities
-    const thesisId = this.createModel({
-      type: options.thesis.type,
-      properties: options.thesis.properties,
-      spaceId,
-      metadata: { triadId, role: "thesis" },
-    });
-
-    const antithesisId = this.createModel({
-      type: options.antithesis.type,
-      properties: options.antithesis.properties,
-      spaceId,
-      metadata: { triadId, role: "antithesis" },
-    });
-
-    const synthesisId = this.createModel({
-      type: options.synthesis.type,
-      properties: options.synthesis.properties,
-      spaceId,
-      metadata: { triadId, role: "synthesis" },
-    });
-
-    // Create relationships between them
-    this.createRelation({
-      source: thesisId,
-      target: antithesisId,
-      type: "dialectic:opposes",
-      properties: { triadId },
-    });
-
-    this.createRelation({
-      source: antithesisId,
-      target: thesisId,
-      type: "dialectic:opposes",
-      properties: { triadId },
-    });
-
-    this.createRelation({
-      source: thesisId,
-      target: synthesisId,
-      type: "dialectic:transcends-to",
-      properties: { triadId },
-    });
-
-    this.createRelation({
-      source: antithesisId,
-      target: synthesisId,
-      type: "dialectic:transcends-to",
-      properties: { triadId },
-    });
-
-    this.createRelation({
-      source: synthesisId,
-      target: thesisId,
-      type: "dialectic:transcends-from",
-      properties: { triadId },
-    });
-
-    this.createRelation({
-      source: synthesisId,
-      target: antithesisId,
-      type: "dialectic:transcends-from",
-      properties: { triadId },
-    });
-
-    // Emit triad creation event
-    this.dialectic.emit({
-      type: "dialectic",
-      subtype: "triad-created",
-      spaceId,
-      content: {
-        triadId,
-        thesis: {
-          id: thesisId,
-          type: options.thesis.type,
-        },
-        antithesis: {
-          id: antithesisId,
-          type: options.antithesis.type,
-        },
-        synthesis: {
-          id: synthesisId,
-          type: options.synthesis.type,
-        },
+        // Emit the event
+        this.systemEmitter.emit(event.type, completeEvent);
+        this.systemEmitter.emit("*", completeEvent);
       },
-    });
 
-    return {
-      thesis: thesisId,
-      antithesis: antithesisId,
-      synthesis: synthesisId,
-    };
-  }
+      on: (eventType: string, handler: (event: NeoEvent) => void) => {
+        // Register event listener
+        this.systemEmitter.on(eventType, handler);
 
-  /**
-   * Add properties to an entity
-   */
-  addProperties(entityId: string, properties: Record<string, any>): void {
-    const entity = this.dialectic.getEntity(entityId);
-    if (!entity) {
-      throw new Error(`Entity not found: ${entityId}`);
-    }
-
-    // Update the entity with new properties
-    this.dialectic.updateEntity(entityId, {
-      properties,
-    });
-
-    // Emit property addition event
-    this.dialectic.emit({
-      type: "property",
-      subtype: "added",
-      spaceId: entity.spaceId || "default",
-      content: {
-        entityId,
-        properties,
-        timestamp: Date.now(),
+        // Return function to remove listener
+        return () => {
+          this.systemEmitter.off(eventType, handler);
+        };
       },
-    });
-  }
 
-  /**
-   * Remove properties from an entity
-   */
-  removeProperties(entityId: string, propertyKeys: string[]): void {
-    const entity = this.dialectic.getEntity(entityId);
-    if (!entity) {
-      throw new Error(`Entity not found: ${entityId}`);
-    }
-
-    // Create null properties to remove them
-    const propertiesToRemove: Record<string, null> = {};
-    for (const key of propertyKeys) {
-      propertiesToRemove[key] = null;
-    }
-
-    // Update entity to remove properties
-    this.dialectic.updateEntity(entityId, {
-      properties: propertiesToRemove,
-    });
-
-    // Emit property removal event
-    this.dialectic.emit({
-      type: "property",
-      subtype: "removed",
-      spaceId: entity.spaceId || "default",
-      content: {
-        entityId,
-        propertyKeys,
-        timestamp: Date.now(),
+      send: (message: NeoMessage) => {
+        // Create and emit a direct message event
+        this.systemEmitter.emit("*", {
+          id: `message:${Date.now()}:${Math.random()
+            .toString(36)
+            .substring(2, 7)}`,
+          type: "message",
+          subtype: message.type || "direct",
+          source: componentId,
+          target: message.to,
+          timestamp: Date.now(),
+          content: message,
+        });
       },
-    });
+
+      createEntity: (entity: any) => {
+        return this.createEntity(entity);
+      },
+
+      updateEntity: (entityId: string, updates: any) => {
+        this.updateEntity(entityId, updates);
+      },
+
+      deleteEntity: (entityId: string) => {
+        this.deleteEntity(entityId);
+      },
+    } as NeoProtocol;
   }
 
   /**
-   * Helper for creating one-time event listeners with cleanup
+   * Create Neo Dialectic implementation
    */
-  private createOneTimeListener(
-    eventPattern: string,
-    predicate: (event: any) => boolean,
-    callback: (event: any) => void,
-    timeout: number = 5000
-  ): () => void {
-    const handler = (event: any) => {
-      if (predicate(event)) {
-        // Remove the listener immediately
-        this.systemEmitter.off(eventPattern, handler);
-        callback(event);
+  private createNeoDialectic(protocol: NeoProtocol): NeoDialectic {
+    // We'll use the NeoDialectic implementation from dialectic.ts
+    return new NeoDialectic(protocol);
+  }
+
+  /**
+   * Create Neo Graph implementation
+   */
+  private createNeoGraph(protocol: NeoProtocol): NeoGraph {
+    // Initialize with the protocol
+    return new NeoGraph(protocol);
+  }
+
+  /**
+   * Create Neo Property implementation
+   */
+  private createNeoProperty(protocol: NeoProtocol): NeoProperty {
+    // Initialize with the protocol
+    return new NeoProperty(protocol);
+  }
+
+  /**
+   * Shutdown the Neo Core system
+   */
+  async shutdown(): Promise<void> {
+    // Emit shutdown event
+    this.protocol.emit({
+      id: `system:${Date.now()}`,
+      type: "system",
+      subtype: "shutdown-initiated",
+      source: this.componentId,
+      timestamp: Date.now(),
+    });
+
+    try {
+      // Shutdown extensions in reverse registration order
+      const extensionIds = Array.from(this.extensions.keys());
+      for (let i = extensionIds.length - 1; i >= 0; i--) {
+        const extension = this.extensions.get(extensionIds[i]);
+        if (extension && typeof (extension as any).shutdown === "function") {
+          await (extension as any).shutdown();
+        }
       }
-    };
 
-    // Add the listener
-    this.systemEmitter.on(eventPattern, handler);
+      // Shutdown core systems
+      if (typeof (this.graph as any).shutdown === "function") {
+        await (this.graph as any).shutdown();
+      }
 
-    // Set timeout to clean up if no matching event arrives
-    const timeoutId = setTimeout(() => {
-      this.systemEmitter.off(eventPattern, handler);
-    }, timeout);
+      if (typeof (this.property as any).shutdown === "function") {
+        await (this.property as any).shutdown();
+      }
 
-    // Return cleanup function
-    return () => {
-      clearTimeout(timeoutId);
-      this.systemEmitter.off(eventPattern, handler);
-    };
+      if (typeof (this.protocol as any).shutdown === "function") {
+        await (this.protocol as any).shutdown();
+      }
+
+      // Clear all event listeners
+      this.systemEmitter.removeAllListeners();
+
+      // Emit final shutdown event
+      this.protocol.emit({
+        id: `system:${Date.now()}`,
+        type: "system",
+        subtype: "shutdown-complete",
+        source: this.componentId,
+        timestamp: Date.now(),
+      });
+
+      // Remove references to help garbage collection
+      this.extensions.clear();
+    } catch (error) {
+      // Emit shutdown error event
+      this.protocol.emit({
+        id: `system:${Date.now()}`,
+        type: "system",
+        subtype: "shutdown-error",
+        source: this.componentId,
+        timestamp: Date.now(),
+        content: { error: error},
+      });
+
+      throw error;
+    }
   }
 }
 
 /**
- * Create a Neo Core instance
+ * Create a new NeoCore instance with standard configuration
  */
 export function createNeoCore(
-  componentId: NeoComponentId,
-  options?: {
+  componentId: string | NeoComponentId,
+  options: {
     extensions?: NeoExtension[];
-  }
+  } = {}
 ): NeoCore {
-  return new NeoCore(componentId, options);
+  // Convert string ID to component ID if needed
+  const actualComponentId =
+    typeof componentId === "string"
+      ? { id: componentId, type: "neo:core", name: "Neo Core" }
+      : componentId;
+
+  // Create and return NeoCore instance
+  return new NeoCore(actualComponentId, options);
 }
 
 /**
- * Utility function to import from Core module
+ * Create a new NeoExtension instance
  */
-export {
-  NeoDialectics,
-  NeoProtocol,
-  createNeoDialectics,
-  createNeoProtocol,
-} from "./dialectic";
+export function createNeoExtension(options: {
+  id: NeoComponentId;
+  type: string;
+  capabilities?: string[];
+  initialize?: (core: NeoCore) => void;
+  handleEvent?: (event: NeoEvent) => void;
+  transformEntity?: (entity: any, direction: "toDomain" | "toNeo") => any;
+}): NeoExtension {
+  return {
+    id: options.id,
+    type: options.type,
+    capabilities: options.capabilities || [],
+    initialize: options.initialize || ((core) => {}),
+    handleEvent: options.handleEvent || ((event) => {}),
+    transformEntity: options.transformEntity,
+  };
+}

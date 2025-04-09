@@ -1,0 +1,140 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology .
+
+# Class definitions
+:Being rdf:type owl:Class ;
+    rdfs:comment "Pure being, without further determination"@en .
+
+:Indeterminateness rdf:type owl:Class .
+:Immediacy rdf:type owl:Class .
+:Emptiness rdf:type owl:Class .
+:PureIntuiting rdf:type owl:Class .
+:EmptyThinking rdf:type owl:Class .
+
+# Property definitions
+:hasCharacteristic rdf:type owl:ObjectProperty ;
+    rdfs:domain :Being ;
+    rdfs:range owl:Thing .
+
+:isEqualTo rdf:type owl:ObjectProperty ;
+    rdfs:domain :Being ;
+    rdfs:range :Being .
+
+:hasNoDifference rdf:type owl:ObjectProperty ;
+    rdfs:domain :Being ;
+    rdfs:range owl:Thing .
+
+:isEquivalentTo rdf:type owl:ObjectProperty ;
+    rdfs:domain :Being ;
+    rdfs:range owl:Thing .
+
+# Relationships
+:Being :hasCharacteristic :Indeterminateness,
+                          :Immediacy,
+                          :Emptiness ;
+       :isEqualTo :Being ;
+       :hasNoDifference :Being ;
+       :isEquivalentTo :PureIntuiting,
+                       :EmptyThinking .
+
+# Additional assertions
+:Being rdfs:comment "Being, in its purest form, is indeterminate, immediate, and empty. It is equal only to itself, has no internal or external differences, and is equivalent to pure intuiting and empty thinking."@en .
+
+:Indeterminateness rdfs:comment "The quality of having no determinations or distinguishing characteristics"@en .
+
+:Immediacy rdfs:comment "The state of being direct and without mediation"@en .
+
+:Emptiness rdfs:comment "The state of containing nothing, being void of content"@en .
+
+:PureIntuiting rdfs:comment "The act of intuiting without any specific content"@en .
+
+:EmptyThinking rdfs:comment "The act of thinking without any specific content or determination"@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Being"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Being as presented in the Science of Logic"@en .
+
+# Class definitions
+:Being rdf:type owl:Class ;
+    rdfs:label "Pure Being"@en ;
+    rdfs:comment "Pure being, without further determination. It is the most abstract and immediate concept, devoid of any specific content or characteristics."@en .
+
+:Indeterminateness rdf:type owl:Class ;
+    rdfs:label "Indeterminateness"@en ;
+    rdfs:comment "The quality of pure being that denotes its lack of any specific determinations or distinguishing features."@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The direct, unmediated nature of pure being, representing its existence prior to any reflection or mediation."@en .
+
+:Emptiness rdf:type owl:Class ;
+    rdfs:label "Emptiness"@en ;
+    rdfs:comment "The void-like nature of pure being, signifying its lack of any content or internal structure."@en .
+
+:PureIntuiting rdf:type owl:Class ;
+    rdfs:label "Pure Intuiting"@en ;
+    rdfs:comment "The act of intuiting that corresponds to pure being, characterized by its lack of any specific object or content."@en .
+
+:EmptyThinking rdf:type owl:Class ;
+    rdfs:label "Empty Thinking"@en ;
+    rdfs:comment "The act of thinking that corresponds to pure being, characterized by its lack of any specific thought content or determination."@en .
+
+# Property definitions
+:hasCharacteristic rdf:type owl:ObjectProperty ;
+    rdfs:label "has characteristic"@en ;
+    rdfs:comment "Relates Being to its essential characteristics of indeterminateness, immediacy, and emptiness."@en ;
+    rdfs:domain :Being ;
+    rdfs:range owl:Thing .
+
+:isEqualTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is equal to"@en ;
+    rdfs:comment "Expresses the self-identity of Being, which is equal only to itself in its pure form."@en ;
+    rdfs:domain :Being ;
+    rdfs:range :Being .
+
+:hasNoDifference rdf:type owl:ObjectProperty ;
+    rdfs:label "has no difference"@en ;
+    rdfs:comment "Indicates that Being, in its pure form, has no internal differences or distinctions from other things."@en ;
+    rdfs:domain :Being ;
+    rdfs:range owl:Thing .
+
+:isEquivalentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is equivalent to"@en ;
+    rdfs:comment "Expresses the equivalence of Being with pure intuiting and empty thinking, reflecting its contentless nature."@en ;
+    rdfs:domain :Being ;
+    rdfs:range owl:Thing .
+
+# Relationships
+:Being :hasCharacteristic :Indeterminateness,
+                          :Immediacy,
+                          :Emptiness ;
+       :isEqualTo :Being ;
+       :hasNoDifference :Being ;
+       :isEquivalentTo :PureIntuiting,
+                       :EmptyThinking .
+
+# Additional assertions
+:Being rdfs:comment """
+Pure Being, as conceived by Hegel, represents the most fundamental and abstract concept in his logical system.
+It is characterized by its utter simplicity and lack of determination. Key aspects include:
+
+1. Indeterminateness: Being has no specific qualities or characteristics that distinguish it.
+2. Immediacy: It is direct and unmediated, prior to any reflection or relation.
+3. Self-identity: Being is equal only to itself, with no internal or external differences.
+4. Emptiness: In its purity, Being is devoid of any content or structure.
+5. Equivalence to pure intuiting and empty thinking: Being corresponds to the most abstract forms of consciousness.
+
+This concept of Being serves as the starting point of Hegel's dialectical logic, providing the basis for the development of more complex and determined concepts.
+"""@en .

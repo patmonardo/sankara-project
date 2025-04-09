@@ -1,0 +1,1021 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Being-for-itself in General"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of Being-for-itself in general as presented in the Science of Logic"@en .
+
+:BeingForItself rdf:type owl:Class ;
+    rdfs:label "Being-for-itself"@en ;
+    rdfs:comment """Being-for-itself in Hegel's logic is characterized by:
+1. Representing the completion of qualitative being
+2. Being infinite being
+3. Having sublated existence and its determinations
+4. Containing the first negation and the negation of this negation
+5. Being a simple unity with itself"""@en .
+
+:QualitativeBeing rdf:type owl:Class ;
+    rdfs:label "Qualitative Being"@en ;
+    rdfs:comment "The stage of being that is completed in Being-for-itself"@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The category that Being-for-itself has sublated and transcended"@en .
+
+:Infinity rdf:type owl:Class ;
+    rdfs:label "Infinity"@en ;
+    rdfs:comment "The characteristic of Being-for-itself as infinite being"@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The process of negation that is central to the nature of Being-for-itself"@en .
+
+:Unity rdf:type owl:Class ;
+    rdfs:label "Unity"@en ;
+    rdfs:comment "The simple unity with itself that characterizes Being-for-itself"@en .
+
+:completes rdf:type owl:ObjectProperty ;
+    rdfs:label "completes"@en ;
+    rdfs:comment "Expresses that Being-for-itself completes Qualitative Being"@en ;
+    rdfs:domain :BeingForItself ;
+    rdfs:range :QualitativeBeing .
+
+:sublates rdf:type owl:ObjectProperty ;
+    rdfs:label "sublates"@en ;
+    rdfs:comment "Expresses that Being-for-itself sublates Existence"@en ;
+    rdfs:domain :BeingForItself ;
+    rdfs:range :Existence .
+
+:embodies rdf:type owl:ObjectProperty ;
+    rdfs:label "embodies"@en ;
+    rdfs:comment "Expresses that Being-for-itself embodies Infinity"@en ;
+    rdfs:domain :BeingForItself ;
+    rdfs:range :Infinity .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:comment "Expresses that Being-for-itself contains Negation"@en ;
+    rdfs:domain :BeingForItself ;
+    rdfs:range :Negation .
+
+:achieves rdf:type owl:ObjectProperty ;
+    rdfs:label "achieves"@en ;
+    rdfs:comment "Expresses that Being-for-itself achieves Unity"@en ;
+    rdfs:domain :BeingForItself ;
+    rdfs:range :Unity .
+
+:BeingForItself
+    :completes :QualitativeBeing ;
+    :sublates :Existence ;
+    :embodies :Infinity ;
+    :contains :Negation ;
+    :achieves :Unity .
+
+:BeingForItself rdfs:comment """The nature of Being-for-itself:
+1. It represents the completion and perfection of qualitative being
+2. It is characterized as infinite being, transcending the limitations of finite existence
+3. It has sublated existence and its determinations, incorporating them into a higher unity
+4. It contains within itself both the first negation and the negation of this negation
+5. It achieves a simple unity with itself, resolving previous contradictions
+6. It marks a significant development in the logical progression of Hegel's categories"""@en .
+
+:Negation rdfs:comment """The role of Negation in Being-for-itself:
+1. Being-for-itself contains the first negation, which negates immediate being
+2. It also contains the negation of this negation, leading to a higher affirmation
+3. This double negation is crucial for the self-relation of Being-for-itself
+4. It distinguishes Being-for-itself from earlier, more immediate categories of being"""@en .
+
+:Unity rdfs:comment """The Unity achieved in Being-for-itself:
+1. It is a simple unity of Being-for-itself with itself
+2. This unity results from the sublation of existence and its determinations
+3. It represents a higher-level synthesis in Hegel's dialectical logic
+4. It is characterized by self-relation and self-determination"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Being-for-one"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of Being-for-one in the Science of Logic"@en .
+
+:BeingForOne rdf:type owl:Class ;
+    rdfs:label "Being-for-one"@en ;
+    rdfs:comment """Being-for-one in Hegel's logic is characterized by:
+1. Expressing the ideality of Being-for-itself
+2. Representing the moment of reference to self in Being-for-itself
+3. Not having a distinct 'one' for which it is
+4. Being an undistinguished unity of the one and its being-for"""@en .
+
+:BeingForItself rdf:type owl:Class ;
+    rdfs:label "Being-for-itself"@en ;
+    rdfs:comment "The category that contains Being-for-one as a moment"@en .
+
+:Ideality rdf:type owl:Class ;
+    rdfs:label "Ideality"@en ;
+    rdfs:comment "The characteristic of Being-for-one that expresses the ideality of Being-for-itself"@en .
+
+:SelfReference rdf:type owl:Class ;
+    rdfs:label "Self-Reference"@en ;
+    rdfs:comment "The aspect of Being-for-one that represents self-reference in Being-for-itself"@en .
+
+:UndistinguishedUnity rdf:type owl:Class ;
+    rdfs:label "Undistinguished Unity"@en ;
+    rdfs:comment "The state of Being-for-one where the one and its being-for are not yet distinguished"@en .
+
+:isMomentOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is moment of"@en ;
+    rdfs:comment "Expresses that Being-for-one is a moment of Being-for-itself"@en ;
+    rdfs:domain :BeingForOne ;
+    rdfs:range :BeingForItself .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Relates Being-for-one to the Ideality it expresses"@en ;
+    rdfs:domain :BeingForOne ;
+    rdfs:range :Ideality .
+
+:represents rdf:type owl:ObjectProperty ;
+    rdfs:label "represents"@en ;
+    rdfs:comment "Expresses that Being-for-one represents Self-Reference"@en ;
+    rdfs:domain :BeingForOne ;
+    rdfs:range :SelfReference .
+
+:constitutes rdf:type owl:ObjectProperty ;
+    rdfs:label "constitutes"@en ;
+    rdfs:comment "Relates Being-for-one to the Undistinguished Unity it constitutes"@en ;
+    rdfs:domain :BeingForOne ;
+    rdfs:range :UndistinguishedUnity .
+
+:BeingForOne
+    :isMomentOf :BeingForItself ;
+    :expresses :Ideality ;
+    :represents :SelfReference ;
+    :constitutes :UndistinguishedUnity .
+
+:BeingForItself
+    :contains :BeingForOne .
+
+:BeingForOne rdfs:comment """The nature of Being-for-one:
+1. It is a moment or aspect of Being-for-itself
+2. It expresses the ideality inherent in Being-for-itself
+3. It represents the self-referential nature of Being-for-itself
+4. It constitutes an undistinguished unity where the 'one' and its 'being-for' are not yet separate
+5. It does not have a distinct 'one' for which it is, as it is self-referential
+6. It contributes to the understanding of Being-for-itself as a self-related category"""@en .
+
+:Ideality rdfs:comment """The role of Ideality in Being-for-one:
+1. It is expressed through Being-for-one
+2. It represents the non-material, conceptual nature of Being-for-itself
+3. It distinguishes Being-for-one from more immediate or material forms of being
+4. It contributes to the self-referential nature of Being-for-itself"""@en .
+
+:UndistinguishedUnity rdfs:comment """The Undistinguished Unity in Being-for-one:
+1. It represents the state where the 'one' and its 'being-for' are not yet separated
+2. It contributes to the self-referential nature of Being-for-one
+3. It distinguishes Being-for-one from categories where subject and object are separate
+4. It is a key aspect of understanding the complex unity of Being-for-itself"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of The One"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of The One in the Science of Logic"@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment """The One in Hegel's logic is characterized by:
+1. Being the first negation of negation, as simple existent self-reference
+2. Representing Being-for-itself as an existent-for-itself
+3. Being the totally abstract limit of itself
+4. Emerging from the vanishing of the inner meaning of Being-for-itself in its immediacy"""@en .
+
+:BeingForItself rdf:type owl:Class ;
+    rdfs:label "Being-for-itself"@en ;
+    rdfs:comment "The category from which The One emerges as a further determination"@en .
+
+:NegationOfNegation rdf:type owl:Class ;
+    rdfs:label "Negation of Negation"@en ;
+    rdfs:comment "The dialectical process that results in The One"@en .
+
+:SelfReference rdf:type owl:Class ;
+    rdfs:label "Self-Reference"@en ;
+    rdfs:comment "The characteristic of The One as simple existent self-reference"@en .
+
+:AbstractLimit rdf:type owl:Class ;
+    rdfs:label "Abstract Limit"@en ;
+    rdfs:comment "The nature of The One as the totally abstract limit of itself"@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The state in which the inner meaning of Being-for-itself vanishes, giving rise to The One"@en .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Expresses that The One emerges from Being-for-itself"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :BeingForItself .
+
+:resultOf rdf:type owl:ObjectProperty ;
+    rdfs:label "result of"@en ;
+    rdfs:comment "Relates The One to the Negation of Negation process"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :NegationOfNegation .
+
+:characterized1As rdf:type owl:ObjectProperty ;
+    rdfs:label "characterized as"@en ;
+    rdfs:comment "Relates The One to Self-Reference"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :SelfReference .
+
+:characterized2As rdf:type owl:ObjectProperty ;
+    rdfs:label "characterized as"@en ;
+    rdfs:comment "Relates The One to Abstract Limit"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :AbstractLimit .
+
+:arisesIn rdf:type owl:ObjectProperty ;
+    rdfs:label "arises in"@en ;
+    rdfs:comment "Expresses that The One arises in the Immediacy of Being-for-itself"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Immediacy .
+
+:TheOne
+    :emergesFrom :BeingForItself ;
+    :resultOf :NegationOfNegation ;
+    :characterized1As :SelfReference ;
+    :characterized2As :AbstractLimit ;
+    :arisesIn :Immediacy .
+
+:BeingForItself
+    :develops :TheOne .
+
+:TheOne rdfs:comment """The nature of The One:
+1. It is the result of the negation of negation, representing a higher level of self-relation
+2. It emerges from Being-for-itself as its further determination
+3. It is characterized by simple existent self-reference
+4. It represents the totally abstract limit of itself
+5. It arises when the inner meaning of Being-for-itself vanishes in immediacy
+6. It marks a crucial point in the development of Hegel's logical categories, leading towards quantitative determinations"""@en .
+
+:NegationOfNegation rdfs:comment """The role of Negation of Negation in The One:
+1. It is the dialectical process that results in The One
+2. It represents a higher level of self-relation than simple negation
+3. It contributes to the self-referential nature of The One
+4. It distinguishes The One from earlier, less developed categories"""@en .
+
+:AbstractLimit rdfs:comment """The Abstract Limit in The One:
+1. It represents The One as the totally abstract limit of itself
+2. It distinguishes The One from categories with more concrete or determinate limits
+3. It contributes to the understanding of The One as a transition point towards quantity
+4. It reflects the culmination of qualitative being in its most abstract form"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of The One"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of The One in the Science of Logic"@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment """The One in Hegel's logic is characterized by:
+1. Being the first negation of negation, as simple existent self-reference
+2. Representing Being-for-itself as an existent-for-itself
+3. Being the totally abstract limit of itself
+4. Emerging from the vanishing of the inner meaning of Being-for-itself in its immediacy"""@en .
+
+:BeingForItself rdf:type owl:Class ;
+    rdfs:label "Being-for-itself"@en ;
+    rdfs:comment "The category from which The One emerges as a further determination"@en .
+
+:NegationOfNegation rdf:type owl:Class ;
+    rdfs:label "Negation of Negation"@en ;
+    rdfs:comment "The dialectical process that results in The One"@en .
+
+:SelfReference rdf:type owl:Class ;
+    rdfs:label "Self-Reference"@en ;
+    rdfs:comment "The characteristic of The One as simple existent self-reference"@en .
+
+:AbstractLimit rdf:type owl:Class ;
+    rdfs:label "Abstract Limit"@en ;
+    rdfs:comment "The nature of The One as the totally abstract limit of itself"@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The state in which the inner meaning of Being-for-itself vanishes, giving rise to The One"@en .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Expresses that The One emerges from Being-for-itself"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :BeingForItself .
+
+:resultOf rdf:type owl:ObjectProperty ;
+    rdfs:label "result of"@en ;
+    rdfs:comment "Relates The One to the Negation of Negation process"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :NegationOfNegation .
+
+:characterized1As rdf:type owl:ObjectProperty ;
+    rdfs:label "characterized as"@en ;
+    rdfs:comment "Relates The One to Self-Reference"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :SelfReference .
+
+:characterized2As rdf:type owl:ObjectProperty ;
+    rdfs:label "characterized as"@en ;
+    rdfs:comment "Relates The One to Abstract Limit"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :AbstractLimit .
+
+:arisesIn rdf:type owl:ObjectProperty ;
+    rdfs:label "arises in"@en ;
+    rdfs:comment "Expresses that The One arises in the Immediacy of Being-for-itself"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Immediacy .
+
+:TheOne
+    :emergesFrom :BeingForItself ;
+    :resultOf :NegationOfNegation ;
+    :characterized1As :SelfReference ;
+    :characterized2As :AbstractLimit ;
+    :arisesIn :Immediacy .
+
+:BeingForItself
+    :develops :TheOne .
+
+:TheOne rdfs:comment """The nature of The One:
+1. It is the result of the negation of negation, representing a higher level of self-relation
+2. It emerges from Being-for-itself as its further determination
+3. It is characterized by simple existent self-reference
+4. It represents the totally abstract limit of itself
+5. It arises when the inner meaning of Being-for-itself vanishes in immediacy
+6. It marks a crucial point in the development of Hegel's logical categories, leading towards quantitative determinations"""@en .
+
+:NegationOfNegation rdfs:comment """The role of Negation of Negation in The One:
+1. It is the dialectical process that results in The One
+2. It represents a higher level of self-relation than simple negation
+3. It contributes to the self-referential nature of The One
+4. It distinguishes The One from earlier, less developed categories"""@en .
+
+:AbstractLimit rdfs:comment """The Abstract Limit in The One:
+1. It represents The One as the totally abstract limit of itself
+2. It distinguishes The One from categories with more concrete or determinate limits
+3. It contributes to the understanding of The One as a transition point towards quantity
+4. It reflects the culmination of qualitative being in its most abstract form"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of The One and The Many"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of The One and The Many in the Science of Logic"@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment """The One in relation to The Many is characterized by:
+1. Being the simple self-reference of Being-for-itself
+2. Containing its own moments that have fallen together
+3. Having the form of immediacy
+4. Generating The Many through repulsion"""@en .
+
+:TheMany rdf:type owl:Class ;
+    rdfs:label "The Many"@en ;
+    rdfs:comment "The plurality that emerges from The One through the process of repulsion"@en .
+
+:Repulsion rdf:type owl:Class ;
+    rdfs:label "Repulsion"@en ;
+    rdfs:comment "The process by which The One generates The Many"@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The form that The One takes, in which its moments are now existent"@en .
+
+:BeingForItself rdf:type owl:Class ;
+    rdfs:label "Being-for-itself"@en ;
+    rdfs:comment "The category from which The One emerges and which The One represents in a simple form"@en .
+
+:Unity rdf:type owl:Class ;
+    rdfs:label "Unity"@en ;
+    rdfs:comment "The state of oneness that persists even as The Many emerge"@en .
+
+:Plurality rdf:type owl:Class ;
+    rdfs:label "Plurality"@en ;
+    rdfs:comment "The state of multiplicity that emerges from The One"@en .
+
+:generates rdf:type owl:ObjectProperty ;
+    rdfs:label "generates"@en ;
+    rdfs:comment "Expresses that The One generates The Many"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :TheMany .
+
+:undergoes rdf:type owl:ObjectProperty ;
+    rdfs:label "undergoes"@en ;
+    rdfs:comment "Relates The One to the process of Repulsion"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Repulsion .
+
+:hasForm rdf:type owl:ObjectProperty ;
+    rdfs:label "has form"@en ;
+    rdfs:comment "Expresses that The One has the form of Immediacy"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Immediacy .
+
+:represents rdf:type owl:ObjectProperty ;
+    rdfs:label "represents"@en ;
+    rdfs:comment "Expresses that The One represents Being-for-itself in a simple form"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :BeingForItself .
+
+:maintainsWhileGenerating rdf:type owl:ObjectProperty ;
+    rdfs:label "maintains while generating"@en ;
+    rdfs:comment "Expresses that The One maintains Unity while generating Plurality"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Unity .
+
+:emergesAs rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges as"@en ;
+    rdfs:comment "Expresses that The Many emerge as Plurality"@en ;
+    rdfs:domain :TheMany ;
+    rdfs:range :Plurality .
+
+:TheOne
+    :generates :TheMany ;
+    :undergoes :Repulsion ;
+    :hasForm :Immediacy ;
+    :represents :BeingForItself ;
+    :maintainsWhileGenerating :Unity .
+
+:TheMany
+    :emergesAs :Plurality .
+
+:TheOne rdfs:comment """The nature of The One in relation to The Many:
+1. It is the simple self-reference of Being-for-itself
+2. It contains its own moments that have fallen together in immediacy
+3. It generates The Many through the process of repulsion
+4. It maintains its unity even as it gives rise to plurality
+5. It represents a crucial transition point in Hegel's logic, leading from pure quality towards quantity"""@en .
+
+:Repulsion rdfs:comment """The role of Repulsion in the relationship between The One and The Many:
+1. It is the process by which The One generates The Many
+2. It represents the self-differentiating aspect of The One
+3. It leads to the emergence of plurality from unity
+4. It is a key concept in understanding the dialectical relationship between The One and The Many"""@en .
+
+:Unity rdfs:comment """The persistence of Unity in the generation of The Many:
+1. It is maintained by The One even as it generates plurality
+2. It represents the ongoing self-identity of The One
+3. It exists in tension with the emerging plurality
+4. It forms part of the dialectical relationship between The One and The Many"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of The One Within"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of The One Within in the Science of Logic"@en .
+
+:TheOneWithin rdf:type owl:Class ;
+    rdfs:label "The One Within"@en ;
+    rdfs:comment """The One Within in Hegel's logic is characterized by:
+1. Being within itself, not an existence or determination in relation to others
+2. Not being capable of becoming any other, thus unalterable
+3. Being indeterminate, but in a way distinct from mere being
+4. Having self-reference as its determinateness
+5. Being absolutely determined being"""@en .
+
+:Indeterminateness rdf:type owl:Class ;
+    rdfs:label "Indeterminateness"@en ;
+    rdfs:comment "The quality of The One Within that distinguishes it from mere being"@en .
+
+:SelfReference rdf:type owl:Class ;
+    rdfs:label "Self-Reference"@en ;
+    rdfs:comment "The determinateness of The One Within, which is its self-relation"@en .
+
+:AbsoluteDetermination rdf:type owl:Class ;
+    rdfs:label "Absolute Determination"@en ;
+    rdfs:comment "The state of being absolutely determined that characterizes The One Within"@en .
+
+:Unalterability rdf:type owl:Class ;
+    rdfs:label "Unalterability"@en ;
+    rdfs:comment "The quality of The One Within that makes it incapable of becoming any other"@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The direct, unmediated nature of The One Within"@en .
+
+:possesses rdf:type owl:ObjectProperty ;
+    rdfs:label "possesses"@en ;
+    rdfs:comment "Relates The One Within to its characteristics"@en ;
+    rdfs:domain :TheOneWithin ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Indeterminateness :SelfReference :AbsoluteDetermination :Unalterability :Immediacy)] .
+
+:distinguishedFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "distinguished from"@en ;
+    rdfs:comment "Expresses that The One Within is distinguished from mere being"@en ;
+    rdfs:domain :TheOneWithin ;
+    rdfs:range :Being .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The category of mere being from which The One Within is distinguished"@en .
+
+:TheOneWithin
+    :possesses :Indeterminateness ;
+    :possesses :SelfReference ;
+    :possesses :AbsoluteDetermination ;
+    :possesses :Unalterability ;
+    :possesses :Immediacy ;
+    :distinguishedFrom :Being .
+
+:TheOneWithin rdfs:comment """The nature of The One Within:
+1. It is within itself, not existing in relation to others
+2. It is unalterable, incapable of becoming any other
+3. It is indeterminate, but in a way distinct from mere being
+4. Its determinateness is its self-reference
+5. It is absolutely determined being
+6. It represents a crucial stage in Hegel's logic, where being-for-itself achieves a form of self-contained unity"""@en .
+
+:Indeterminateness rdfs:comment """The Indeterminateness of The One Within:
+1. It distinguishes The One Within from mere being
+2. It is not the absence of determination, but a form of self-determination
+3. It contributes to the self-contained nature of The One Within
+4. It represents a higher form of indeterminateness than that found in earlier categories"""@en .
+
+:SelfReference rdfs:comment """The Self-Reference of The One Within:
+1. It constitutes the determinateness of The One Within
+2. It represents the self-relation achieved in being-for-itself
+3. It distinguishes The One Within from categories determined by external relations
+4. It is key to understanding the self-contained nature of The One Within"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of The One and The Void"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of The One and The Void in the Science of Logic"@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment """The One in relation to The Void is characterized by:
+1. Being the void as the abstract self-reference of negation
+2. Standing in a single reference with The Void
+3. Being affirmative while The Void is negation
+4. Existing alongside The Void in a common connection"""@en .
+
+:TheVoid rdf:type owl:Class ;
+    rdfs:label "The Void"@en ;
+    rdfs:comment """The Void in relation to The One is characterized by:
+1. Being the nothing that stands outside The One
+2. Representing the negation or non-being of The One
+3. Existing in a common connection with The One
+4. Being posited as external to The One"""@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The principle of negation that relates The One and The Void"@en .
+
+:CommonConnection rdf:type owl:Class ;
+    rdfs:label "Common Connection"@en ;
+    rdfs:comment "The relationship that binds The One and The Void together"@en .
+
+:Externality rdf:type owl:Class ;
+    rdfs:label "Externality"@en ;
+    rdfs:comment "The quality of The Void being posited as external to The One"@en .
+
+:SelfReference rdf:type owl:Class ;
+    rdfs:label "Self-Reference"@en ;
+    rdfs:comment "The abstract self-reference of negation that characterizes The One as void"@en .
+
+:standsInRelationTo rdf:type owl:ObjectProperty ;
+    rdfs:label "stands in relation to"@en ;
+    rdfs:comment "Expresses the relationship between The One and The Void"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :TheVoid .
+
+:sharesConnectionWith rdf:type owl:ObjectProperty ;
+    rdfs:label "shares connection with"@en ;
+    rdfs:comment "Relates The One and The Void through their Common Connection"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:TheOne :TheVoid)] ;
+    rdfs:range :CommonConnection .
+
+:positsAsExternal rdf:type owl:ObjectProperty ;
+    rdfs:label "posits as external"@en ;
+    rdfs:comment "Expresses that The One posits The Void as external"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :TheVoid .
+
+:embodies rdf:type owl:ObjectProperty ;
+    rdfs:label "embodies"@en ;
+    rdfs:comment "Relates The One to Self-Reference and The Void to Negation"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:TheOne :TheVoid)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:SelfReference :Negation)] .
+
+:TheOne
+    :standsInRelationTo :TheVoid ;
+    :sharesConnectionWith :CommonConnection ;
+    :positsAsExternal :TheVoid ;
+    :embodies :SelfReference .
+
+:TheVoid
+    :standsInRelationTo :TheOne ;
+    :sharesConnectionWith :CommonConnection ;
+    :embodies :Negation .
+
+:TheOne rdfs:comment """The nature of The One in relation to The Void:
+1. It is the void as abstract self-reference of negation
+2. It stands in a single reference with The Void
+3. It is affirmative while The Void is negation
+4. It exists alongside The Void in a common connection
+5. It posits The Void as external to itself
+6. It represents a crucial stage in Hegel's logic, where being-for-itself encounters its own negation"""@en .
+
+:TheVoid rdfs:comment """The nature of The Void in relation to The One:
+1. It is the nothing that stands outside The One
+2. It represents the negation or non-being of The One
+3. It exists in a common connection with The One
+4. It is posited as external to The One
+5. It embodies the principle of negation in this dialectical relationship"""@en .
+
+:CommonConnection rdfs:comment """The Common Connection between The One and The Void:
+1. It binds The One and The Void together in a single reference
+2. It represents the inseparability of being and non-being at this stage of Hegel's logic
+3. It contributes to the further development of the concept of being-for-itself
+4. It sets the stage for the emergence of plurality from unity"""@en .
+
+## OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:ManyOnes rdf:type owl:Class ;
+    rdfs:label "Many Ones"@en ;
+    rdfs:comment "The plurality of distinct beings, each representing a separate entity."@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment "The singular entity that engages in selective repulsion."@en .
+
+:Repulsion rdf:type owl:Class ;
+    rdfs:label "Repulsion"@en ;
+    rdfs:comment "The force of exclusion that acts between the many ones and from the one."@en .
+
+:AbstractVoid rdf:type owl:Class ;
+    rdfs:label "Abstract Void"@en ;
+    rdfs:comment "The external, non-referential space between the many ones."@en .
+
+:NegativeReference rdf:type owl:Class ;
+    rdfs:label "Negative Reference"@en ;
+    rdfs:comment "The self-contradictory reference of the ones to themselves and others."@en .
+
+:hasNonReferentialRelation rdf:type owl:ObjectProperty ;
+    rdfs:label "has non-referential relation"@en ;
+    rdfs:domain :ManyOnes ;
+    rdfs:range :AbstractVoid .
+
+:exhibitsNegativeReference rdf:type owl:ObjectProperty ;
+    rdfs:label "exhibits negative reference"@en ;
+    rdfs:domain :ManyOnes ;
+    rdfs:range :NegativeReference .
+
+:exerts rdf:type owl:ObjectProperty ;
+    rdfs:label "exerts"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Repulsion .
+
+:experiencesRepulsion rdf:type owl:ObjectProperty ;
+    rdfs:label "experiences repulsion"@en ;
+    rdfs:domain :ManyOnes ;
+    rdfs:range :Repulsion .
+
+:ManyOnes
+    :hasNonReferentialRelation :AbstractVoid ;
+    :exhibitsNegativeReference :NegativeReference ;
+    :experiencesRepulsion :Repulsion .
+
+:TheOne
+    :exerts :Repulsion .
+
+:Repulsion rdfs:comment """Characteristics of Repulsion:
+1. Acts as an excluding force
+2. Is selective, repelling only non-generated entities
+3. Is mutual and omnidirectional
+4. Is limited by the existence of the ones"""@en .
+
+:ManyOnes rdfs:comment """Nature of Many Ones:
+1. Each is a distinct being
+2. Their relations are non-referential and external
+3. They exhibit negative self-reference
+4. They are subject to mutual repulsion"""@en .
+
+:TheOne rdfs:comment """Role of The One:
+1. Engages in selective repulsion
+2. Repels only entities it has not generated or posited
+3. Central to the concept of exclusion in this context"""@en .
+
+## OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:ManyOnes rdf:type owl:Class ;
+    rdfs:label "Many Ones"@en ;
+    rdfs:comment "The plurality of distinct beings, each representing a separate entity."@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment "The singular entity that engages in selective repulsion."@en .
+
+:Repulsion rdf:type owl:Class ;
+    rdfs:label "Repulsion"@en ;
+    rdfs:comment "The force of exclusion that acts between the many ones and from the one."@en .
+
+:AbstractVoid rdf:type owl:Class ;
+    rdfs:label "Abstract Void"@en ;
+    rdfs:comment "The external, non-referential space between the many ones."@en .
+
+:NegativeReference rdf:type owl:Class ;
+    rdfs:label "Negative Reference"@en ;
+    rdfs:comment "The self-contradictory reference of the ones to themselves and others."@en .
+
+:hasNonReferentialRelation rdf:type owl:ObjectProperty ;
+    rdfs:label "has non-referential relation"@en ;
+    rdfs:domain :ManyOnes ;
+    rdfs:range :AbstractVoid .
+
+:exhibitsNegativeReference rdf:type owl:ObjectProperty ;
+    rdfs:label "exhibits negative reference"@en ;
+    rdfs:domain :ManyOnes ;
+    rdfs:range :NegativeReference .
+
+:exerts rdf:type owl:ObjectProperty ;
+    rdfs:label "exerts"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Repulsion .
+
+:experiencesRepulsion rdf:type owl:ObjectProperty ;
+    rdfs:label "experiences repulsion"@en ;
+    rdfs:domain :ManyOnes ;
+    rdfs:range :Repulsion .
+
+:ManyOnes
+    :hasNonReferentialRelation :AbstractVoid ;
+    :exhibitsNegativeReference :NegativeReference ;
+    :experiencesRepulsion :Repulsion .
+
+:TheOne
+    :exerts :Repulsion .
+
+:Repulsion rdfs:comment """Characteristics of Repulsion:
+1. Acts as an excluding force
+2. Is selective, repelling only non-generated entities
+3. Is mutual and omnidirectional
+4. Is limited by the existence of the ones"""@en .
+
+:ManyOnes rdfs:comment """Nature of Many Ones:
+1. Each is a distinct being
+2. Their relations are non-referential and external
+3. They exhibit negative self-reference
+4. They are subject to mutual repulsion"""@en .
+
+:TheOne rdfs:comment """Role of The One:
+1. Engages in selective repulsion
+2. Repels only entities it has not generated or posited
+3. Central to the concept of exclusion in this context"""@en .
+
+## OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Repulsion rdf:type owl:Class ;
+    rdfs:label "Repulsion"@en ;
+    rdfs:comment "The force that fragments the one into many, representing the 'ought' of ideality."@en .
+
+:Attraction rdf:type owl:Class ;
+    rdfs:label "Attraction"@en ;
+    rdfs:comment "The force that brings many ones into one one, realizing ideality."@en .
+
+:Ideality rdf:type owl:Class ;
+    rdfs:label "Ideality"@en ;
+    rdfs:comment "The conceptual state represented by repulsion and realized by attraction."@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment "The singular entity that undergoes fragmentation and reintegration."@en .
+
+:ManyOnes rdf:type owl:Class ;
+    rdfs:label "Many Ones"@en ;
+    rdfs:comment "The plurality resulting from the fragmentation of the one."@en .
+
+:MediadtedOne rdf:type owl:Class ;
+    rdfs:label "Mediated One"@en ;
+    rdfs:comment "The result of attraction, distinct from the immediate ones."@en .
+
+:fragmentsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "fragments into"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :ManyOnes .
+
+:representsOughtOf rdf:type owl:ObjectProperty ;
+    rdfs:label "represents ought of"@en ;
+    rdfs:domain :Repulsion ;
+    rdfs:range :Ideality .
+
+:realizesIdeality rdf:type owl:ObjectProperty ;
+    rdfs:label "realizes ideality"@en ;
+    rdfs:domain :Attraction ;
+    rdfs:range :Ideality .
+
+:transitionsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions into"@en ;
+    rdfs:domain :Repulsion ;
+    rdfs:range :Attraction .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:domain :Attraction ;
+    rdfs:range :Repulsion .
+
+:providesMaterialFor rdf:type owl:ObjectProperty ;
+    rdfs:label "provides material for"@en ;
+    rdfs:domain :Repulsion ;
+    rdfs:range :Attraction .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:domain :Attraction ;
+    rdfs:range :MediadtedOne .
+
+:Repulsion
+    :fragmentsInto :ManyOnes ;
+    :representsOughtOf :Ideality ;
+    :transitionsInto :Attraction ;
+    :providesMaterialFor :Attraction .
+
+:Attraction
+    :presupposes :Repulsion ;
+    :realizesIdeality :Ideality ;
+    :resultsIn :MediadtedOne .
+
+:Repulsion rdfs:comment """Nature of Repulsion:
+1. Fragments the one into many
+2. Represents the 'ought' of ideality
+3. Provides material for attraction
+4. Transitions into attraction"""@en .
+
+:Attraction rdfs:comment """Characteristics of Attraction:
+1. Brings many ones into one one
+2. Presupposes repulsion
+3. Realizes ideality
+4. Results in a mediated one
+5. Inseparable from repulsion"""@en .
+
+:Ideality rdfs:comment """Role of Ideality:
+1. Represented as 'ought' by repulsion
+2. Realized by attraction"""@en .
+
+:MediadtedOne rdfs:comment """Nature of Mediated One:
+1. Result of attraction
+2. Distinct from immediate ones
+3. Represents a higher unity of the many ones"""@en .
+
+## OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Repulsion rdf:type owl:Class ;
+    rdfs:label "Repulsion"@en ;
+    rdfs:comment "The force that separates and distinguishes, appearing as the fundamental determination of the one."@en .
+
+:Attraction rdf:type owl:Class ;
+    rdfs:label "Attraction"@en ;
+    rdfs:comment "The force that unifies, representing the posited ideality implicit in repulsion."@en .
+
+:TheOne rdf:type owl:Class ;
+    rdfs:label "The One"@en ;
+    rdfs:comment "The entity that embodies the unity of repulsion and attraction."@en .
+
+:Ideality rdf:type owl:Class ;
+    rdfs:label "Ideality"@en ;
+    rdfs:comment "The conceptual state implicit in repulsion and made explicit in attraction."@en .
+
+:Unity rdf:type owl:Class ;
+    rdfs:label "Unity"@en ;
+    rdfs:comment "The indeterminate connection between repulsion and attraction."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process through which repulsion and attraction interact and determine each other."@en .
+
+:isMutuallyDeterminedWith rdf:type owl:SymmetricProperty, owl:ObjectProperty ;
+    rdfs:label "is mutually determined with"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Repulsion :Attraction)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Repulsion :Attraction)] .
+
+:containsAsMoment rdf:type owl:ObjectProperty ;
+    rdfs:label "contains as moment"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Repulsion :Attraction)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Repulsion :Attraction)] .
+
+:embodiesUnityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "embodies unity of"@en ;
+    rdfs:domain :TheOne ;
+    rdfs:range :Unity .
+
+:mediatesBetween rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates between"@en ;
+    rdfs:domain :Mediation ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Repulsion :Attraction)] .
+
+:makesExplicit rdf:type owl:ObjectProperty ;
+    rdfs:label "makes explicit"@en ;
+    rdfs:domain :Attraction ;
+    rdfs:range :Ideality .
+
+:implicitlyContains rdf:type owl:ObjectProperty ;
+    rdfs:label "implicitly contains"@en ;
+    rdfs:domain :Repulsion ;
+    rdfs:range :Ideality .
+
+:Repulsion
+    :isMutuallyDeterminedWith :Attraction ;
+    :containsAsMoment :Attraction ;
+    :implicitlyContains :Ideality .
+
+:Attraction
+    :isMutuallyDeterminedWith :Repulsion ;
+    :containsAsMoment :Repulsion ;
+    :makesExplicit :Ideality .
+
+:TheOne
+    :embodiesUnityOf :Unity .
+
+:Mediation
+    :mediatesBetween :Repulsion, :Attraction .
+
+:Repulsion rdfs:comment """Characteristics of Repulsion:
+1. Appears as the fundamental determination of the one
+2. Is immediate and initially indifferent to attraction
+3. Implicitly contains ideality
+4. Is inseparable from attraction
+5. Provides the basis for attraction"""@en .
+
+:Attraction rdfs:comment """Nature of Attraction:
+1. Represents the posited ideality implicit in repulsion
+2. Is not presupposed by repulsion but is inseparable from it
+3. Preserves the multiplicity of ones within it
+4. Operates through the mediation of repulsion"""@en .
+
+:Unity rdfs:comment """Aspects of Unity:
+1. Initially indeterminate
+2. Represents the connection between repulsion and attraction
+3. Embodied in the one
+4. Requires further elaboration"""@en .
+
+:Mediation rdfs:comment """Role of Mediation:
+1. Process through which repulsion and attraction interact
+2. Each force mediates itself through the other
+3. Ultimately, each force is its own self-mediation"""@en .

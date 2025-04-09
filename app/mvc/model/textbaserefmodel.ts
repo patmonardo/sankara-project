@@ -2,7 +2,7 @@ import {
   TextRef,
   TextRegistry,
   TextFindResult
- } from '@/lib/data/schema/textref.js';
+ } from '@/data/schema/textref.js';
 
 export abstract class TextBaseRefModel<T extends TextRef = TextRef>
     implements TextRegistry<T> {

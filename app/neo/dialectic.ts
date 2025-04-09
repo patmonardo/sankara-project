@@ -1,75 +1,140 @@
 import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
+import { NeoCore } from "./neo";
+import { NeoEvent } from "./event";
 
 /**
- * Neo Dialectics - A New Nondual Dialectic
+ * Neo Dialectic - A New Nondual Dialectic
  *
  * Implements a Disjunctive Process that unifies Being (Entities/Models)
  * through a membership protocol spanning both Space and Room contexts.
  */
 
-// Core identity types
-export type NeoEntityId = string;
-export type NeoSpaceId = string;
-export type NeoComponentId = string;
+/**
+ * Neo Component ID
+ * Identifies components in the Neo ecosystem
+ */
+export type NeoComponentId = {
+  id: string;
+  type: string;
+  name?: string;
+  version?: string;
+};
+
+/**
+ * Neo Extension Interface
+ * Defines how extensions interact with the Neo Core
+ */
+export interface NeoExtension {
+  /**
+   * Extension identifier
+   */
+  id: NeoComponentId;
+  
+  /**
+   * Extension type
+   */
+  type: string;
+  
+  /**
+   * Capabilities provided by this extension
+   */
+  capabilities?: string[];
+  
+  /**
+   * Initialize this extension with NeoCore
+   */
+  initialize(core: NeoCore): void;
+  
+  /**
+   * Handle events directed to this extension
+   */
+  handleEvent(event: NeoEvent): void;
+  
+  /**
+   * Transform entities between Neo and domain formats
+   * Optional method for domain-specific transformations
+   */
+  transformEntity?(entity: any, direction: "toDomain" | "toNeo"): any;
+}
+
+/**
+ * Neo Protocol Interface
+ * Defines the core protocol functions
+ */
+export interface NeoProtocol {
+  /**
+   * Emit an event through the Neo system
+   */
+  emit(event: NeoEvent): void;
+  
+  /**
+   * Listen for specific events
+   */
+  on(eventType: string, handler: (event: NeoEvent) => void): () => void;
+  
+  /**
+   * Send a message to a specific component
+   */
+  send(message: NeoMessage): void;
+  
+  /**
+   * Create an entity in the Neo ecosystem
+   */
+  createEntity(entity: any): string;
+  
+  /**
+   * Update an entity in the Neo ecosystem
+   */
+  updateEntity(entityId: string, updates: any): void;
+  
+  /**
+   * Delete an entity from the Neo ecosystem
+   */
+  deleteEntity(entityId: string): void;
+}
+
+/**
+ * Neo Dialectic Interface
+ * Higher level dialectical operations
+ */
+export interface NeoDialectic {
+  /**
+   * Process input through dialectical movement
+   */
+  process(input: any): Promise<any>;
+  
+  /**
+   * Create a thesis from input
+   */
+  createThesis(input: any): Promise<any>;
+  
+  /**
+   * Create antithesis from thesis
+   */
+  createAntithesis(thesis: any): Promise<any>;
+  
+  /**
+   * Create synthesis from thesis and antithesis
+   */
+  createSynthesis(thesis: any, antithesis: any): Promise<any>;
+}
 
 // Core movement types (modes of dialectical movement)
 export type NeoMovementType =
-  | "state" // Being (state of entities)
-  | "message" // Communication (directed content)
-  | "action" // Intention (request for change)
-  | "relation" // Connection (links between entities)
-  | "property" // Attribution (qualities of entities)
-  | "consensus" // Resolution (agreement process)
-  | "transform" // Becoming (entity metamorphosis)
   | "system" // Reflection (system self-reference)
   | "dialectic" // Non-dual movement (unifying change)
+  | "consensus" // Resolution (agreement process)
+  | "message" // Communication (directed content)
+  | "action" // Intention (request for change)
+  | "entity" // Being (state of entities)
+  | "relation" // Connection (links between entities)
+  | "property" // Attribution (qualities of entities)
+  | "transform" // Becoming (entity metamorphosis)
 
-/**
- * Dialectical Event (Non-dual unit of movement and being)
- *
- * An event is both:
- * 1. An entity (it has properties and persists)
- * 2. A movement (it represents change and action)
- */
-export interface NeoEvent {
-  id: string; // Unique event ID
-  type: NeoMovementType; // Dialectical movement type
-  subtype?: string; // Specialized movement category
-  source: NeoComponentId; // Originating component
-  spaceId?: NeoSpaceId; // Context space
-  timestamp: number; // Creation time
-  content: any; // Event content
-  relations?: {
-    // Dialectical relationships
-    replyTo?: string; // Responsive movement
-    refersTo?: string; // Referential movement
-    follows?: string; // Sequential movement
-    inThread?: string; // Conversational movement
-    causedBy?: string; // Causal movement
-  };
-  metadata?: Record<string, any>; // Self-reflective data
-}
-
-/**
- * Neo Message (Directed communication event)
- *
- * A message is a specialized event that:
- * 1. Has explicit direction (from/to)
- * 2. Participates in conversations (threads)
- */
-export interface NeoMessage {
-  id: string; // Unique message ID
-  from: NeoComponentId; // Sender
-  to: NeoComponentId | NeoComponentId[]; // Recipient(s)
-  type: string; // Message type
-  spaceId?: NeoSpaceId; // Context space
-  timestamp: number; // Creation time
-  content: any; // Message content
-  replyTo?: string; // Message this replies to
-  threadId?: string; // Thread ID
-  metadata?: Record<string, any>; // Additional metadata
-}
+// Core identity types
+export type NeoSpaceId = string;
+export type NeoEntityId = string;
 
 /**
  * Neo Space (Container context)
@@ -109,6 +174,26 @@ export interface NeoEntity {
     properties?: Record<string, any>; // Relation properties
   }>;
   metadata?: Record<string, any>; // Self-reflective data
+}
+
+/**
+ * Neo Message (Directed communication event)
+ *
+ * A message is a specialized event that:
+ * 1. Has explicit direction (from/to)
+ * 2. Participates in conversations (threads)
+ */
+export interface NeoMessage {
+  id: string; // Unique message ID
+  from: NeoComponentId; // Sender
+  to: NeoComponentId | NeoComponentId[]; // Recipient(s)
+  type: string; // Message type
+  spaceId?: NeoSpaceId; // Context space
+  timestamp: number; // Creation time
+  content: any; // Message content
+  replyTo?: string; // Message this replies to
+  threadId?: string; // Thread ID
+  metadata?: Record<string, any>; // Additional metadata
 }
 
 /**
@@ -153,6 +238,7 @@ export class NeoProtocol {
 
     // Announce protocol creation (system self-awareness)
     this.emit({
+      id: uuidv4(),
       type: "system",
       subtype: "protocol-created",
       spaceId: "system",
@@ -191,6 +277,7 @@ export class NeoProtocol {
 
     // Emit space creation event (system reflection)
     this.emit({
+      id: uuidv4(),
       type: "system",
       subtype: "space-created",
       spaceId: "system",
@@ -218,6 +305,7 @@ export class NeoProtocol {
 
     // Emit join event (membership change)
     this.emit({
+      id: uuidv4(),
       type: "system",
       subtype: "space-join",
       spaceId,
@@ -237,6 +325,7 @@ export class NeoProtocol {
 
     // Emit leave event (membership change)
     this.emit({
+      id: uuidv4(),
       type: "system",
       subtype: "space-leave",
       spaceId,
@@ -247,7 +336,7 @@ export class NeoProtocol {
   /**
    * Emit an event (create dialectical movement)
    */
-  emit(event: Omit<NeoEvent, "id" | "source" | "timestamp">): string {
+  emit(event: NeoEvent): void {
     // Complete the event with required properties
     const fullEvent: NeoEvent = {
       ...event,
@@ -263,7 +352,7 @@ export class NeoProtocol {
         space.events.push(fullEvent);
 
         // Update space state if this is a state event
-        if (fullEvent.type === "state" && fullEvent.content) {
+        if (fullEvent.type === "system" && fullEvent.content) {
           this.updateSpaceState(fullEvent.spaceId, fullEvent.content);
         }
       }
@@ -305,13 +394,12 @@ export class NeoProtocol {
       }
     }
 
-    return fullEvent.id;
   }
 
   /**
    * Send a message (directed communication)
    */
-  send(message: Omit<NeoMessage, "id" | "from" | "timestamp">): string {
+  send(message: NeoMessage): void {
     // Complete the message with required properties
     const fullMessage: NeoMessage = {
       ...message,
@@ -322,6 +410,7 @@ export class NeoProtocol {
 
     // Emit the message as an event (unify message with event)
     this.emit({
+      id: fullMessage.id,
       type: "message",
       subtype: message.type,
       spaceId: message.spaceId,
@@ -353,17 +442,12 @@ export class NeoProtocol {
     if (message.threadId) {
       this.emitter.emit(`thread:${message.threadId}`, fullMessage);
     }
-
-    return fullMessage.id;
   }
 
   /**
    * Listen for events
    */
-  onEvent(
-    pattern: string,
-    callback: (event: NeoEvent) => void
-  ): () => void {
+  onEvent(pattern: string, callback: (event: NeoEvent) => void): () => void {
     this.emitter.on(pattern, callback);
     return () => {
       this.emitter.off(pattern, callback);
@@ -436,7 +520,8 @@ export class NeoProtocol {
     // Emit state update event (if not already emitting)
     if (!update.__fromStateEvent) {
       this.emit({
-        type: "state",
+        id: uuidv4(),
+        type: "system",
         subtype: "update",
         spaceId,
         content: {
@@ -476,6 +561,7 @@ export class NeoProtocol {
 
     // Emit entity created event
     this.emit({
+      id: uuidv4(),
       type: "relation",
       subtype: "entity-created",
       spaceId: entity.spaceId || "system",
@@ -491,7 +577,10 @@ export class NeoProtocol {
   /**
    * Update an entity
    */
-  updateEntity(entityId: NeoEntityId, updates: Partial<Omit<NeoEntity, "id">>): void {
+  updateEntity(
+    entityId: NeoEntityId,
+    updates: Partial<Omit<NeoEntity, "id">>
+  ): void {
     const entity = this.entities.get(entityId);
     if (!entity) {
       throw new Error(`Entity not found: ${entityId}`);
@@ -514,6 +603,7 @@ export class NeoProtocol {
 
     // Emit entity updated event
     this.emit({
+      id: uuidv4(),
       type: "relation",
       subtype: "entity-updated",
       spaceId: entity.spaceId || "system",
@@ -539,6 +629,7 @@ export class NeoProtocol {
 
     // Emit entity deleted event
     this.emit({
+      id: uuidv4(),
       type: "relation",
       subtype: "entity-deleted",
       spaceId: entity.spaceId || "system",
@@ -644,6 +735,7 @@ export class NeoProtocol {
 
     // Emit relation created/updated event
     this.emit({
+      id: uuidv4(),
       type: "relation",
       subtype:
         existingRelationIndex !== -1 ? "relation-updated" : "relation-created",
@@ -660,7 +752,11 @@ export class NeoProtocol {
   /**
    * Delete a relation
    */
-  deleteRelation(sourceId: NeoEntityId, targetId: NeoEntityId, type: string): void {
+  deleteRelation(
+    sourceId: NeoEntityId,
+    targetId: NeoEntityId,
+    type: string
+  ): void {
     const sourceEntity = this.entities.get(sourceId);
 
     if (!sourceEntity || !sourceEntity.relations) {
@@ -683,6 +779,7 @@ export class NeoProtocol {
 
     // Emit relation deleted event
     this.emit({
+      id: uuidv4(),
       type: "relation",
       subtype: "relation-deleted",
       spaceId: sourceEntity.spaceId || "system",
@@ -797,6 +894,7 @@ export class NeoProtocol {
 
     // Emit consensus started event
     this.emit({
+      id: uuidv4(),
       type: "consensus",
       subtype: "initiated",
       spaceId,
@@ -838,7 +936,7 @@ export class NeoProtocol {
     const votes = { ...consensusEntity.properties.votes };
 
     // Record vote
-    votes[this.componentId] = vote;
+    votes[this.componentId.id] = vote;
 
     // Update consensus entity
     this.updateEntity(consensusEntity.id, {
@@ -850,6 +948,7 @@ export class NeoProtocol {
 
     // Emit vote event
     this.emit({
+      id: uuidv4(),
       type: "consensus",
       subtype: "vote",
       spaceId: consensusEntity.spaceId || "system",
@@ -943,6 +1042,7 @@ export class NeoProtocol {
 
     // Emit consensus result event
     this.emit({
+      id: uuidv4(),
       type: "consensus",
       subtype: "resolved",
       spaceId: consensusEntity.spaceId || "system",
@@ -1034,13 +1134,12 @@ export class NeoProtocol {
   }
 }
 
-
 /**
- * Neo Dialectics higher-level operations
+ * Neo Dialectic higher-level operations
  *
  * Additional capabilities built on the core Dialectical Protocol
  */
-export class NeoDialectics {
+export class NeoDialectic {
   constructor(private protocol: NeoProtocol) {}
 
   /**
@@ -1054,74 +1153,69 @@ export class NeoDialectics {
   }): { thesisId: string; antithesisId: string; synthesisId: string } {
     const spaceId = options.spaceId || "dialectic";
     const triadId = uuidv4(); // Generate a unique ID for the triad
-  
+
     // Create the three entities
     const thesisId = this.protocol.createEntity({
       type: options.thesis.type,
       spaceId,
       properties: options.thesis.properties,
-      metadata: { triadId, role: 'thesis' }
+      metadata: { triadId, role: "thesis" },
     });
-    
+
     const antithesisId = this.protocol.createEntity({
       type: options.antithesis.type,
       spaceId,
       properties: options.antithesis.properties,
-      metadata: { triadId, role: 'antithesis' }
+      metadata: { triadId, role: "antithesis" },
     });
-    
+
     const synthesisId = this.protocol.createEntity({
       type: options.synthesis.type,
       spaceId,
       properties: options.synthesis.properties,
-      metadata: { triadId, role: 'synthesis' }
+      metadata: { triadId, role: "synthesis" },
     });
-    
+
     // Create relationships between them
-    this.protocol.createRelation(
-      thesisId,
-      antithesisId,
-      'dialectic:opposes',
-      { triadId }
-    );
-    
-    this.protocol.createRelation(
-      antithesisId,
-      thesisId,
-      'dialectic:opposes',
-      { triadId }
-    );
-    
+    this.protocol.createRelation(thesisId, antithesisId, "dialectic:opposes", {
+      triadId,
+    });
+
+    this.protocol.createRelation(antithesisId, thesisId, "dialectic:opposes", {
+      triadId,
+    });
+
     this.protocol.createRelation(
       thesisId,
       synthesisId,
-      'dialectic:transcends-to',
+      "dialectic:transcends-to",
       { triadId }
     );
-    
+
     this.protocol.createRelation(
       antithesisId,
       synthesisId,
-      'dialectic:transcends-to',
+      "dialectic:transcends-to",
       { triadId }
     );
-    
+
     this.protocol.createRelation(
       synthesisId,
       thesisId,
-      'dialectic:transcends-from',
+      "dialectic:transcends-from",
       { triadId }
     );
-    
+
     this.protocol.createRelation(
       synthesisId,
       antithesisId,
-      'dialectic:transcends-from',
+      "dialectic:transcends-from",
       { triadId }
     );
-  
+
     // Emit triad creation event
     this.protocol.emit({
+      id: uuidv4(),
       type: "dialectic",
       subtype: "triad-created",
       spaceId,
@@ -1129,23 +1223,23 @@ export class NeoDialectics {
         triadId,
         thesis: {
           id: thesisId,
-          type: options.thesis.type
+          type: options.thesis.type,
         },
         antithesis: {
           id: antithesisId,
-          type: options.antithesis.type
+          type: options.antithesis.type,
         },
         synthesis: {
           id: synthesisId,
-          type: options.synthesis.type
-        }
-      }
+          type: options.synthesis.type,
+        },
+      },
     });
-  
+
     return {
       thesisId,
       antithesisId,
-      synthesisId
+      synthesisId,
     };
   }
 
@@ -1252,18 +1346,13 @@ export class NeoDialectics {
 /**
  * Create a Dialectical Protocol instance
  */
-export function createNeoProtocol(
-  componentId: NeoComponentId
-): NeoProtocol {
+export function createNeoProtocol(componentId: NeoComponentId): NeoProtocol {
   return new NeoProtocol(componentId);
 }
 
 /**
  * Create a Neo Dialectics instance
  */
-export function createNeoDialectics(
-  protocol: NeoProtocol
-): NeoDialectics {
-  return new NeoDialectics(protocol);
+export function createNeoDialectic(protocol: NeoProtocol): NeoDialectic {
+  return new NeoDialectic(protocol);
 }
-

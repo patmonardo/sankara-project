@@ -1,7 +1,7 @@
-//@/lib/model/dashboard.ts
-import { prisma } from '@/lib/data/client';
+//@/mvc/model/dashboard.ts
+import { prisma } from '@/data/client';
 import { SankaraModel } from './sankara';
-import type { Dashboard, Widget, WidgetTypeString, CreateDashboard } from '@/lib/data/schema/dashboard';
+import type { Dashboard, Widget, WidgetTypeString, CreateDashboard } from '@/data/schema/dashboard';
 
 export class DashboardModel {
   /**

@@ -5,9 +5,9 @@ import {
   TextKeyword,
   TextDescription,
   TextAnnotation,
-} from "@/lib/data/schema/textmeta.js";
-import { TextMetaParser, TextParserOptions } from "@/lib/data/schema/textparser.js";
-import { TextBaseParserModel } from "@/lib/model/textbaseparsermodel.js";
+} from "@/data/schema/textmeta.js";
+import { TextMetaParser, TextParserOptions } from "@/data/schema/textparser.js";
+import { TextBaseParserModel } from "@/mvc/model/textbaseparsermodel.js";
 
 export class TextMetaParserModel
   extends TextBaseParserModel

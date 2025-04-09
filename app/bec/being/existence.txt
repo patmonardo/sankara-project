@@ -1,0 +1,2338 @@
+# OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Existence"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Existence as presented in the Science of Logic"@en .
+
+# Class definitions
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "Determinate being with existent determinateness (quality), characterized by opposition, alterability, and finitude."@en .
+
+:Quality rdf:type owl:Class ;
+    rdfs:label "Quality"@en ;
+    rdfs:comment "The existent determinateness that characterizes Existence and enables opposition to others."@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment "An instance of Existence, characterized by its quality and its opposition to others."@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment "That which Something is opposed to by virtue of its quality."@en .
+
+:Finite rdf:type owl:Class ;
+    rdfs:label "Finite"@en ;
+    rdfs:comment "The characteristic of Existence as limited and alterable."@en .
+
+:Infinite rdf:type owl:Class ;
+    rdfs:label "Infinite"@en ;
+    rdfs:comment "The negation within finite Something, contrasted with the finite itself."@en .
+
+:BeingForItself rdf:type owl:Class ;
+    rdfs:label "Being-for-itself"@en ;
+    rdfs:comment "The resolution of the opposition between finite and infinite, representing a higher form of Existence."@en .
+
+# Property definitions
+:hasDeterminateness rdf:type owl:ObjectProperty ;
+    rdfs:label "has determinateness"@en ;
+    rdfs:comment "Relates Existence to its existent determinateness (Quality)."@en ;
+    rdfs:domain :Existence ;
+    rdfs:range :Quality .
+
+:isOpposedTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is opposed to"@en ;
+    rdfs:comment "Expresses the opposition between Something and Other based on their qualities."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:isNegativelyDeterminedWithin rdf:type owl:DatatypeProperty ;
+    rdfs:label "is negatively determined within"@en ;
+    rdfs:comment "Indicates that Something is negatively determined within itself."@en ;
+    rdfs:domain :Something ;
+    rdfs:range xsd:boolean .
+
+:containsNegation rdf:type owl:ObjectProperty ;
+    rdfs:label "contains negation"@en ;
+    rdfs:comment "Relates finite Something to the Infinite as its internal negation."@en ;
+    rdfs:domain :Finite ;
+    rdfs:range :Infinite .
+
+:resolvesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "resolves into"@en ;
+    rdfs:comment "Expresses the resolution of opposition into Being-for-itself."@en ;
+    rdfs:domain :Existence ;
+    rdfs:range :BeingForItself .
+
+# Relationships
+:Existence :hasDeterminateness :Quality .
+
+:Something :isOpposedTo :Other ;
+           :isNegativelyDeterminedWithin "true"^^xsd:boolean .
+
+:Finite :containsNegation :Infinite .
+
+:Existence :resolvesInto :BeingForItself .
+
+# Additional assertions
+:Existence rdfs:comment """
+Existence in Hegel's Logic is characterized by:
+1. Determinate being with existent determinateness (quality)
+2. Opposition between Something and Other
+3. Alterability and finitude
+4. Internal negative determination
+5. The presence of the infinite as a negation within the finite
+6. Resolution of opposition into Being-for-itself
+
+Existence is structured in three main divisions:
+a) Existence as such
+b) Something and other, finitude
+c) Qualitative infinity
+
+This concept represents a more concrete and determined stage in the dialectical development from Being to Essence.
+"""@en .
+
+:Quality rdfs:comment """
+Quality in the context of Existence:
+1. Constitutes the existent determinateness of Existence
+2. Enables opposition between Something and Other
+3. Makes Something alterable and finite
+4. Is the basis for the negative determination within Something
+"""@en .
+
+:BeingForItself rdfs:comment """
+Being-for-itself emerges as:
+1. The resolution of the opposition between finite and infinite
+2. A higher, more developed form of Existence
+3. The culmination of the dialectical movement within Existence
+4. A transition point towards further developments in Hegel's logical system
+"""@en .
+
+# OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Existence as Such"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Existence as Such presented in the Science of Logic"@en .
+
+# Class definitions
+:ExistenceAsSuch rdf:type owl:Class ;
+    rdfs:label "Existence as Such"@en ;
+    rdfs:comment "The fundamental form of Existence, characterized by its quality and self-reflection."@en .
+
+:Quality rdf:type owl:Class ;
+    rdfs:label "Quality"@en ;
+    rdfs:comment "The determinateness of Existence, manifesting as both reality and negation."@en .
+
+:Reality rdf:type owl:Class ;
+    rdfs:subClassOf :Quality ;
+    rdfs:label "Reality"@en ;
+    rdfs:comment "One determination of Quality in Existence, representing its positive aspect."@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:subClassOf :Quality ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "One determination of Quality in Existence, representing its negative aspect."@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment "The result of Existence's self-reflection, representing a more concrete form of existence."@en .
+
+# Property definitions
+:hasDeterminateness rdf:type owl:ObjectProperty ;
+    rdfs:label "has determinateness"@en ;
+    rdfs:comment "Relates Existence as Such to its Quality."@en ;
+    rdfs:domain :ExistenceAsSuch ;
+    rdfs:range :Quality .
+
+:manifestsAs rdf:type owl:ObjectProperty ;
+    rdfs:label "manifests as"@en ;
+    rdfs:comment "Expresses the dual manifestation of Quality as Reality and Negation."@en ;
+    rdfs:domain :Quality ;
+    rdfs:range :Reality, :Negation .
+
+:isReflectedInto rdf:type owl:ObjectProperty ;
+    rdfs:label "is reflected into"@en ;
+    rdfs:comment "Indicates the self-reflection of Existence in its determinacies."@en ;
+    rdfs:domain :ExistenceAsSuch ;
+    rdfs:range :ExistenceAsSuch .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Expresses the outcome of Existence's self-reflection as Something."@en ;
+    rdfs:domain :ExistenceAsSuch ;
+    rdfs:range :Something .
+
+# Relationships
+:ExistenceAsSuch :hasDeterminateness :Quality ;
+                 :isReflectedInto :ExistenceAsSuch ;
+                 :resultsIn :Something .
+
+:Quality :manifestsAs :Reality, :Negation .
+
+# Additional assertions
+:ExistenceAsSuch rdfs:comment """
+Existence as Such in Hegel's Logic is characterized by:
+1. Having Quality as its determinateness
+2. Quality manifesting as both Reality and Negation
+3. Self-reflection within its determinacies
+4. Resulting in the positing of Something as a more concrete form of existence
+
+This concept represents the initial, most abstract form of Existence, setting the stage for further dialectical development.
+"""@en .
+
+:Quality rdfs:comment """
+Quality in the context of Existence as Such:
+1. Constitutes the determinateness of Existence
+2. Has a dual nature, manifesting as both Reality and Negation
+3. Serves as the basis for Existence's self-reflection
+4. Plays a crucial role in the emergence of Something from Existence
+"""@en .
+
+:Something rdfs:comment """
+Something emerges as:
+1. The result of Existence's self-reflection
+2. A more concrete, determined form of Existence
+3. The transition point towards more complex forms of Existence
+4. The initial positing of a distinct existent within the dialectic of Existence
+"""@en .
+
+# OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Existence: Form"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Form in Existence as presented in the Science of Logic"@en .
+
+# Class definitions
+:Form rdf:type owl:Class ;
+    rdfs:label "Form"@en ;
+    rdfs:comment "The immediate and simple unity of being and nothing in existence."@en .
+
+:Becoming rdf:type owl:Class ;
+    rdfs:label "Becoming"@en ;
+    rdfs:comment "The process from which existence proceeds, representing the mediation that lies behind existence."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "One side of the determination in existence, representing its positive aspect."@en .
+
+:NonBeing rdf:type owl:Class ;
+    rdfs:label "Non-Being"@en ;
+    rdfs:comment "The other determination in existence, taken up into unity with being."@en .
+
+:Determinateness rdf:type owl:Class ;
+    rdfs:label "Determinateness"@en ;
+    rdfs:comment "The result of non-being taken up into being, constituting the concrete whole of existence."@en .
+
+# Property definitions
+:proceedsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "proceeds from"@en ;
+    rdfs:comment "Indicates the origin of existence in becoming."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Becoming .
+
+:hasUnityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "has unity of"@en ;
+    rdfs:comment "Expresses the unity of being and non-being in existence."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Being, :NonBeing .
+
+:appearsAs rdf:type owl:ObjectProperty ;
+    rdfs:label "appears as"@en ;
+    rdfs:comment "Indicates how existence initially appears in its development."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Being .
+
+:takenUpInto rdf:type owl:ObjectProperty ;
+    rdfs:label "taken up into"@en ;
+    rdfs:comment "Expresses how non-being is incorporated into being in existence."@en ;
+    rdfs:domain :NonBeing ;
+    rdfs:range :Being .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Indicates the outcome of the unity of being and non-being in existence."@en ;
+    rdfs:domain :Form ;
+    rdfs:range :Determinateness .
+
+# Relationships
+:Form :proceedsFrom :Becoming ;
+      :hasUnityOf :Being, :NonBeing ;
+      :appearsAs :Being ;
+      :resultsIn :Determinateness .
+
+:NonBeing :takenUpInto :Being .
+
+# Additional assertions
+:Form rdfs:comment """
+Form in Hegel's concept of Existence is characterized by:
+1. Proceeding from becoming
+2. Being the simple unity of being and non-being
+3. Having an immediate nature due to its simplicity
+4. Appearing initially as being, with non-being as a contrasting determination
+5. Representing existence (Dasein) rather than mere being
+6. Incorporating non-being into a unity with being
+7. Resulting in determinateness as the concrete whole of existence
+
+This concept represents the initial structure of existence, setting the stage for further dialectical development in Hegel's logic.
+"""@en .
+
+:Determinateness rdfs:comment """
+Determinateness in the context of Form and Existence:
+1. Results from non-being taken up into being
+2. Constitutes the concrete whole of existence
+3. Is in the form of being and immediacy
+4. Represents the initial specific character of existence
+"""@en .
+
+:Becoming rdfs:comment """
+Becoming in relation to Form and Existence:
+1. Is the process from which existence proceeds
+2. Represents the mediation that lies behind existence
+3. Has sublated itself in the emergence of existence
+4. Provides the background for the immediacy of existence's form
+"""@en .
+
+# OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Existence: Quality"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Quality in Existence as presented in the Science of Logic"@en .
+
+# Class definitions
+:Quality rdf:type owl:Class ;
+    rdfs:label "Quality"@en ;
+    rdfs:comment "The existent determinateness in existence, characterized by simplicity and immediacy."@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The state of being that unifies being and non-being, characterized by determinateness."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "One aspect of existence, unified with non-being."@en .
+
+:NonBeing rdf:type owl:Class ;
+    rdfs:label "Non-Being"@en ;
+    rdfs:comment "The other aspect of existence, unified with being."@en .
+
+:Determinateness rdf:type owl:Class ;
+    rdfs:label "Determinateness"@en ;
+    rdfs:comment "The specific character of existence, not yet detached from being."@en .
+
+# Property definitions
+:hasUnityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "has unity of"@en ;
+    rdfs:comment "Expresses the unity of being and non-being in existence."@en ;
+    rdfs:domain :Existence ;
+    rdfs:range :Being, :NonBeing .
+
+:isCharacterizedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "is characterized by"@en ;
+    rdfs:comment "Indicates the defining feature of existence."@en ;
+    rdfs:domain :Existence ;
+    rdfs:range :Determinateness .
+
+:manifestsAs rdf:type owl:ObjectProperty ;
+    rdfs:label "manifests as"@en ;
+    rdfs:comment "Expresses how determinateness appears in existence."@en ;
+    rdfs:domain :Determinateness ;
+    rdfs:range :Quality .
+
+:isInseparableFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "is inseparable from"@en ;
+    rdfs:comment "Indicates the inseparable connection between determinateness and being."@en ;
+    rdfs:domain :Determinateness ;
+    rdfs:range :Being .
+
+# Relationships
+:Existence :hasUnityOf :Being, :NonBeing ;
+           :isCharacterizedBy :Determinateness .
+
+:Determinateness :manifestsAs :Quality ;
+                 :isInseparableFrom :Being .
+
+# Additional assertions
+:Quality rdfs:comment """
+Quality in Hegel's concept of Existence is characterized by:
+1. Being the existent determinateness in existence
+2. Representing something totally simple and immediate
+3. Emerging from the unity of being and non-being in existence
+4. Being inseparable from being in the context of existence
+"""@en .
+
+:Determinateness rdfs:comment """
+Determinateness in the context of Quality and Existence:
+1. Is not yet detached from being and will never fully detach
+2. Forms the basis for all further determinations in existence
+3. Is in immediate unity with being, without differentiation
+4. Can be further determined as quantitative in addition to qualitative
+"""@en .
+
+# OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Existence: Something"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Something in Existence as presented in the Science of Logic"@en .
+
+# Class definitions
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment "The first negation of negation, representing simple existent self-reference in Hegel's Logic."@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The state of being that manifests in various forms, including life and thought."@en .
+
+:Subject rdf:type owl:Class ;
+    rdfs:label "Subject"@en ;
+    rdfs:comment "The developed form of Something, representing a higher intensity of self-reference."@en .
+
+:NegativeUnity rdf:type owl:Class ;
+    rdfs:label "Negative Unity"@en ;
+    rdfs:comment "The foundational principle of Something, representing its unity with itself through negation."@en .
+
+# Property definitions
+:isNegationOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is negation of"@en ;
+    rdfs:comment "Expresses the nature of Something as a negation of negation."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Something .
+
+:manifestsAs rdf:type owl:ObjectProperty ;
+    rdfs:label "manifests as"@en ;
+    rdfs:comment "Indicates the various forms in which Existence manifests."@en ;
+    rdfs:domain :Existence ;
+    rdfs:range :Something .
+
+:developsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "develops into"@en ;
+    rdfs:comment "Represents the development of Something into more determined forms."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Subject .
+
+:hasFoundationIn rdf:type owl:ObjectProperty ;
+    rdfs:label "has foundation in"@en ;
+    rdfs:comment "Indicates the foundational principle of Something."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :NegativeUnity .
+
+# Relationships
+:Something :isNegationOf :Something ;
+           :developsInto :Subject ;
+           :hasFoundationIn :NegativeUnity .
+
+:Existence :manifestsAs :Something .
+
+# Additional assertions
+:Something rdfs:comment """
+Something in Hegel's concept of Existence is characterized by:
+1. Being the first negation of negation
+2. Representing simple existent self-reference
+3. Manifesting in various forms of existence (life, thought)
+4. Being the beginning of the subject, though still indeterminate
+5. Developing further into more determined forms, ultimately reaching the intensity of the subject
+"""@en .
+
+:NegativeUnity rdfs:comment """
+Negative Unity in the context of Something:
+1. Forms the foundation of all determinations in Something
+2. Represents Something's unity with itself through negation
+3. Underlies the development of Something into more complex forms
+"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/finitude-ontology#> .
+
+:Finitude a owl:Class ;
+    rdfs:label "Finitude" ;
+    rdfs:comment "The essential nature of being limited or bounded, encompassing the dialectical relationship between something and other, and the inherent contradiction within existence." .
+
+:Something a owl:Class ;
+    rdfs:label "Something" ;
+    rdfs:comment "An entity with determinate existence, defined by its relationship to other and its own internal limit, embodying the tension between being-in-itself and being-for-other." .
+
+:Other a owl:Class ;
+    rdfs:label "Other" ;
+    rdfs:comment "The negation or counterpart to something, essential in defining the boundaries and nature of determinate existence through its dialectical relationship with something." .
+
+:Determination a owl:Class ;
+    rdfs:label "Determination" ;
+    rdfs:comment "The specific quality or character that defines the nature of something, arising from its relationship with other and its own internal limit." .
+
+:Limit a owl:Class ;
+    rdfs:label "Limit" ;
+    rdfs:comment "The boundary or point of transition between something and other, simultaneously defining and negating the existence of something." .
+
+:BeingForOther a owl:Class ;
+    rdfs:label "Being-for-Other" ;
+    rdfs:comment "The aspect of something's existence that is defined by its relationship to and difference from other, contrasting with its being-in-itself." .
+
+:hasOther a owl:ObjectProperty ;
+    rdfs:label "has other" ;
+    rdfs:comment "Relates something to its other, establishing the dialectical relationship that defines finitude." ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:hasDetermination a owl:ObjectProperty ;
+    rdfs:label "has determination" ;
+    rdfs:comment "Connects something to its specific determination, defining its essential nature within the context of finitude." ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasLimit a owl:ObjectProperty ;
+    rdfs:label "has limit" ;
+    rdfs:comment "Establishes the relationship between something and its limit, defining the boundary of its existence and its transition to other." ;
+    rdfs:domain :Something ;
+    rdfs:range :Limit .
+
+:hasBeingForOther a owl:ObjectProperty ;
+    rdfs:label "has being-for-other" ;
+    rdfs:comment "Relates something to its aspect of being-for-other, capturing the external relational nature of its existence." ;
+    rdfs:domain :Something ;
+    rdfs:range :BeingForOther .
+# OWL Schema
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://example.org/hegel-ontology#> .
+
+# Ontology definition
+<http://example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Finitude"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Finitude as presented in the Science of Logic"@en .
+
+# Class definitions
+:Finitude rdf:type owl:Class ;
+    rdfs:label "Finitude"@en ;
+    rdfs:comment "The concept of being limited or bounded, characterized by qualitative negation and the relationship between something and other."@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment "An entity with determinate existence, defined by its relation to other and its own limit."@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment "The counterpart to something, essential in defining the nature of finite existence."@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment "The specific quality or character that defines the nature of something within finitude."@en .
+
+:Limit rdf:type owl:Class ;
+    rdfs:label "Limit"@en ;
+    rdfs:comment "The boundary or point of transition between something and other, central to the concept of finitude."@en .
+
+:BeingForOther rdf:type owl:Class ;
+    rdfs:label "Being-for-Other"@en ;
+    rdfs:comment "The aspect of something's existence that is defined by its relation to other, contrasting with its being-in-itself."@en .
+
+:Infinity rdf:type owl:Class ;
+    rdfs:label "Infinity"@en ;
+    rdfs:comment "The concept that emerges from the sublation of finitude, representing the resolution of finite contradictions."@en .
+
+# Property definitions
+:hasOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has other"@en ;
+    rdfs:comment "Relates something to its other, establishing the dialectical relationship that defines finitude."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Connects something to its specific determination, defining its essential nature within finitude."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasLimit rdf:type owl:ObjectProperty ;
+    rdfs:label "has limit"@en ;
+    rdfs:comment "Establishes the relationship between something and its limit, defining the boundary of its existence."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Limit .
+
+:hasBeingForOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has being-for-other"@en ;
+    rdfs:comment "Relates something to its aspect of being-for-other, capturing the external relational nature of its existence."@en ;
+    rdfs:domain :Something ;
+    rdfs:range :BeingForOther .
+
+:transitionsTo rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions to"@en ;
+    rdfs:comment "Represents the dialectical movement from finitude to infinity through sublation."@en ;
+    rdfs:domain :Finitude ;
+    rdfs:range :Infinity .
+
+# Relationships
+:Finitude :transitionsTo :Infinity .
+
+:Something :hasOther :Other ;
+           :hasDetermination :Determination ;
+           :hasLimit :Limit ;
+           :hasBeingForOther :BeingForOther .
+
+# Additional assertions
+:Finitude rdfs:comment """
+Finitude in Hegel's Logic is characterized by:
+1. The extreme form of qualitative negation
+2. The dialectical relationship between something and other
+3. The presence of limit and determination in defining existence
+4. The contradiction between being-in-itself and being-for-other
+5. The inherent drive towards its own sublation and transition to infinity
+"""@en .
+
+:Limit rdfs:comment """
+Limit in the context of Finitude:
+1. Defines the boundary between something and other
+2. Is both immanent to something and external to it
+3. Mediates the relationship between something and other
+4. Plays a crucial role in the dialectical movement towards infinity
+"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Something and Other"@en ;
+    rdfs:comment "An ontological representation of Hegel's concept of Something and Other as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In Hegel's dialectic, Something is a determinate being that exists in relation to Other. It is characterized by:
+1. Being an immediate existent
+2. Having a quality that distinguishes it from Other
+3. Possessing both being-in-itself and being-for-other
+4. Containing its own negation (the Other) within itself"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment """The Other in Hegel's dialectic is:
+1. Also an immediate existent
+2. The negation or counterpart to Something
+3. Essential in defining the nature of Something through opposition
+4. Itself a Something in relation to other Others"""@en .
+
+:Quality rdf:type owl:Class ;
+    rdfs:label "Quality"@en ;
+    rdfs:comment "The determinateness that defines Something and distinguishes it from Other"@en .
+
+:BeingInItself rdf:type owl:Class ;
+    rdfs:label "Being-in-itself"@en ;
+    rdfs:comment "The intrinsic nature or essence of Something, independent of its relations"@en .
+
+:BeingForOther rdf:type owl:Class ;
+    rdfs:label "Being-for-other"@en ;
+    rdfs:comment "The aspect of Something that is defined by its relation to Other"@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment "The specific character or quality that defines Something in its relation to Other"@en .
+
+:Limit rdf:type owl:Class ;
+    rdfs:label "Limit"@en ;
+    rdfs:comment "The boundary where Something ends and Other begins, defining both entities"@en .
+
+:hasQuality rdf:type owl:ObjectProperty ;
+    rdfs:label "has quality"@en ;
+    rdfs:comment "Relates Something to its defining Quality"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Quality .
+
+:hasOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has other"@en ;
+    rdfs:comment "Relates Something to its corresponding Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:hasBeingInItself rdf:type owl:ObjectProperty ;
+    rdfs:label "has being-in-itself"@en ;
+    rdfs:comment "Relates Something to its intrinsic nature"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :BeingInItself .
+
+:hasBeingForOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has being-for-other"@en ;
+    rdfs:comment "Relates Something to its aspect defined by relation to Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :BeingForOther .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates Something to its specific Determination"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasLimit rdf:type owl:ObjectProperty ;
+    rdfs:label "has limit"@en ;
+    rdfs:comment "Relates Something to its Limit, which also defines its relation to Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Limit .
+
+:isNegationOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is negation of"@en ;
+    rdfs:comment "Expresses the reciprocal negation between Something and Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:Something
+    :hasOther :Other ;
+    :hasQuality :Quality ;
+    :hasBeingInItself :BeingInItself ;
+    :hasBeingForOther :BeingForOther ;
+    :hasDetermination :Determination ;
+    :hasLimit :Limit ;
+    :isNegationOf :Other .
+
+:Other
+    :hasOther :Something ;
+    :hasQuality :Quality ;
+    :hasBeingInItself :BeingInItself ;
+    :hasBeingForOther :BeingForOther ;
+    :hasDetermination :Determination ;
+    :hasLimit :Limit ;
+    :isNegationOf :Something .
+
+:Limit rdfs:comment """The Limit in Hegel's concept of Something and Other:
+1. Defines the boundary between Something and Other
+2. Is both internal to Something and external (relating to Other)
+3. Represents the point where Something transitions into Other
+4. Is essential in defining the finite nature of both Something and Other"""@en .
+
+:Determination rdfs:comment """Determination in the context of Something and Other:
+1. Represents the specific quality that defines Something
+2. Arises from the relation between Something and Other
+3. Is both internal to Something and influenced by its relation to Other
+4. Plays a crucial role in the dialectical development of Something"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Something and Other - Part 1"@en ;
+    rdfs:comment "An ontological representation of the first part of Hegel's concept of Something and Other as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In the initial characterization of Hegel's dialectic, Something is:
+1. An immediate existent
+2. Indifferent to Other initially
+3. Qualitatively distinct from Other
+4. Defined partly by its relation to Other"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment """The Other in the initial stage of Hegel's dialectic is:
+1. Also an immediate existent
+2. Initially indifferent to Something
+3. Qualitatively distinct from Something
+4. Equally a 'Something' in its own right"""@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The state of being as an immediate, qualitative entity"@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The principle of distinction or difference that initially falls outside both Something and Other"@en .
+
+:isExistent rdf:type owl:ObjectProperty ;
+    rdfs:label "is existent"@en ;
+    rdfs:comment "Relates Something or Other to their state of Existence"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Existence .
+
+:hasOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has other"@en ;
+    rdfs:comment "Relates Something to its corresponding Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:isInitiallyIndifferentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is initially indifferent to"@en ;
+    rdfs:comment "Expresses the initial indifference between Something and Other"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :Other)] .
+
+:hasNegation rdf:type owl:ObjectProperty ;
+    rdfs:label "has negation"@en ;
+    rdfs:comment "Relates Something or Other to the principle of Negation that initially falls outside them"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Negation .
+
+:Something
+    :isExistent :Existence ;
+    :hasOther :Other ;
+    :isInitiallyIndifferentTo :Other ;
+    :hasNegation :Negation .
+
+:Other
+    :isExistent :Existence ;
+    :hasOther :Something ;
+    :isInitiallyIndifferentTo :Something ;
+    :hasNegation :Negation .
+
+:Existence rdfs:comment """Existence in the context of Something and Other:
+1. Represents the immediate, qualitative being of both Something and Other
+2. Is the foundation upon which the dialectic of Something and Other unfolds
+3. Is characterized by indifference and distinction simultaneously"""@en .
+
+:Negation rdfs:comment """Negation in the initial stage of Something and Other:
+1. Initially falls outside both Something and Other
+2. Serves as the principle of distinction between Something and Other
+3. Will later be internalized in the dialectical development of Something and Other"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Something and Other - Part 2"@en ;
+    rdfs:comment "An ontological representation of the second part of Hegel's concept of Something and Other as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In the further development of Hegel's dialectic, Something is characterized by:
+1. Being-in-itself (intrinsic nature)
+2. Being-for-other (relational aspect)
+3. Determination through its relation to Other
+4. Containing negation within itself"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment """The Other in this stage of Hegel's dialectic is:
+1. Also characterized by being-in-itself and being-for-other
+2. Essential in defining Something through mutual determination
+3. Itself a Something in relation to other Others
+4. Containing its own negation"""@en .
+
+:BeingInItself rdf:type owl:Class ;
+    rdfs:label "Being-in-itself"@en ;
+    rdfs:comment "The intrinsic nature or essence of Something, independent of its relations"@en .
+
+:BeingForOther rdf:type owl:Class ;
+    rdfs:label "Being-for-other"@en ;
+    rdfs:comment "The aspect of Something that is defined by its relation to Other"@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment "The specific character or quality that defines Something in its relation to Other"@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The principle of distinction or difference that is now internalized within Something and Other"@en .
+
+:hasBeingInItself rdf:type owl:ObjectProperty ;
+    rdfs:label "has being-in-itself"@en ;
+    rdfs:comment "Relates Something or Other to its intrinsic nature"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :BeingInItself .
+
+:hasBeingForOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has being-for-other"@en ;
+    rdfs:comment "Relates Something or Other to its aspect defined by relation to the other"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :BeingForOther .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates Something or Other to its specific Determination"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Determination .
+
+:containsNegation rdf:type owl:ObjectProperty ;
+    rdfs:label "contains negation"@en ;
+    rdfs:comment "Expresses that Something or Other now contains Negation within itself"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Negation .
+
+:mutuallyDetermines rdf:type owl:ObjectProperty ;
+    rdfs:label "mutually determines"@en ;
+    rdfs:comment "Expresses the reciprocal determination between Something and Other"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :Other)] .
+
+:Something
+    :hasBeingInItself :BeingInItself ;
+    :hasBeingForOther :BeingForOther ;
+    :hasDetermination :Determination ;
+    :containsNegation :Negation ;
+    :mutuallyDetermines :Other .
+
+:Other
+    :hasBeingInItself :BeingInItself ;
+    :hasBeingForOther :BeingForOther ;
+    :hasDetermination :Determination ;
+    :containsNegation :Negation ;
+    :mutuallyDetermines :Something .
+
+:Determination rdfs:comment """Determination in this stage of Something and Other:
+1. Arises from the relation between Something and Other
+2. Is both internal to Something/Other and influenced by their mutual relation
+3. Represents the unity of being-in-itself and being-for-other
+4. Is essential in defining the specific nature of Something and Other"""@en .
+
+:Negation rdfs:comment """Negation in the further development of Something and Other:
+1. Is now internalized within both Something and Other
+2. Serves as the principle of self-distinction and relation to Other
+3. Is essential in the dialectical development of Something and Other
+4. Represents the unity-in-difference of Something and Other"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Something and Other - Part 3"@en ;
+    rdfs:comment "An ontological representation of the third part of Hegel's concept of Something and Other as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In the final stage of Hegel's dialectic of Something and Other:
+1. Something is defined by its limit
+2. It contains its own negation (the Other) within itself
+3. It is in a state of becoming, transitioning between itself and Other
+4. It achieves a more complex unity with Other through their mutual limit"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment """The Other in the final stage of this dialectic:
+1. Is also defined by the same limit as Something
+2. Contains its own negation (Something) within itself
+3. Participates in the state of becoming with Something
+4. Forms a complex unity with Something through their shared limit"""@en .
+
+:Limit rdf:type owl:Class ;
+    rdfs:label "Limit"@en ;
+    rdfs:comment """The Limit in Hegel's dialectic:
+1. Defines both Something and Other
+2. Is the point where Something transitions into Other and vice versa
+3. Represents the unity and distinction of Something and Other
+4. Is both internal and external to Something and Other"""@en .
+
+:Becoming rdf:type owl:Class ;
+    rdfs:label "Becoming"@en ;
+    rdfs:comment "The process of transition between Something and Other, mediated by their shared Limit"@en .
+
+:Unity rdf:type owl:Class ;
+    rdfs:label "Unity"@en ;
+    rdfs:comment "The complex unity achieved by Something and Other through their mutual definition and shared Limit"@en .
+
+:hasLimit rdf:type owl:ObjectProperty ;
+    rdfs:label "has limit"@en ;
+    rdfs:comment "Relates Something or Other to their defining Limit"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Limit .
+
+:participatesIn rdf:type owl:ObjectProperty ;
+    rdfs:label "participates in"@en ;
+    rdfs:comment "Relates Something or Other to the process of Becoming"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Becoming .
+
+:formsUnityWith rdf:type owl:ObjectProperty ;
+    rdfs:label "forms unity with"@en ;
+    rdfs:comment "Expresses the complex unity formed between Something and Other"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :Other)] .
+
+:containsWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "contains within"@en ;
+    rdfs:comment "Expresses that Something contains Other within itself and vice versa"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :Other)] .
+
+:mediates rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates"@en ;
+    rdfs:comment "Expresses how the Limit mediates the relationship between Something and Other"@en ;
+    rdfs:domain :Limit ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :Other)] .
+
+:Something
+    :hasLimit :Limit ;
+    :participatesIn :Becoming ;
+    :formsUnityWith :Other ;
+    :containsWithin :Other .
+
+:Other
+    :hasLimit :Limit ;
+    :participatesIn :Becoming ;
+    :formsUnityWith :Something ;
+    :containsWithin :Something .
+
+:Limit
+    :mediates :Something ;
+    :mediates :Other .
+
+:Becoming rdfs:comment """Becoming in the context of Something and Other:
+1. Represents the dynamic transition between Something and Other
+2. Is mediated by their shared Limit
+3. Expresses the dialectical nature of their relationship
+4. Leads to a more complex understanding of both Something and Other"""@en .
+
+:Unity rdfs:comment """The Unity of Something and Other:
+1. Is achieved through their mutual definition and shared Limit
+2. Represents a higher-level synthesis in the dialectic
+3. Preserves the distinction between Something and Other while acknowledging their interconnectedness
+4. Forms the basis for further dialectical development"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Determination, Constitution, and Limit"@en ;
+    rdfs:comment "An ontological representation of the introductory concepts in Hegel's discussion of Determination, Constitution, and Limit as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In the context of determination, constitution, and limit, Something is:
+1. Characterized by its determination and limit
+2. Possessing both being-in-itself and being-for-other
+3. Defined by its relation to Other while maintaining its own identity
+4. Subject to alteration through its constitution"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment "The counterpart to Something, essential in defining its determination and limit"@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment """Determination in Hegel's logic:
+1. Represents the specific quality or character of Something
+2. Arises from the relation between Something and Other
+3. Is associated with being-in-itself
+4. Contributes to the definition of Something's limit"""@en .
+
+:Constitution rdf:type owl:Class ;
+    rdfs:label "Constitution"@en ;
+    rdfs:comment """Constitution in Hegel's logic:
+1. Represents the changeable aspect of Something
+2. Is associated with being-for-other
+3. Allows for alteration while Something maintains its determination
+4. Mediates between Something's intrinsic nature and its external relations"""@en .
+
+:Limit rdf:type owl:Class ;
+    rdfs:label "Limit"@en ;
+    rdfs:comment """Limit in Hegel's logic:
+1. Defines the boundary between Something and Other
+2. Is both immanent to Something and a point of relation to Other
+3. Unifies determination and constitution
+4. Represents the finitude of Something"""@en .
+
+:BeingInItself rdf:type owl:Class ;
+    rdfs:label "Being-in-itself"@en ;
+    rdfs:comment "The intrinsic nature or essence of Something, associated with its determination"@en .
+
+:BeingForOther rdf:type owl:Class ;
+    rdfs:label "Being-for-other"@en ;
+    rdfs:comment "The relational aspect of Something, associated with its constitution and its interaction with Other"@en .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates Something to its specific Determination"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasConstitution rdf:type owl:ObjectProperty ;
+    rdfs:label "has constitution"@en ;
+    rdfs:comment "Relates Something to its Constitution"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Constitution .
+
+:hasLimit rdf:type owl:ObjectProperty ;
+    rdfs:label "has limit"@en ;
+    rdfs:comment "Relates Something to its Limit"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Limit .
+
+:relatesTo rdf:type owl:ObjectProperty ;
+    rdfs:label "relates to"@en ;
+    rdfs:comment "Expresses the relation between Something and Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Expresses how Limit unifies Determination and Constitution"@en ;
+    rdfs:domain :Limit ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Determination :Constitution)] .
+
+:Something
+    :hasDetermination :Determination ;
+    :hasConstitution :Constitution ;
+    :hasLimit :Limit ;
+    :relatesTo :Other .
+
+:Limit
+    :unifies :Determination ;
+    :unifies :Constitution .
+
+:Determination rdfs:comment """The role of Determination:
+1. Defines the essential nature of Something
+2. Is closely associated with being-in-itself
+3. Contributes to the establishment of Something's limit
+4. Remains constant through alterations in Something's constitution"""@en .
+
+:Constitution rdfs:comment """The role of Constitution:
+1. Represents the mutable aspect of Something
+2. Is associated with being-for-other and Something's relations
+3. Allows for change and alteration in Something
+4. Mediates between Something's determination and its external interactions"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Determination - Segment 1"@en ;
+    rdfs:comment "An ontological representation of the first segment in Hegel's discussion of Determination as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In this deeper exploration of determination, Something is characterized by:
+1. Having an in-itself that is distinguished from its being-for-other
+2. Possessing determinateness that belongs to its in-itself
+3. Preserving itself in its relation to Other
+4. Maintaining self-equality while involved with Other"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment "The counterpart to Something, involved in defining Something's determination"@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment """Determination in this segment is characterized as:
+1. The quality by which Something abides in its existence
+2. The means by which Something preserves itself in relation to Other
+3. An affirmative determinateness
+4. The in-itself by which Something maintains its self-equality"""@en .
+
+:InItself rdf:type owl:Class ;
+    rdfs:label "In-itself"@en ;
+    rdfs:comment "The intrinsic nature of Something, to which determination belongs"@en .
+
+:BeingForOther rdf:type owl:Class ;
+    rdfs:label "Being-for-other"@en ;
+    rdfs:comment "The aspect of Something that is involved with Other, distinguished from its in-itself"@en .
+
+:SelfEquality rdf:type owl:Class ;
+    rdfs:label "Self-equality"@en ;
+    rdfs:comment "The state of Something maintaining its identity despite involvement with Other"@en .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates Something to its Determination"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasInItself rdf:type owl:ObjectProperty ;
+    rdfs:label "has in-itself"@en ;
+    rdfs:comment "Relates Something to its intrinsic nature or In-itself"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :InItself .
+
+:hasBeingForOther rdf:type owl:ObjectProperty ;
+    rdfs:label "has being-for-other"@en ;
+    rdfs:comment "Relates Something to its aspect of Being-for-other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :BeingForOther .
+
+:maintainsSelfEquality rdf:type owl:ObjectProperty ;
+    rdfs:label "maintains self-equality"@en ;
+    rdfs:comment "Expresses how Something maintains its identity through Self-equality"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :SelfEquality .
+
+:involvesRelationTo rdf:type owl:ObjectProperty ;
+    rdfs:label "involves relation to"@en ;
+    rdfs:comment "Expresses the involvement of Something with Other"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:belongsTo rdf:type owl:ObjectProperty ;
+    rdfs:label "belongs to"@en ;
+    rdfs:comment "Expresses that Determination belongs to the In-itself of Something"@en ;
+    rdfs:domain :Determination ;
+    rdfs:range :InItself .
+
+:preservesAgainst rdf:type owl:ObjectProperty ;
+    rdfs:label "preserves against"@en ;
+    rdfs:comment "Expresses how Determination preserves Something against Other"@en ;
+    rdfs:domain :Determination ;
+    rdfs:range :Other .
+
+:Something
+    :hasDetermination :Determination ;
+    :hasInItself :InItself ;
+    :hasBeingForOther :BeingForOther ;
+    :maintainsSelfEquality :SelfEquality ;
+    :involvesRelationTo :Other .
+
+:Determination
+    :belongsTo :InItself ;
+    :preservesAgainst :Other .
+
+:InItself rdfs:comment """The In-itself in this context:
+1. Is the aspect of Something to which Determination belongs
+2. Is distinguished from Being-for-other
+3. Represents the intrinsic nature of Something
+4. Is preserved through Determination in relation to Other"""@en .
+
+:Determination rdfs:comment """The role of Determination in this segment:
+1. It is the affirmative quality by which Something abides in its existence
+2. It allows Something to preserve itself while involved with Other
+3. It belongs to the In-itself of Something
+4. It enables Something to maintain its self-equality in relation to Other"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Determination and Constitution - Segment 2"@en ;
+    rdfs:comment "An ontological representation of the second segment in Hegel's discussion of Determination, Constitution, and Limit as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In this segment, Something is characterized by:
+1. Having both determination and constitution
+2. Being caught up in external influences and relationships
+3. Possessing a quality that makes it susceptible to externality
+4. Being alterable through its constitution"""@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment """Determination in this segment is:
+1. Contrasted with constitution
+2. Associated with the intrinsic nature of Something
+3. Relatively stable compared to constitution"""@en .
+
+:Constitution rdf:type owl:Class ;
+    rdfs:label "Constitution"@en ;
+    rdfs:comment """Constitution in this segment is characterized as:
+1. The aspect of Something that is susceptible to external influences
+2. The way in which Something is caught up in external relationships
+3. The basis for Something's alterability
+4. A seemingly accidental aspect of Something"""@en .
+
+:ExternalInfluence rdf:type owl:Class ;
+    rdfs:label "External Influence"@en ;
+    rdfs:comment "The external factors that affect the constitution of Something"@en .
+
+:ExternalRelationship rdf:type owl:Class ;
+    rdfs:label "External Relationship"@en ;
+    rdfs:comment "The relationships that Something has with entities outside itself"@en .
+
+:Alterability rdf:type owl:Class ;
+    rdfs:label "Alterability"@en ;
+    rdfs:comment "The capacity of Something to change through its constitution"@en .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates Something to its Determination"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasConstitution rdf:type owl:ObjectProperty ;
+    rdfs:label "has constitution"@en ;
+    rdfs:comment "Relates Something to its Constitution"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Constitution .
+
+:isInfluencedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "is influenced by"@en ;
+    rdfs:comment "Expresses how Something is influenced by external factors"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :ExternalInfluence .
+
+:hasRelationshipWith rdf:type owl:ObjectProperty ;
+    rdfs:label "has relationship with"@en ;
+    rdfs:comment "Expresses the external relationships of Something"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :ExternalRelationship .
+
+:possessesAlterability rdf:type owl:ObjectProperty ;
+    rdfs:label "possesses alterability"@en ;
+    rdfs:comment "Relates Something to its capacity for change"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Alterability .
+
+:mediatesBetween rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates between"@en ;
+    rdfs:comment "Expresses how Constitution mediates between Something and external factors"@en ;
+    rdfs:domain :Constitution ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :ExternalInfluence)] .
+
+:Something
+    :hasDetermination :Determination ;
+    :hasConstitution :Constitution ;
+    :isInfluencedBy :ExternalInfluence ;
+    :hasRelationshipWith :ExternalRelationship ;
+    :possessesAlterability :Alterability .
+
+:Constitution
+    :mediatesBetween :Something ;
+    :mediatesBetween :ExternalInfluence .
+
+:Determination rdfs:comment """The role of Determination in this segment:
+1. It represents the more stable aspect of Something
+2. It is contrasted with the changeability of Constitution
+3. It is associated with the intrinsic nature of Something
+4. It is less affected by external influences compared to Constitution"""@en .
+
+:Constitution rdfs:comment """The role of Constitution in this segment:
+1. It represents the changeable aspect of Something
+2. It is the basis for Something's susceptibility to external influences
+3. It allows for the alterability of Something
+4. It mediates between Something's intrinsic nature and external factors"""@en .
+
+:ExternalInfluence rdfs:comment """External Influences in this context:
+1. Affect the Constitution of Something
+2. Contribute to the alterability of Something
+3. Are mediated through the Constitution
+4. Contrast with the stability provided by Determination"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Determination, Constitution, and Limit - Segment 3"@en ;
+    rdfs:comment "An ontological representation of the third segment in Hegel's discussion of Determination, Constitution, and Limit as presented in the Science of Logic"@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment """In this synthesizing segment, Something is characterized by:
+1. Having both determination and constitution unified through its limit
+2. Possessing a limit that is both internal and external
+3. Being defined by its limit in relation to Other
+4. Containing the possibility of its own transcendence"""@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment """Determination in this synthesis:
+1. Is integrated with constitution through the concept of limit
+2. Represents the internal aspect of Something's limit
+3. Contributes to the definition of Something's being"""@en .
+
+:Constitution rdf:type owl:Class ;
+    rdfs:label "Constitution"@en ;
+    rdfs:comment """Constitution in this synthesis:
+1. Is integrated with determination through the concept of limit
+2. Represents the external aspect of Something's limit
+3. Allows for Something's interaction with Other"""@en .
+
+:Limit rdf:type owl:Class ;
+    rdfs:label "Limit"@en ;
+    rdfs:comment """Limit in this synthesis:
+1. Unifies determination and constitution
+2. Is both internal to Something and a point of relation to Other
+3. Defines Something while also being the point of its potential transcendence
+4. Represents the finitude of Something"""@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment "The counterpart to Something, essential in defining its limit"@en .
+
+:Finitude rdf:type owl:Class ;
+    rdfs:label "Finitude"@en ;
+    rdfs:comment "The state of being limited or bounded, characteristic of Something"@en .
+
+:Transcendence rdf:type owl:Class ;
+    rdfs:label "Transcendence"@en ;
+    rdfs:comment "The potential for Something to go beyond its current limit"@en .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates Something to its Determination"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Determination .
+
+:hasConstitution rdf:type owl:ObjectProperty ;
+    rdfs:label "has constitution"@en ;
+    rdfs:comment "Relates Something to its Constitution"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Constitution .
+
+:hasLimit rdf:type owl:ObjectProperty ;
+    rdfs:label "has limit"@en ;
+    rdfs:comment "Relates Something to its Limit"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Limit .
+
+:relatesTo rdf:type owl:ObjectProperty ;
+    rdfs:label "relates to"@en ;
+    rdfs:comment "Expresses the relation between Something and Other through its Limit"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Other .
+
+:exhibitsFinitude rdf:type owl:ObjectProperty ;
+    rdfs:label "exhibits finitude"@en ;
+    rdfs:comment "Expresses that Something exhibits Finitude through its Limit"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Finitude .
+
+:containsPotentialFor rdf:type owl:ObjectProperty ;
+    rdfs:label "contains potential for"@en ;
+    rdfs:comment "Expresses that Something contains the potential for Transcendence"@en ;
+    rdfs:domain :Something ;
+    rdfs:range :Transcendence .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Expresses how Limit unifies Determination and Constitution"@en ;
+    rdfs:domain :Limit ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Determination :Constitution)] .
+
+:Something
+    :hasDetermination :Determination ;
+    :hasConstitution :Constitution ;
+    :hasLimit :Limit ;
+    :relatesTo :Other ;
+    :exhibitsFinitude :Finitude ;
+    :containsPotentialFor :Transcendence .
+
+:Limit
+    :unifies :Determination ;
+    :unifies :Constitution .
+
+:Determination rdfs:comment """The role of Determination in this synthesis:
+1. It is integrated with Constitution through the concept of Limit
+2. It represents the internal aspect of Something's being
+3. It contributes to the definition of Something's Limit
+4. It is part of what makes Something finite"""@en .
+
+:Constitution rdfs:comment """The role of Constitution in this synthesis:
+1. It is integrated with Determination through the concept of Limit
+2. It represents the external aspect of Something's being
+3. It allows for Something's interaction with Other through the Limit
+4. It contributes to the potential for Something's Transcendence"""@en .
+
+:Limit rdfs:comment """The central role of Limit in this synthesis:
+1. It unifies Determination and Constitution
+2. It is both internal to Something and a point of relation to Other
+3. It defines Something while also being the point of its potential Transcendence
+4. It represents the Finitude of Something while containing the seed of its overcoming"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Finitude - Introduction"@en ;
+    rdfs:comment "An ontological representation of the introductory concepts in Hegel's discussion of Finitude as presented in the Science of Logic"@en .
+
+:Finitude rdf:type owl:Class ;
+    rdfs:label "Finitude"@en ;
+    rdfs:comment """Finitude in Hegel's logic is characterized by:
+1. Being the result of the dialectic of determination, constitution, and limit
+2. Representing the qualitative negation driven to its extreme
+3. Containing within itself the seeds of its own transcendence
+4. Being the unity of something and other in their limitation"""@en .
+
+:Something rdf:type owl:Class ;
+    rdfs:label "Something"@en ;
+    rdfs:comment "An entity characterized by finitude, possessing determination, constitution, and limit"@en .
+
+:Other rdf:type owl:Class ;
+    rdfs:label "Other"@en ;
+    rdfs:comment "The counterpart to Something, also characterized by finitude"@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment "The specific quality that defines Something, now integrated into the concept of finitude"@en .
+
+:Constitution rdf:type owl:Class ;
+    rdfs:label "Constitution"@en ;
+    rdfs:comment "The changeable aspect of Something, contributing to its finite nature"@en .
+
+:Limit rdf:type owl:Class ;
+    rdfs:label "Limit"@en ;
+    rdfs:comment "The boundary that defines Something and relates it to Other, crucial in the concept of finitude"@en .
+
+:QualitativeNegation rdf:type owl:Class ;
+    rdfs:label "Qualitative Negation"@en ;
+    rdfs:comment "The process of negation that characterizes finitude, driven to its extreme"@en .
+
+:Transcendence rdf:type owl:Class ;
+    rdfs:label "Transcendence"@en ;
+    rdfs:comment "The potential within finitude to go beyond its own limitations"@en .
+
+:isCharacterizedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "is characterized by"@en ;
+    rdfs:comment "Relates Something or Other to their finite nature"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Something :Other)] ;
+    rdfs:range :Finitude .
+
+:involves rdf:type owl:ObjectProperty ;
+    rdfs:label "involves"@en ;
+    rdfs:comment "Relates Finitude to its constituent concepts"@en ;
+    rdfs:domain :Finitude ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Determination :Constitution :Limit)] .
+
+:manifestsAs rdf:type owl:ObjectProperty ;
+    rdfs:label "manifests as"@en ;
+    rdfs:comment "Relates Finitude to its manifestation as Qualitative Negation"@en ;
+    rdfs:domain :Finitude ;
+    rdfs:range :QualitativeNegation .
+
+:containsPotentialFor rdf:type owl:ObjectProperty ;
+    rdfs:label "contains potential for"@en ;
+    rdfs:comment "Expresses that Finitude contains the potential for Transcendence"@en ;
+    rdfs:domain :Finitude ;
+    rdfs:range :Transcendence .
+
+:unites rdf:type owl:ObjectProperty ;
+    rdfs:label "unites"@en ;
+    rdfs:comment "Expresses how Finitude unites Something and Other"@en ;
+    rdfs:domain :Finitude ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Something :Other)] .
+
+:Finitude
+    :involves :Determination ;
+    :involves :Constitution ;
+    :involves :Limit ;
+    :manifestsAs :QualitativeNegation ;
+    :containsPotentialFor :Transcendence ;
+    :unites :Something ;
+    :unites :Other .
+
+:Something
+    :isCharacterizedBy :Finitude .
+
+:Other
+    :isCharacterizedBy :Finitude .
+
+:Finitude rdfs:comment """The nature of Finitude in this introduction:
+1. It is the result of the dialectical development of determination, constitution, and limit
+2. It represents the extreme form of qualitative negation
+3. It contains within itself the potential for its own transcendence
+4. It unifies Something and Other in their mutual limitation
+5. It is a more concrete and developed concept compared to earlier categories"""@en .
+
+:QualitativeNegation rdfs:comment """Qualitative Negation in the context of Finitude:
+1. It is the process by which Finitude is characterized
+2. It represents the extreme form of negation in the dialectic
+3. It distinguishes Finitude from earlier, more abstract categories
+4. It is crucial in understanding the nature of finite entities"""@en .
+
+:Transcendence rdfs:comment """The role of Transcendence in Finitude:
+1. It represents the inherent potential within Finitude to go beyond itself
+2. It is contained within Finitude as a seed or possibility
+3. It points towards the dialectical development beyond Finitude
+4. It is crucial for understanding the dynamic nature of Hegel's ontology"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of the Immediacy of Finitude"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of the immediate aspect of finitude as presented in the Science of Logic"@en .
+
+:ImmediateFinitude rdf:type owl:Class ;
+    rdfs:label "Immediate Finitude"@en ;
+    rdfs:comment """The immediate aspect of finitude in Hegel's logic is characterized by:
+1. Being the direct, apparent nature of finite things
+2. Containing an inherent contradiction between existence and non-being
+3. Manifesting as a qualitative limit or boundary
+4. Implying an inevitable tendency towards ceasing-to-be"""@en .
+
+:FiniteThing rdf:type owl:Class ;
+    rdfs:label "Finite Thing"@en ;
+    rdfs:comment "An entity characterized by immediate finitude, existing within qualitative limits"@en .
+
+:QualitativeLimit rdf:type owl:Class ;
+    rdfs:label "Qualitative Limit"@en ;
+    rdfs:comment "The boundary or limitation that defines the nature of a finite thing"@en .
+
+:InherentContradiction rdf:type owl:Class ;
+    rdfs:label "Inherent Contradiction"@en ;
+    rdfs:comment "The tension within finite things between their existence and their tendency towards non-being"@en .
+
+:CeasingToBe rdf:type owl:Class ;
+    rdfs:label "Ceasing-to-be"@en ;
+    rdfs:comment "The inevitable process of finite things coming to an end or transitioning into non-being"@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The principle of limitation and contradiction within finite things"@en .
+
+:ApparentSelfSubsistence rdf:type owl:Class ;
+    rdfs:label "Apparent Self-Subsistence"@en ;
+    rdfs:comment "The seeming independence and self-sufficiency of finite things in their immediate appearance"@en .
+
+:isCharacterizedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "is characterized by"@en ;
+    rdfs:comment "Relates a Finite Thing to Immediate Finitude"@en ;
+    rdfs:domain :FiniteThing ;
+    rdfs:range :ImmediateFinitude .
+
+:hasQualitativeLimit rdf:type owl:ObjectProperty ;
+    rdfs:label "has qualitative limit"@en ;
+    rdfs:comment "Relates a Finite Thing to its Qualitative Limit"@en ;
+    rdfs:domain :FiniteThing ;
+    rdfs:range :QualitativeLimit .
+
+:containsContradiction rdf:type owl:ObjectProperty ;
+    rdfs:label "contains contradiction"@en ;
+    rdfs:comment "Expresses that a Finite Thing contains an Inherent Contradiction"@en ;
+    rdfs:domain :FiniteThing ;
+    rdfs:range :InherentContradiction .
+
+:tendsTowads rdf:type owl:ObjectProperty ;
+    rdfs:label "tends towards"@en ;
+    rdfs:comment "Expresses the tendency of a Finite Thing towards Ceasing-to-be"@en ;
+    rdfs:domain :FiniteThing ;
+    rdfs:range :CeasingToBe .
+
+:involvesNegation rdf:type owl:ObjectProperty ;
+    rdfs:label "involves negation"@en ;
+    rdfs:comment "Relates Immediate Finitude to the principle of Negation"@en ;
+    rdfs:domain :ImmediateFinitude ;
+    rdfs:range :Negation .
+
+:exhibitsApparentSelfSubsistence rdf:type owl:ObjectProperty ;
+    rdfs:label "exhibits apparent self-subsistence"@en ;
+    rdfs:comment "Relates a Finite Thing to its Apparent Self-Subsistence"@en ;
+    rdfs:domain :FiniteThing ;
+    rdfs:range :ApparentSelfSubsistence .
+
+:FiniteThing
+    :isCharacterizedBy :ImmediateFinitude ;
+    :hasQualitativeLimit :QualitativeLimit ;
+    :containsContradiction :InherentContradiction ;
+    :tendsTowads :CeasingToBe ;
+    :exhibitsApparentSelfSubsistence :ApparentSelfSubsistence .
+
+:ImmediateFinitude
+    :involvesNegation :Negation .
+
+:ImmediateFinitude rdfs:comment """The nature of Immediate Finitude:
+1. It represents the direct, apparent aspect of finite things
+2. It involves a qualitative limit that defines the nature of finite things
+3. It contains an inherent contradiction between existence and non-being
+4. It implies an inevitable tendency towards ceasing-to-be
+5. It involves negation as a principle of limitation and contradiction"""@en .
+
+:InherentContradiction rdfs:comment """The Inherent Contradiction in Immediate Finitude:
+1. It represents the tension between existence and non-being in finite things
+2. It is the source of the dynamic nature of finite things
+3. It manifests in the apparent self-subsistence and inevitable ceasing-to-be of finite things
+4. It is crucial for understanding the dialectical nature of finitude"""@en .
+
+:ApparentSelfSubsistence rdfs:comment """Apparent Self-Subsistence in Immediate Finitude:
+1. It represents the seeming independence of finite things in their immediate appearance
+2. It stands in tension with the inherent tendency towards ceasing-to-be
+3. It is part of the contradiction that characterizes immediate finitude
+4. It is ultimately revealed as illusory through the dialectical development"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Restriction and the Ought"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of restriction and the ought in relation to finitude, as presented in the Science of Logic"@en .
+
+:Restriction rdf:type owl:Class ;
+    rdfs:label "Restriction"@en ;
+    rdfs:comment """Restriction in Hegel's logic is characterized by:
+1. Being the specific limitation of a finite entity
+2. Defining the boundaries of what a finite thing is
+3. Implying a negation of what lies beyond the restriction
+4. Being intimately connected with the concept of the ought"""@en .
+
+:Ought rdf:type owl:Class ;
+    rdfs:label "Ought"@en ;
+    rdfs:comment """The Ought in Hegel's logic is characterized by:
+1. Representing what a finite entity should be or become
+2. Implying a tension between the current state and a potential state
+3. Being intrinsically linked to the concept of restriction
+4. Pointing towards the transcendence of current limitations"""@en .
+
+:FiniteEntity rdf:type owl:Class ;
+    rdfs:label "Finite Entity"@en ;
+    rdfs:comment "An entity characterized by restriction and the ought, existing within specific limitations"@en .
+
+:Barrier rdf:type owl:Class ;
+    rdfs:label "Barrier"@en ;
+    rdfs:comment "The specific manifestation of restriction that a finite entity encounters or contains"@en .
+
+:Transcendence rdf:type owl:Class ;
+    rdfs:label "Transcendence"@en ;
+    rdfs:comment "The potential or drive within a finite entity to go beyond its current restrictions"@en .
+
+:InternalContradiction rdf:type owl:Class ;
+    rdfs:label "Internal Contradiction"@en ;
+    rdfs:comment "The tension within a finite entity between its current state (restriction) and its potential state (ought)"@en .
+
+:hasRestriction rdf:type owl:ObjectProperty ;
+    rdfs:label "has restriction"@en ;
+    rdfs:comment "Relates a Finite Entity to its specific Restriction"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :Restriction .
+
+:impliesOught rdf:type owl:ObjectProperty ;
+    rdfs:label "implies ought"@en ;
+    rdfs:comment "Expresses that a Restriction implies an Ought"@en ;
+    rdfs:domain :Restriction ;
+    rdfs:range :Ought .
+
+:encountersBarrier rdf:type owl:ObjectProperty ;
+    rdfs:label "encounters barrier"@en ;
+    rdfs:comment "Relates a Finite Entity to the specific Barrier it encounters"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :Barrier .
+
+:containsPotentialFor rdf:type owl:ObjectProperty ;
+    rdfs:label "contains potential for"@en ;
+    rdfs:comment "Expresses that a Finite Entity contains the potential for Transcendence"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :Transcendence .
+
+:manifestsContradiction rdf:type owl:ObjectProperty ;
+    rdfs:label "manifests contradiction"@en ;
+    rdfs:comment "Expresses that a Finite Entity manifests an Internal Contradiction"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :InternalContradiction .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Expresses that the Ought points towards Transcendence"@en ;
+    rdfs:domain :Ought ;
+    rdfs:range :Transcendence .
+
+:FiniteEntity
+    :hasRestriction :Restriction ;
+    :encountersBarrier :Barrier ;
+    :containsPotentialFor :Transcendence ;
+    :manifestsContradiction :InternalContradiction .
+
+:Restriction
+    :impliesOught :Ought .
+
+:Ought
+    :pointsTowards :Transcendence .
+
+:Restriction rdfs:comment """The nature of Restriction in relation to finitude:
+1. It defines the specific limitations of a finite entity
+2. It is intrinsically linked to the concept of the ought
+3. It manifests as concrete barriers or limitations
+4. It is both constitutive of and in tension with the finite entity's nature"""@en .
+
+:Ought rdfs:comment """The role of the Ought in finitude:
+1. It represents the potential or ideal state of a finite entity
+2. It arises from and stands in tension with the entity's restrictions
+3. It points towards the transcendence of current limitations
+4. It is crucial for understanding the dynamic nature of finite entities"""@en .
+
+:InternalContradiction rdfs:comment """The Internal Contradiction in finite entities:
+1. It emerges from the tension between restriction and the ought
+2. It drives the dialectical development of finite entities
+3. It manifests as the struggle between what is and what could be
+4. It is essential for understanding the nature of finitude in Hegel's logic"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of the Transition from Finite to Infinite"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of the transition from the finite to the infinite, as presented in the Science of Logic"@en .
+
+:FiniteEntity rdf:type owl:Class ;
+    rdfs:label "Finite Entity"@en ;
+    rdfs:comment """A finite entity in Hegel's logic is characterized by:
+1. Being limited and determined
+2. Containing internal contradictions
+3. Having the potential for self-transcendence
+4. Being part of the process of transition to infinity"""@en .
+
+:Infinity rdf:type owl:Class ;
+    rdfs:label "Infinity"@en ;
+    rdfs:comment """Infinity in Hegel's logic is characterized by:
+1. Emerging from the self-transcendence of finite entities
+2. Representing the overcoming of finite limitations
+3. Being the result of the dialectical process of finitude
+4. Containing a new, higher-level unity of being"""@en .
+
+:Transition rdf:type owl:Class ;
+    rdfs:label "Transition"@en ;
+    rdfs:comment "The process by which finite entities transcend their limitations and move towards infinity"@en .
+
+:InternalContradiction rdf:type owl:Class ;
+    rdfs:label "Internal Contradiction"@en ;
+    rdfs:comment "The inherent tension within finite entities that drives their self-transcendence"@en .
+
+:SelfTranscendence rdf:type owl:Class ;
+    rdfs:label "Self-Transcendence"@en ;
+    rdfs:comment "The process by which finite entities overcome their own limitations"@en .
+
+:DialecticalMovement rdf:type owl:Class ;
+    rdfs:label "Dialectical Movement"@en ;
+    rdfs:comment "The logical progression that drives the transition from finite to infinite"@en .
+
+:containsContradiction rdf:type owl:ObjectProperty ;
+    rdfs:label "contains contradiction"@en ;
+    rdfs:comment "Relates a Finite Entity to its Internal Contradiction"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :InternalContradiction .
+
+:undergoesTransition rdf:type owl:ObjectProperty ;
+    rdfs:label "undergoes transition"@en ;
+    rdfs:comment "Relates a Finite Entity to the process of Transition"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :Transition .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Expresses that the Transition results in Infinity"@en ;
+    rdfs:domain :Transition ;
+    rdfs:range :Infinity .
+
+:engagesIn rdf:type owl:ObjectProperty ;
+    rdfs:label "engages in"@en ;
+    rdfs:comment "Relates a Finite Entity to the process of Self-Transcendence"@en ;
+    rdfs:domain :FiniteEntity ;
+    rdfs:range :SelfTranscendence .
+
+:drivenBy rdf:type owl:ObjectProperty ;
+    rdfs:label "driven by"@en ;
+    rdfs:comment "Expresses that the Transition is driven by Dialectical Movement"@en ;
+    rdfs:domain :Transition ;
+    rdfs:range :DialecticalMovement .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Expresses that Infinity emerges from the Self-Transcendence of Finite Entities"@en ;
+    rdfs:domain :Infinity ;
+    rdfs:range :SelfTranscendence .
+
+:FiniteEntity
+    :containsContradiction :InternalContradiction ;
+    :undergoesTransition :Transition ;
+    :engagesIn :SelfTranscendence .
+
+:Transition
+    :resultsIn :Infinity ;
+    :drivenBy :DialecticalMovement .
+
+:Infinity
+    :emergesFrom :SelfTranscendence .
+
+:FiniteEntity rdfs:comment """The nature of Finite Entities in the transition to infinity:
+1. They contain internal contradictions that drive their development
+2. They engage in a process of self-transcendence
+3. They undergo a transition towards infinity
+4. Their limitations are both constitutive of their being and the source of their overcoming"""@en .
+
+:Infinity rdfs:comment """The nature of Infinity in Hegel's logic:
+1. It emerges from the self-transcendence of finite entities
+2. It represents the overcoming of finite limitations
+3. It is the result of a dialectical process
+4. It contains a new, higher-level unity that preserves and transcends finitude"""@en .
+
+:Transition rdfs:comment """The process of Transition from finite to infinite:
+1. It is driven by the dialectical movement inherent in finite entities
+2. It involves the self-transcendence of finite limitations
+3. It results in the emergence of infinity
+4. It represents a key moment in the logical development of being"""@en .
+
+:DialecticalMovement rdfs:comment """The role of Dialectical Movement in the transition:
+1. It drives the process of transition from finite to infinite
+2. It emerges from the internal contradictions of finite entities
+3. It manifests as the logical progression of concepts
+4. It is crucial for understanding the dynamic nature of Hegel's ontology"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Infinity - Introduction"@en ;
+    rdfs:comment "An ontological representation of the introductory concepts in Hegel's discussion of Infinity as presented in the Science of Logic"@en .
+
+:Infinity rdf:type owl:Class ;
+    rdfs:label "Infinity"@en ;
+    rdfs:comment """Infinity in Hegel's logic is characterized by:
+1. Being the affirmative as negation of the finite
+2. Existing in alternating determination with the finite
+3. Involving the self-sublation of both the infinite and the finite
+4. Representing the true infinite as a unity of itself and the finite"""@en .
+
+:Finite rdf:type owl:Class ;
+    rdfs:label "Finite"@en ;
+    rdfs:comment "The concept of the finite as it relates to and is involved in the development of infinity"@en .
+
+:SimpleInfinity rdf:type owl:Class ;
+    rdfs:label "Simple Infinity"@en ;
+    rdfs:comment "The initial, abstract form of infinity as mere negation of the finite"@en .
+
+:AlternatingDetermination rdf:type owl:Class ;
+    rdfs:label "Alternating Determination"@en ;
+    rdfs:comment "The process by which the infinite and finite define each other through mutual reference"@en .
+
+:SelfSublation rdf:type owl:Class ;
+    rdfs:label "Self-Sublation"@en ;
+    rdfs:comment "The process by which the infinite and finite overcome and preserve themselves in a higher unity"@en .
+
+:TrueInfinite rdf:type owl:Class ;
+    rdfs:label "True Infinite"@en ;
+    rdfs:comment "The highest form of infinity that encompasses both itself and the finite in a complex unity"@en .
+
+:negates rdf:type owl:ObjectProperty ;
+    rdfs:label "negates"@en ;
+    rdfs:comment "Expresses that Infinity negates the Finite"@en ;
+    rdfs:domain :Infinity ;
+    rdfs:range :Finite .
+
+:existsInAlternationWith rdf:type owl:ObjectProperty ;
+    rdfs:label "exists in alternation with"@en ;
+    rdfs:comment "Relates Infinity to the Finite in their alternating determination"@en ;
+    rdfs:domain :Infinity ;
+    rdfs:range :Finite .
+
+:undergoesProcess rdf:type owl:ObjectProperty ;
+    rdfs:label "undergoes process"@en ;
+    rdfs:comment "Relates Infinity and Finite to the process of Self-Sublation"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Infinity :Finite)] ;
+    rdfs:range :SelfSublation .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Expresses that the process of Self-Sublation results in the True Infinite"@en ;
+    rdfs:domain :SelfSublation ;
+    rdfs:range :TrueInfinite .
+
+:encompasses rdf:type owl:ObjectProperty ;
+    rdfs:label "encompasses"@en ;
+    rdfs:comment "Expresses that the True Infinite encompasses both itself and the Finite"@en ;
+    rdfs:domain :TrueInfinite ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Infinity :Finite)] .
+
+:Infinity
+    :negates :Finite ;
+    :existsInAlternationWith :Finite ;
+    :undergoesProcess :SelfSublation .
+
+:Finite
+    :undergoesProcess :SelfSublation .
+
+:SelfSublation
+    :resultsIn :TrueInfinite .
+
+:TrueInfinite
+    :encompasses :Infinity ;
+    :encompasses :Finite .
+
+:Infinity rdfs:comment """The nature of Infinity in this introduction:
+1. It is initially presented as the negation of the finite
+2. It exists in a dialectical relationship with the finite through alternating determination
+3. It undergoes a process of self-sublation along with the finite
+4. It culminates in the true infinite, which is a higher unity of itself and the finite"""@en .
+
+:TrueInfinite rdfs:comment """The True Infinite in Hegel's logic:
+1. It is the result of the self-sublation of both the infinite and the finite
+2. It represents a higher-level unity that preserves and transcends both infinity and finitude
+3. It is the resolution of the dialectical tension between the infinite and finite
+4. It embodies the most comprehensive understanding of infinity in Hegel's system"""@en .
+
+:SelfSublation rdfs:comment """The process of Self-Sublation in the development of infinity:
+1. It involves both the infinite and the finite overcoming their initial opposition
+2. It preserves aspects of both the infinite and finite while transcending their limitations
+3. It is crucial for the emergence of the true infinite
+4. It represents a key moment in the dialectical development of Hegel's logic"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of the Infinite in General"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of the infinite in general as presented in the Science of Logic"@en .
+
+:Infinite rdf:type owl:Class ;
+    rdfs:label "Infinite"@en ;
+    rdfs:comment """The infinite in general in Hegel's logic is characterized by:
+1. Being the negation of negation, thus affirmative
+2. Representing being that has reinstated itself out of restrictedness
+3. Being more intense than immediate being
+4. Elevating above restriction and finitude"""@en .
+
+:Finite rdf:type owl:Class ;
+    rdfs:label "Finite"@en ;
+    rdfs:comment "The concept of the finite as it relates to and is transcended by the infinite"@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The concept of being as it relates to the infinite, representing a more immediate form of existence"@en .
+
+:Negation rdf:type owl:Class ;
+    rdfs:label "Negation"@en ;
+    rdfs:comment "The process of negation that the infinite undergoes and transcends"@en .
+
+:Restrictedness rdf:type owl:Class ;
+    rdfs:label "Restrictedness"@en ;
+    rdfs:comment "The state of limitation that the infinite overcomes"@en .
+
+:Elevation rdf:type owl:Class ;
+    rdfs:label "Elevation"@en ;
+    rdfs:comment "The process by which the infinite rises above finite restrictions"@en .
+
+:negates rdf:type owl:ObjectProperty ;
+    rdfs:label "negates"@en ;
+    rdfs:comment "Expresses that the Infinite negates the Finite"@en ;
+    rdfs:domain :Infinite ;
+    rdfs:range :Finite .
+
+:transcends rdf:type owl:ObjectProperty ;
+    rdfs:label "transcends"@en ;
+    rdfs:comment "Expresses that the Infinite transcends Being and Restrictedness"@en ;
+    rdfs:domain :Infinite ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Being :Restrictedness)] .
+
+:undergoesProcess rdf:type owl:ObjectProperty ;
+    rdfs:label "undergoes process"@en ;
+    rdfs:comment "Relates the Infinite to the processes of Negation and Elevation"@en ;
+    rdfs:domain :Infinite ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Negation :Elevation)] .
+
+:reinstatesBeing rdf:type owl:ObjectProperty ;
+    rdfs:label "reinstates being"@en ;
+    rdfs:comment "Expresses that the Infinite reinstates Being in a higher form"@en ;
+    rdfs:domain :Infinite ;
+    rdfs:range :Being .
+
+:overcomesRestrictedness rdf:type owl:ObjectProperty ;
+    rdfs:label "overcomes restrictedness"@en ;
+    rdfs:comment "Expresses that the Infinite overcomes Restrictedness"@en ;
+    rdfs:domain :Infinite ;
+    rdfs:range :Restrictedness .
+
+:Infinite
+    :negates :Finite ;
+    :transcends :Being ;
+    :transcends :Restrictedness ;
+    :undergoesProcess :Negation ;
+    :undergoesProcess :Elevation ;
+    :reinstatesBeing :Being ;
+    :overcomesRestrictedness :Restrictedness .
+
+:Infinite rdfs:comment """The nature of the Infinite in general:
+1. It is the result of the negation of negation, making it affirmative
+2. It represents a higher form of being that has overcome restrictedness
+3. It is more intense and profound than immediate being
+4. It elevates thought and spirit above finite limitations
+5. It is the true realm where spirit is at home and finds its freedom"""@en .
+
+:Negation rdfs:comment """The role of Negation in the concept of the Infinite:
+1. The Infinite undergoes a double negation
+2. This double negation results in an affirmation
+3. It is through this process that the Infinite transcends finitude
+4. Negation is key to understanding the dialectical nature of the Infinite"""@en .
+
+:Elevation rdfs:comment """The process of Elevation in relation to the Infinite:
+1. It represents the Infinite's transcendence over finite restrictions
+2. It involves the lifting of spirit and thought to a higher realm
+3. It is associated with freedom and the true home of spirit
+4. It distinguishes the Infinite from mere immediate being"""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Alternating Determination of Finite and Infinite"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of the alternating determination between the finite and the infinite as presented in the Science of Logic"@en .
+
+:AlternatingDetermination rdf:type owl:Class ;
+    rdfs:label "Alternating Determination"@en ;
+    rdfs:comment """The process of alternating determination in Hegel's logic is characterized by:
+1. The mutual definition of the finite and infinite through their opposition
+2. The transition of each into the other
+3. The revelation of their interconnectedness and inseparability
+4. The demonstration of the inadequacy of viewing them as merely opposed"""@en .
+
+:Finite rdf:type owl:Class ;
+    rdfs:label "Finite"@en ;
+    rdfs:comment "The concept of the finite as it participates in the alternating determination with the infinite"@en .
+
+:Infinite rdf:type owl:Class ;
+    rdfs:label "Infinite"@en ;
+    rdfs:comment "The concept of the infinite as it participates in the alternating determination with the finite"@en .
+
+:Transition rdf:type owl:Class ;
+    rdfs:label "Transition"@en ;
+    rdfs:comment "The process by which the finite and infinite pass into each other"@en .
+
+:Opposition rdf:type owl:Class ;
+    rdfs:label "Opposition"@en ;
+    rdfs:comment "The apparent contradiction between the finite and infinite that drives their alternating determination"@en .
+
+:Unity rdf:type owl:Class ;
+    rdfs:label "Unity"@en ;
+    rdfs:comment "The underlying connection between the finite and infinite revealed through their alternating determination"@en .
+
+:BadInfinite rdf:type owl:Class ;
+    rdfs:label "Bad Infinite"@en ;
+    rdfs:comment "The conception of the infinite as merely opposed to the finite, resulting in an endless progression"@en .
+
+:participatesIn rdf:type owl:ObjectProperty ;
+    rdfs:label "participates in"@en ;
+    rdfs:comment "Relates the Finite and Infinite to the process of Alternating Determination"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Finite :Infinite)] ;
+    rdfs:range :AlternatingDetermination .
+
+:transitionsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions into"@en ;
+    rdfs:comment "Expresses the mutual transition between the Finite and Infinite"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Finite :Infinite)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Finite :Infinite)] .
+
+:standsInOppositionTo rdf:type owl:ObjectProperty ;
+    rdfs:label "stands in opposition to"@en ;
+    rdfs:comment "Expresses the apparent opposition between the Finite and Infinite"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Finite :Infinite)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Finite :Infinite)] .
+
+:revealsUnityWith rdf:type owl:ObjectProperty ;
+    rdfs:label "reveals unity with"@en ;
+    rdfs:comment "Expresses the underlying unity between the Finite and Infinite revealed through their alternating determination"@en ;
+    rdfs:domain [rdf:type owl:Class ;
+                 owl:unionOf (:Finite :Infinite)] ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Finite :Infinite)] .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Expresses that the misunderstanding of the alternating determination results in the Bad Infinite"@en ;
+    rdfs:domain :AlternatingDetermination ;
+    rdfs:range :BadInfinite .
+
+:Finite
+    :participatesIn :AlternatingDetermination ;
+    :transitionsInto :Infinite ;
+    :standsInOppositionTo :Infinite ;
+    :revealsUnityWith :Infinite .
+
+:Infinite
+    :participatesIn :AlternatingDetermination ;
+    :transitionsInto :Finite ;
+    :standsInOppositionTo :Finite ;
+    :revealsUnityWith :Finite .
+
+:AlternatingDetermination
+    :resultsIn :BadInfinite .
+
+:AlternatingDetermination rdfs:comment """The nature of Alternating Determination:
+1. It involves the mutual definition of the finite and infinite through their interaction
+2. It reveals the inadequacy of viewing the finite and infinite as merely opposed
+3. It demonstrates the transition of each into the other
+4. It ultimately points towards a deeper unity between the finite and infinite"""@en .
+
+:BadInfinite rdfs:comment """The concept of the Bad Infinite:
+1. It results from misunderstanding the alternating determination
+2. It views the infinite as merely opposed to the finite
+3. It leads to an endless progression or regress
+4. It fails to grasp the true nature of infinity in Hegel's logic"""@en .
+
+:Unity rdfs:comment """The Unity revealed through Alternating Determination:
+1. It is the underlying connection between the finite and infinite
+2. It emerges through the process of their mutual determination
+3. It challenges the view of finite and infinite as absolutely separate
+4. It points towards a higher conception of infinity in Hegel's system"""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+<http://www.example.org/hegel-ontology> rdf:type owl:Ontology ;
+    rdfs:label "Hegel's Ontology of Affirmative Infinity"@en ;
+    rdfs:comment "An ontological representation of Hegel's discussion of affirmative infinity as presented in the Science of Logic"@en .
+
+:AffirmativeInfinity rdf:type owl:Class ;
+    rdfs:label "Affirmative Infinity"@en ;
+    rdfs:comment """Affirmative infinity in Hegel's logic is characterized by:
+1. Being the true resolution of the dialectic between finite and infinite
+2. Encompassing both finite and infinite in a higher unity
+3. Overcoming the limitations of the 'bad infinite'
+4. Representing a self-related, concrete totality"""@en .
+
+:Finite rdf:type owl:Class ;
+    rdfs:label "Finite"@en ;
+    rdfs:comment "The concept of the finite as it is preserved and transcended in affirmative infinity"@en .
+
+:Infinite rdf:type owl:Class ;
+    rdfs:label "Infinite"@en ;
+    rdfs:comment "The concept of the infinite as it is preserved and transcended in affirmative infinity"@en .
+
+:BadInfinite rdf:type owl:Class ;
+    rdfs:label "Bad Infinite"@en ;
+    rdfs:comment "The inadequate conception of infinity that affirmative infinity overcomes"@en .
+
+:DialecticalResolution rdf:type owl:Class ;
+    rdfs:label "Dialectical Resolution"@en ;
+    rdfs:comment "The process by which the opposition between finite and infinite is resolved in affirmative infinity"@en .
+
+:SelfRelation rdf:type owl:Class ;
+    rdfs:label "Self-Relation"@en ;
+    rdfs:comment "The characteristic of affirmative infinity to be self-related and self-determined"@en .
+
+:ConcreteUnity rdf:type owl:Class ;
+    rdfs:label "Concrete Unity"@en ;
+    rdfs:comment "The nature of affirmative infinity as a concrete, rather than abstract, unity of finite and infinite"@en .
+
+:encompasses rdf:type owl:ObjectProperty ;
+    rdfs:label "encompasses"@en ;
+    rdfs:comment "Expresses that Affirmative Infinity encompasses both the Finite and the Infinite"@en ;
+    rdfs:domain :AffirmativeInfinity ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:Finite :Infinite)] .
+
+:resolves rdf:type owl:ObjectProperty ;
+    rdfs:label "resolves"@en ;
+    rdfs:comment "Expresses that Affirmative Infinity resolves the dialectic between Finite and Infinite"@en ;
+    rdfs:domain :AffirmativeInfinity ;
+    rdfs:range :DialecticalResolution .
+
+:overcomes rdf:type owl:ObjectProperty ;
+    rdfs:label "overcomes"@en ;
+    rdfs:comment "Expresses that Affirmative Infinity overcomes the limitations of the Bad Infinite"@en ;
+    rdfs:domain :AffirmativeInfinity ;
+    rdfs:range :BadInfinite .
+
+:exhibits rdf:type owl:ObjectProperty ;
+    rdfs:label "exhibits"@en ;
+    rdfs:comment "Relates Affirmative Infinity to its characteristics of Self-Relation and Concrete Unity"@en ;
+    rdfs:domain :AffirmativeInfinity ;
+    rdfs:range [rdf:type owl:Class ;
+                owl:unionOf (:SelfRelation :ConcreteUnity)] .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Expresses that Affirmative Infinity emerges from the Dialectical Resolution of Finite and Infinite"@en ;
+    rdfs:domain :AffirmativeInfinity ;
+    rdfs:range :DialecticalResolution .
+
+:AffirmativeInfinity
+    :encompasses :Finite ;
+    :encompasses :Infinite ;
+    :resolves :DialecticalResolution ;
+    :overcomes :BadInfinite ;
+    :exhibits :SelfRelation ;
+    :exhibits :ConcreteUnity ;
+    :emergesFrom :DialecticalResolution .
+
+:DialecticalResolution
+    :resolves :Finite ;
+    :resolves :Infinite .
+
+:AffirmativeInfinity rdfs:comment """The nature of Affirmative Infinity:
+1. It is the true resolution of the dialectic between finite and infinite
+2. It encompasses both finite and infinite in a higher, concrete unity
+3. It overcomes the limitations of the 'bad infinite' by being self-related and self-determined
+4. It represents a concrete totality rather than an abstract, endless progression
+5. It emerges from the process of alternating determination between finite and infinite"""@en .
+
+:ConcreteUnity rdfs:comment """The Concrete Unity in Affirmative Infinity:
+1. It differs from the abstract unity of the 'bad infinite'
+2. It preserves the distinctions between finite and infinite while transcending their opposition
+3. It represents a higher-level synthesis in Hegel's dialectical logic
+4. It is characterized by self-relation and self-determination"""@en .
+
+:DialecticalResolution rdfs:comment """The Dialectical Resolution in Affirmative Infinity:
+1. It resolves the apparent contradiction between finite and infinite
+2. It demonstrates the inadequacy of viewing finite and infinite as merely opposed
+3. It leads to a higher conception of infinity that includes finitude
+4. It is crucial for understanding the dynamic nature of Hegel's logical system"""@en .

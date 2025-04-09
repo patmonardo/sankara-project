@@ -1,5 +1,5 @@
-//@/lib/model/sankara.ts
-import { prisma } from '@/lib/data/client';
+//@/mvc/model/sankara.ts
+import { prisma } from '@/data/client';
 
 export class SankaraModel {
   /**

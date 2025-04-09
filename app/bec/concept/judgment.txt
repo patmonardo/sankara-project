@@ -1,0 +1,1750 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-judgment-existence-ontology#> .
+
+# Classes
+:JudgmentOfExistence rdf:type owl:Class ;
+    rdfs:label "Judgment of Existence"@en ;
+    rdfs:comment "The immediate judgment where the subject is an immediate singular and the predicate is an abstract, universal determinateness."@en .
+
+:Subject rdf:type owl:Class ;
+    rdfs:label "Subject"@en ;
+    rdfs:comment "The concrete existent in a judgment of existence, representing an immediate singular."@en .
+
+:Predicate rdf:type owl:Class ;
+    rdfs:label "Predicate"@en ;
+    rdfs:comment "The abstract, universal determinateness or property in a judgment of existence."@en .
+
+:Concept rdf:type owl:Class ;
+    rdfs:label "Concept"@en ;
+    rdfs:comment "The imperishable essence that underlies the judgment of existence."@en .
+
+:UniversalEssence rdf:type owl:Class ;
+    rdfs:label "Universal Essence"@en ;
+    rdfs:comment "The general nature or character reflected in the predicate of a judgment of existence."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a judgment to its subject."@en ;
+    rdfs:domain :JudgmentOfExistence ;
+    rdfs:range :Subject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a judgment to its predicate."@en ;
+    rdfs:domain :JudgmentOfExistence ;
+    rdfs:range :Predicate .
+
+:reflectsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "reflects in"@en ;
+    rdfs:comment "Indicates that the subject is reflected in the predicate."@en ;
+    rdfs:domain :Subject ;
+    rdfs:range :Predicate .
+
+:expressesPartOf rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses part of"@en ;
+    rdfs:comment "Indicates that the predicate expresses a part or aspect of the subject."@en ;
+    rdfs:domain :Predicate ;
+    rdfs:range :Subject .
+
+:subsistsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "subsists in"@en ;
+    rdfs:comment "Indicates that the subject subsists in the concept despite its perishability."@en ;
+    rdfs:domain :Subject ;
+    rdfs:range :Concept .
+
+:representsEssenceOf rdf:type owl:ObjectProperty ;
+    rdfs:label "represents essence of"@en ;
+    rdfs:comment "Indicates that the predicate represents the universal essence of the subject."@en ;
+    rdfs:domain :Predicate ;
+    rdfs:range :UniversalEssence .
+
+# Data Properties
+:isImmediate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediate"@en ;
+    rdfs:comment "Indicates whether the entity is directly given or unmediated."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isAbstract rdf:type owl:DatatypeProperty ;
+    rdfs:label "is abstract"@en ;
+    rdfs:comment "Indicates whether the entity is abstract or general rather than concrete."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isPerishable rdf:type owl:DatatypeProperty ;
+    rdfs:label "is perishable"@en ;
+    rdfs:comment "Indicates whether the entity is subject to change or destruction."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isImperishable rdf:type owl:DatatypeProperty ;
+    rdfs:label "is imperishable"@en ;
+    rdfs:comment "Indicates whether the entity is not subject to change or destruction."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:judgmentOfExistence rdf:type :JudgmentOfExistence .
+:subject rdf:type :Subject .
+:predicate rdf:type :Predicate .
+:concept rdf:type :Concept .
+:universalEssence rdf:type :UniversalEssence .
+
+# Relationships
+:judgmentOfExistence :hasSubject :subject ;
+                     :hasPredicate :predicate .
+:subject :reflectsIn :predicate ;
+         :subsistsIn :concept .
+:predicate :expressesPartOf :subject ;
+           :representsEssenceOf :universalEssence .
+
+# Properties
+:judgmentOfExistence :isImmediate "true"^^xsd:boolean .
+:subject :isImmediate "true"^^xsd:boolean ;
+         :isPerishable "true"^^xsd:boolean .
+:predicate :isAbstract "true"^^xsd:boolean .
+:concept :isImperishable "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-positive-judgment-ontology#> .
+
+# Classes
+:PositiveJudgment rdf:type owl:Class ;
+    rdfs:label "Positive Judgment"@en ;
+    rdfs:comment "The first or immediate judgment of existence, expressing that the singular is universal."@en .
+
+:SingularSubject rdf:type owl:Class ;
+    rdfs:label "Singular Subject"@en ;
+    rdfs:comment "The immediate, singular entity in a positive judgment, often expressed as 'this'."@en .
+
+:UniversalPredicate rdf:type owl:Class ;
+    rdfs:label "Universal Predicate"@en ;
+    rdfs:comment "The abstract universal or property attributed to the subject in a positive judgment."@en .
+
+:Concept rdf:type owl:Class ;
+    rdfs:label "Concept"@en ;
+    rdfs:comment "The universal essence in which singular things subsist despite their perishability."@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment "A specific quality or characteristic of the subject."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a positive judgment to its singular subject."@en ;
+    rdfs:domain :PositiveJudgment ;
+    rdfs:range :SingularSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a positive judgment to its universal predicate."@en ;
+    rdfs:domain :PositiveJudgment ;
+    rdfs:range :UniversalPredicate .
+
+:subsistsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "subsists in"@en ;
+    rdfs:comment "Indicates that the singular subject subsists in the universal concept."@en ;
+    rdfs:domain :SingularSubject ;
+    rdfs:range :Concept .
+
+:expressesOneOf rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses one of"@en ;
+    rdfs:comment "Indicates that the predicate expresses one of the subject's determinations."@en ;
+    rdfs:domain :UniversalPredicate ;
+    rdfs:range :Determination .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:comment "Relates a singular subject to its multiple determinations."@en ;
+    rdfs:domain :SingularSubject ;
+    rdfs:range :Determination .
+
+:raisesTo rdf:type owl:ObjectProperty ;
+    rdfs:label "raises to"@en ;
+    rdfs:comment "Indicates that the judgment raises the singular to universality."@en ;
+    rdfs:domain :PositiveJudgment ;
+    rdfs:range :UniversalPredicate .
+
+:descendsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "descends into"@en ;
+    rdfs:comment "Indicates that the universal descends into existence in the singular."@en ;
+    rdfs:domain :UniversalPredicate ;
+    rdfs:range :SingularSubject .
+
+# Data Properties
+:isImmediate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediate"@en ;
+    rdfs:comment "Indicates whether the entity is directly given or unmediated."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isAbstract rdf:type owl:DatatypeProperty ;
+    rdfs:label "is abstract"@en ;
+    rdfs:comment "Indicates whether the entity is abstract or general rather than concrete."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isPerishable rdf:type owl:DatatypeProperty ;
+    rdfs:label "is perishable"@en ;
+    rdfs:comment "Indicates whether the entity is subject to change or destruction."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:containsOwnNegation rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains own negation"@en ;
+    rdfs:comment "Indicates whether the entity contains its own negation or contradiction."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:positiveJudgment rdf:type :PositiveJudgment .
+:singularSubject rdf:type :SingularSubject .
+:universalPredicate rdf:type :UniversalPredicate .
+:concept rdf:type :Concept .
+:determination rdf:type :Determination .
+
+# Relationships
+:positiveJudgment :hasSubject :singularSubject ;
+                  :hasPredicate :universalPredicate ;
+                  :raisesTo :universalPredicate .
+:singularSubject :subsistsIn :concept ;
+                 :hasDetermination :determination .
+:universalPredicate :expressesOneOf :determination ;
+                    :descendsInto :singularSubject .
+
+# Properties
+:positiveJudgment :isImmediate "true"^^xsd:boolean ;
+                  :containsOwnNegation "true"^^xsd:boolean .
+:singularSubject :isImmediate "true"^^xsd:boolean ;
+                 :isPerishable "true"^^xsd:boolean .
+:universalPredicate :isAbstract "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-negative-judgment-ontology#> .
+
+# Classes
+:NegativeJudgment rdf:type owl:Class ;
+    rdfs:label "Negative Judgment"@en ;
+    rdfs:comment "The second stage in the judgment of existence, expressing non-identity between subject and predicate."@en .
+
+:SingularSubject rdf:type owl:Class ;
+    rdfs:label "Singular Subject"@en ;
+    rdfs:comment "The singular entity in a negative judgment, maintained from the positive judgment."@en .
+
+:UniversalPredicate rdf:type owl:Class ;
+    rdfs:label "Universal Predicate"@en ;
+    rdfs:comment "The universal property or concept negatively related to the subject in a negative judgment."@en .
+
+:UniversalSphere rdf:type owl:Class ;
+    rdfs:label "Universal Sphere"@en ;
+    rdfs:comment "The broader context of universality maintained even in negative judgments."@en .
+
+:PositiveJudgment rdf:type owl:Class ;
+    rdfs:label "Positive Judgment"@en ;
+    rdfs:comment "The preceding stage of judgment from which the negative judgment emerges."@en .
+
+:Determinateness rdf:type owl:Class ;
+    rdfs:label "Determinateness"@en ;
+    rdfs:comment "The specific quality or character revealed in the singular through negation."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a negative judgment to its singular subject."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range :SingularSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a negative judgment to its universal predicate."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range :UniversalPredicate .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Indicates that the negative judgment emerges from the inadequacy of the positive judgment."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range :PositiveJudgment .
+
+:maintainsWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "maintains within"@en ;
+    rdfs:comment "Indicates that the universal sphere is maintained within the negative judgment."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range :UniversalSphere .
+
+:revealsWithin rdf:type owl:ObjectProperty ;
+    rdfs:label "reveals within"@en ;
+    rdfs:comment "Indicates that determinateness is revealed within the singular subject through negation."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range :Determinateness .
+
+:negates rdf:type owl:ObjectProperty ;
+    rdfs:label "negates"@en ;
+    rdfs:comment "Indicates that the negative judgment negates the connection asserted in the positive judgment."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range :PositiveJudgment .
+
+# Data Properties
+:expressesNonIdentity rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses non-identity"@en ;
+    rdfs:comment "Indicates whether the judgment expresses a non-identity between subject and predicate."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range xsd:boolean .
+
+:preservesUniversality rdf:type owl:DatatypeProperty ;
+    rdfs:label "preserves universality"@en ;
+    rdfs:comment "Indicates whether the judgment preserves the universality of the predicate."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range xsd:boolean .
+
+:isIndeterminate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is indeterminate"@en ;
+    rdfs:comment "Indicates whether the judgment is still indeterminate in its negation."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range xsd:boolean .
+
+:leadsToFurtherDetermination rdf:type owl:DatatypeProperty ;
+    rdfs:label "leads to further determination"@en ;
+    rdfs:comment "Indicates whether the judgment points towards further determination and particularization."@en ;
+    rdfs:domain :NegativeJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:negativeJudgment rdf:type :NegativeJudgment .
+:singularSubject rdf:type :SingularSubject .
+:universalPredicate rdf:type :UniversalPredicate .
+:universalSphere rdf:type :UniversalSphere .
+:positiveJudgment rdf:type :PositiveJudgment .
+:determinateness rdf:type :Determinateness .
+
+# Relationships
+:negativeJudgment :hasSubject :singularSubject ;
+                  :hasPredicate :universalPredicate ;
+                  :emergesFrom :positiveJudgment ;
+                  :maintainsWithin :universalSphere ;
+                  :revealsWithin :determinateness ;
+                  :negates :positiveJudgment .
+
+# Properties
+:negativeJudgment :expressesNonIdentity "true"^^xsd:boolean ;
+                  :preservesUniversality "true"^^xsd:boolean ;
+                  :isIndeterminate "true"^^xsd:boolean ;
+                  :leadsToFurtherDetermination "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-infinite-judgment-ontology#> .
+
+# Classes
+:InfiniteJudgment rdf:type owl:Class ;
+    rdfs:label "Infinite Judgment"@en ;
+    rdfs:comment "The third stage in the judgment of existence, expressing absolute incompatibility between subject and predicate."@en .
+
+:Subject rdf:type owl:Class ;
+    rdfs:label "Subject"@en ;
+    rdfs:comment "The subject in an infinite judgment, often from a completely different category than the predicate."@en .
+
+:Predicate rdf:type owl:Class ;
+    rdfs:label "Predicate"@en ;
+    rdfs:comment "The predicate in an infinite judgment, often from a completely different category than the subject."@en .
+
+:NegativeJudgment rdf:type owl:Class ;
+    rdfs:label "Negative Judgment"@en ;
+    rdfs:comment "The preceding stage of judgment from which the infinite judgment emerges."@en .
+
+:ConceptualRelationship rdf:type owl:Class ;
+    rdfs:label "Conceptual Relationship"@en ;
+    rdfs:comment "The true relationship between concepts that infinite judgments indirectly point towards."@en .
+
+:JudgmentOfReflection rdf:type owl:Class ;
+    rdfs:label "Judgment of Reflection"@en ;
+    rdfs:comment "The next major category of judgment that follows the judgment of existence."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates an infinite judgment to its subject."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range :Subject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates an infinite judgment to its predicate."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range :Predicate .
+
+:emergesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges from"@en ;
+    rdfs:comment "Indicates that the infinite judgment emerges from the limitations of the negative judgment."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range :NegativeJudgment .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the infinite judgment indirectly points towards true conceptual relationships."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range :ConceptualRelationship .
+
+:transitionsTo rdf:type owl:ObjectProperty ;
+    rdfs:label "transitions to"@en ;
+    rdfs:comment "Indicates that the infinite judgment leads to the transition to the judgment of reflection."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range :JudgmentOfReflection .
+
+# Data Properties
+:expressesAbsoluteIncompatibility rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses absolute incompatibility"@en ;
+    rdfs:comment "Indicates whether the judgment expresses an absolute incompatibility between subject and predicate."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range xsd:boolean .
+
+:isNonsensicalInContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "is nonsensical in content"@en ;
+    rdfs:comment "Indicates whether the judgment, while correct in form, is nonsensical in content."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range xsd:boolean .
+
+:critiquesFormality rdf:type owl:DatatypeProperty ;
+    rdfs:label "critiques formality"@en ;
+    rdfs:comment "Indicates whether the judgment serves as a critique of formal logic and simple predication."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range xsd:boolean .
+
+:revealsInadequacy rdf:type owl:DatatypeProperty ;
+    rdfs:label "reveals inadequacy"@en ;
+    rdfs:comment "Indicates whether the judgment reveals the inadequacy of the judgment of existence in capturing true conceptual relationships."@en ;
+    rdfs:domain :InfiniteJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:infiniteJudgment rdf:type :InfiniteJudgment .
+:subject rdf:type :Subject .
+:predicate rdf:type :Predicate .
+:negativeJudgment rdf:type :NegativeJudgment .
+:conceptualRelationship rdf:type :ConceptualRelationship .
+:judgmentOfReflection rdf:type :JudgmentOfReflection .
+
+# Relationships
+:infiniteJudgment :hasSubject :subject ;
+                  :hasPredicate :predicate ;
+                  :emergesFrom :negativeJudgment ;
+                  :pointsTowards :conceptualRelationship ;
+                  :transitionsTo :judgmentOfReflection .
+
+# Properties
+:infiniteJudgment :expressesAbsoluteIncompatibility "true"^^xsd:boolean ;
+                  :isNonsensicalInContent "true"^^xsd:boolean ;
+                  :critiquesFormality "true"^^xsd:boolean ;
+                  :revealsInadequacy "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-judgment-reflection-ontology#> .
+
+# Classes
+:JudgmentOfReflection rdf:type owl:Class ;
+    rdfs:label "Judgment of Reflection"@en ;
+    rdfs:comment "A form of judgment that goes beyond immediate existence, expressing essential relations and reflective determinations."@en .
+
+:ReflectiveSubject rdf:type owl:Class ;
+    rdfs:label "Reflective Subject"@en ;
+    rdfs:comment "The subject in a judgment of reflection, which is a singular essentially related to others and reflecting these relations."@en .
+
+:ReflectivePredicate rdf:type owl:Class ;
+    rdfs:label "Reflective Predicate"@en ;
+    rdfs:comment "The predicate in a judgment of reflection, expressing the essential nature or substantial identity of the subject."@en .
+
+:EssentialRelation rdf:type owl:Class ;
+    rdfs:label "Essential Relation"@en ;
+    rdfs:comment "A relation that is fundamental to the nature of the subject in a judgment of reflection."@en .
+
+:Universality rdf:type owl:Class ;
+    rdfs:label "Universality"@en ;
+    rdfs:comment "The quality of being universal or applicable to all cases, which the subject in a judgment of reflection refers to."@en .
+
+:JudgmentOfExistence rdf:type owl:Class ;
+    rdfs:label "Judgment of Existence"@en ;
+    rdfs:comment "The preceding form of judgment from which the judgment of reflection develops."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a judgment of reflection to its reflective subject."@en ;
+    rdfs:domain :JudgmentOfReflection ;
+    rdfs:range :ReflectiveSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a judgment of reflection to its reflective predicate."@en ;
+    rdfs:domain :JudgmentOfReflection ;
+    rdfs:range :ReflectivePredicate .
+
+:refersTo rdf:type owl:ObjectProperty ;
+    rdfs:label "refers to"@en ;
+    rdfs:comment "Indicates that the subject refers to universality in a judgment of reflection."@en ;
+    rdfs:domain :ReflectiveSubject ;
+    rdfs:range :Universality .
+
+:involvesRelation rdf:type owl:ObjectProperty ;
+    rdfs:label "involves relation"@en ;
+    rdfs:comment "Indicates that the subject involves essential relations in a judgment of reflection."@en ;
+    rdfs:domain :ReflectiveSubject ;
+    rdfs:range :EssentialRelation .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Indicates that the predicate expresses the essential nature of the subject in a judgment of reflection."@en ;
+    rdfs:domain :ReflectivePredicate ;
+    rdfs:range :EssentialRelation .
+
+:developsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "develops from"@en ;
+    rdfs:comment "Indicates that the judgment of reflection develops from the judgment of existence."@en ;
+    rdfs:domain :JudgmentOfReflection ;
+    rdfs:range :JudgmentOfExistence .
+
+# Data Properties
+:isEssentiallyRelational rdf:type owl:DatatypeProperty ;
+    rdfs:label "is essentially relational"@en ;
+    rdfs:comment "Indicates whether the subject is essentially related to others."@en ;
+    rdfs:domain :ReflectiveSubject ;
+    rdfs:range xsd:boolean .
+
+:containsUniversality rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains universality"@en ;
+    rdfs:comment "Indicates whether the predicate contains universality that goes beyond immediate determinateness."@en ;
+    rdfs:domain :ReflectivePredicate ;
+    rdfs:range xsd:boolean .
+
+:expressesNecessaryConnection rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses necessary connection"@en ;
+    rdfs:comment "Indicates whether the copula in the judgment expresses a necessary connection."@en ;
+    rdfs:domain :JudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+:involvesReflectionAndComparison rdf:type owl:DatatypeProperty ;
+    rdfs:label "involves reflection and comparison"@en ;
+    rdfs:comment "Indicates whether the judgment involves processes of reflection and comparison."@en ;
+    rdfs:domain :JudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:judgmentOfReflection rdf:type :JudgmentOfReflection .
+:reflectiveSubject rdf:type :ReflectiveSubject .
+:reflectivePredicate rdf:type :ReflectivePredicate .
+:essentialRelation rdf:type :EssentialRelation .
+:universality rdf:type :Universality .
+:judgmentOfExistence rdf:type :JudgmentOfExistence .
+
+# Relationships
+:judgmentOfReflection :hasSubject :reflectiveSubject ;
+                      :hasPredicate :reflectivePredicate ;
+                      :developsFrom :judgmentOfExistence .
+:reflectiveSubject :refersTo :universality ;
+                   :involvesRelation :essentialRelation .
+:reflectivePredicate :expresses :essentialRelation .
+
+# Properties
+:reflectiveSubject :isEssentiallyRelational "true"^^xsd:boolean .
+:reflectivePredicate :containsUniversality "true"^^xsd:boolean .
+:judgmentOfReflection :expressesNecessaryConnection "true"^^xsd:boolean ;
+                      :involvesReflectionAndComparison "true"^^xsd:boolean .
+                      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-singular-judgment-reflection-ontology#> .
+
+# Classes
+:SingularJudgmentOfReflection rdf:type owl:Class ;
+    rdfs:label "Singular Judgment of Reflection"@en ;
+    rdfs:comment "The first form of judgment of reflection, expressing a singular subject's reflection into essential universality."@en .
+
+:ReflectedSingularSubject rdf:type owl:Class ;
+    rdfs:label "Reflected Singular Subject"@en ;
+    rdfs:comment "The subject in a singular judgment of reflection, which is a singular entity reflected into itself."@en .
+
+:EssentialUniversalPredicate rdf:type owl:Class ;
+    rdfs:label "Essential Universal Predicate"@en ;
+    rdfs:comment "The predicate in a singular judgment of reflection, expressing the subject's essential nature or universal reflection."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process by which the subject gains depth beyond immediacy and connects to universality."@en .
+
+:EssentialUniversality rdf:type owl:Class ;
+    rdfs:label "Essential Universality"@en ;
+    rdfs:comment "The universal nature or essence revealed through the subject's reflection."@en .
+
+:ParticularJudgment rdf:type owl:Class ;
+    rdfs:label "Particular Judgment"@en ;
+    rdfs:comment "The next stage in the development of judgments of reflection, to which the singular judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a singular judgment of reflection to its reflected singular subject."@en ;
+    rdfs:domain :SingularJudgmentOfReflection ;
+    rdfs:range :ReflectedSingularSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a singular judgment of reflection to its essential universal predicate."@en ;
+    rdfs:domain :SingularJudgmentOfReflection ;
+    rdfs:range :EssentialUniversalPredicate .
+
+:undergoes rdf:type owl:ObjectProperty ;
+    rdfs:label "undergoes"@en ;
+    rdfs:comment "Indicates that the subject undergoes the process of reflection."@en ;
+    rdfs:domain :ReflectedSingularSubject ;
+    rdfs:range :Reflection .
+
+:reveals rdf:type owl:ObjectProperty ;
+    rdfs:label "reveals"@en ;
+    rdfs:comment "Indicates that reflection reveals the essential universality of the subject."@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :EssentialUniversality .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Indicates that the predicate expresses the essential universality of the subject."@en ;
+    rdfs:domain :EssentialUniversalPredicate ;
+    rdfs:range :EssentialUniversality .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the singular judgment points towards the particular judgment as its truth."@en ;
+    rdfs:domain :SingularJudgmentOfReflection ;
+    rdfs:range :ParticularJudgment .
+
+# Data Properties
+:isReflectedIntoItself rdf:type owl:DatatypeProperty ;
+    rdfs:label "is reflected into itself"@en ;
+    rdfs:comment "Indicates whether the subject is reflected into itself, gaining depth beyond immediacy."@en ;
+    rdfs:domain :ReflectedSingularSubject ;
+    rdfs:range xsd:boolean .
+
+:expressesEssentialNature rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses essential nature"@en ;
+    rdfs:comment "Indicates whether the predicate expresses the essential nature or universal reflection of the subject."@en ;
+    rdfs:domain :EssentialUniversalPredicate ;
+    rdfs:range xsd:boolean .
+
+:retainsElementOfImmediacy rdf:type owl:DatatypeProperty ;
+    rdfs:label "retains element of immediacy"@en ;
+    rdfs:comment "Indicates whether the judgment still retains an element of immediacy in the singular subject."@en ;
+    rdfs:domain :SingularJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+:bridgesImmediateAndReflective rdf:type owl:DatatypeProperty ;
+    rdfs:label "bridges immediate and reflective"@en ;
+    rdfs:comment "Indicates whether the judgment bridges the gap between immediate existence and reflective universality."@en ;
+    rdfs:domain :SingularJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:singularJudgmentOfReflection rdf:type :SingularJudgmentOfReflection .
+:reflectedSingularSubject rdf:type :ReflectedSingularSubject .
+:essentialUniversalPredicate rdf:type :EssentialUniversalPredicate .
+:reflection rdf:type :Reflection .
+:essentialUniversality rdf:type :EssentialUniversality .
+:particularJudgment rdf:type :ParticularJudgment .
+
+# Relationships
+:singularJudgmentOfReflection :hasSubject :reflectedSingularSubject ;
+                              :hasPredicate :essentialUniversalPredicate ;
+                              :pointsTowards :particularJudgment .
+:reflectedSingularSubject :undergoes :reflection .
+:reflection :reveals :essentialUniversality .
+:essentialUniversalPredicate :expresses :essentialUniversality .
+
+# Properties
+:reflectedSingularSubject :isReflectedIntoItself "true"^^xsd:boolean .
+:essentialUniversalPredicate :expressesEssentialNature "true"^^xsd:boolean .
+:singularJudgmentOfReflection :retainsElementOfImmediacy "true"^^xsd:boolean ;
+                              :bridgesImmediateAndReflective "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-particular-judgment-reflection-ontology#> .
+
+# Classes
+:ParticularJudgmentOfReflection rdf:type owl:Class ;
+    rdfs:label "Particular Judgment of Reflection"@en ;
+    rdfs:comment "The second form of judgment of reflection, expressing a group of particulars in relation to a universal of reflection."@en .
+
+:ParticularSubject rdf:type owl:Class ;
+    rdfs:label "Particular Subject"@en ;
+    rdfs:comment "The subject in a particular judgment of reflection, representing a collection of particulars."@en .
+
+:UniversalOfReflectionPredicate rdf:type owl:Class ;
+    rdfs:label "Universal of Reflection Predicate"@en ;
+    rdfs:comment "The predicate in a particular judgment of reflection, expressing a universal concept that applies to the group of particulars."@en .
+
+:Particularity rdf:type owl:Class ;
+    rdfs:label "Particularity"@en ;
+    rdfs:comment "The concept that mediates between singularity and universality in the particular judgment."@en .
+
+:Dialectic rdf:type owl:Class ;
+    rdfs:label "Dialectic"@en ;
+    rdfs:comment "The process of development through internal contradiction in the particular judgment."@en .
+
+:UniversalJudgment rdf:type owl:Class ;
+    rdfs:label "Universal Judgment"@en ;
+    rdfs:comment "The next stage in the development of judgments of reflection, to which the particular judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a particular judgment of reflection to its particular subject."@en ;
+    rdfs:domain :ParticularJudgmentOfReflection ;
+    rdfs:range :ParticularSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a particular judgment of reflection to its universal of reflection predicate."@en ;
+    rdfs:domain :ParticularJudgmentOfReflection ;
+    rdfs:range :UniversalOfReflectionPredicate .
+
+:mediatesBetween rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates between"@en ;
+    rdfs:comment "Indicates that particularity mediates between singularity and universality."@en ;
+    rdfs:domain :Particularity ;
+    rdfs:range owl:Thing .
+
+:containsDialectic rdf:type owl:ObjectProperty ;
+    rdfs:label "contains dialectic"@en ;
+    rdfs:comment "Indicates that the particular judgment contains a dialectical process."@en ;
+    rdfs:domain :ParticularJudgmentOfReflection ;
+    rdfs:range :Dialectic .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the particular judgment points towards the universal judgment as its further development."@en ;
+    rdfs:domain :ParticularJudgmentOfReflection ;
+    rdfs:range :UniversalJudgment .
+
+# Data Properties
+:expressesGroupOfParticulars rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses group of particulars"@en ;
+    rdfs:comment "Indicates whether the subject expresses a group of particulars rather than a single instance."@en ;
+    rdfs:domain :ParticularSubject ;
+    rdfs:range xsd:boolean .
+
+:appliesUniversallyToGroup rdf:type owl:DatatypeProperty ;
+    rdfs:label "applies universally to group"@en ;
+    rdfs:comment "Indicates whether the predicate applies universally to the group of particulars."@en ;
+    rdfs:domain :UniversalOfReflectionPredicate ;
+    rdfs:range xsd:boolean .
+
+:containsPositiveAndNegative rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains positive and negative"@en ;
+    rdfs:comment "Indicates whether the judgment contains both positive and negative aspects within itself."@en ;
+    rdfs:domain :ParticularJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+:isIndeterminate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is indeterminate"@en ;
+    rdfs:comment "Indicates whether the 'some' in the judgment remains indeterminate and potentially arbitrary."@en ;
+    rdfs:domain :ParticularJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:particularJudgmentOfReflection rdf:type :ParticularJudgmentOfReflection .
+:particularSubject rdf:type :ParticularSubject .
+:universalOfReflectionPredicate rdf:type :UniversalOfReflectionPredicate .
+:particularity rdf:type :Particularity .
+:dialectic rdf:type :Dialectic .
+:universalJudgment rdf:type :UniversalJudgment .
+
+# Relationships
+:particularJudgmentOfReflection :hasSubject :particularSubject ;
+                                :hasPredicate :universalOfReflectionPredicate ;
+                                :containsDialectic :dialectic ;
+                                :pointsTowards :universalJudgment .
+:particularity :mediatesBetween :ParticularSubject, :UniversalOfReflectionPredicate .
+
+# Properties
+:particularSubject :expressesGroupOfParticulars "true"^^xsd:boolean .
+:universalOfReflectionPredicate :appliesUniversallyToGroup "true"^^xsd:boolean .
+:particularJudgmentOfReflection :containsPositiveAndNegative "true"^^xsd:boolean ;
+                                :isIndeterminate "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-universal-judgment-reflection-ontology#> .
+
+# Classes
+:UniversalJudgmentOfReflection rdf:type owl:Class ;
+    rdfs:label "Universal Judgment of Reflection"@en ;
+    rdfs:comment "The third and most developed form of judgment of reflection, expressing a fully reflective relationship between a universal subject and a universal predicate."@en .
+
+:UniversalSubject rdf:type owl:Class ;
+    rdfs:label "Universal Subject"@en ;
+    rdfs:comment "The subject in a universal judgment of reflection, representing all individuals of a certain kind."@en .
+
+:UniversalOfReflectionPredicate rdf:type owl:Class ;
+    rdfs:label "Universal of Reflection Predicate"@en ;
+    rdfs:comment "The predicate in a universal judgment of reflection, expressing an essential characteristic that applies universally to the subject."@en .
+
+:ConcreteUniversality rdf:type owl:Class ;
+    rdfs:label "Concrete Universality"@en ;
+    rdfs:comment "The form of universality present in the subject, representing all individuals of a kind."@en .
+
+:ReflectiveUniversality rdf:type owl:Class ;
+    rdfs:label "Reflective Universality"@en ;
+    rdfs:comment "The form of universality present in the predicate, representing an essential characteristic."@en .
+
+:JudgmentOfNecessity rdf:type owl:Class ;
+    rdfs:label "Judgment of Necessity"@en ;
+    rdfs:comment "The next stage in the development of judgments, to which the universal judgment of reflection points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a universal judgment of reflection to its universal subject."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range :UniversalSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a universal judgment of reflection to its universal of reflection predicate."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range :UniversalOfReflectionPredicate .
+
+:embodies rdf:type owl:ObjectProperty ;
+    rdfs:label "embodies"@en ;
+    rdfs:comment "Indicates that the subject embodies concrete universality."@en ;
+    rdfs:domain :UniversalSubject ;
+    rdfs:range :ConcreteUniversality .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Indicates that the predicate expresses reflective universality."@en ;
+    rdfs:domain :UniversalOfReflectionPredicate ;
+    rdfs:range :ReflectiveUniversality .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the universal judgment of reflection points towards judgments of necessity."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range :JudgmentOfNecessity .
+
+# Data Properties
+:appliesUniversally rdf:type owl:DatatypeProperty ;
+    rdfs:label "applies universally"@en ;
+    rdfs:comment "Indicates whether the judgment applies to all individuals of a certain kind."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+:overcomesIndeterminacy rdf:type owl:DatatypeProperty ;
+    rdfs:label "overcomes indeterminacy"@en ;
+    rdfs:comment "Indicates whether the judgment overcomes the indeterminacy present in particular judgments."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+:providesScientificBasis rdf:type owl:DatatypeProperty ;
+    rdfs:label "provides scientific basis"@en ;
+    rdfs:comment "Indicates whether the judgment provides a basis for scientific generalizations and laws."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+:retainsExternality rdf:type owl:DatatypeProperty ;
+    rdfs:label "retains externality"@en ;
+    rdfs:comment "Indicates whether the judgment still retains an element of externality in the subject-predicate relation."@en ;
+    rdfs:domain :UniversalJudgmentOfReflection ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:universalJudgmentOfReflection rdf:type :UniversalJudgmentOfReflection .
+:universalSubject rdf:type :UniversalSubject .
+:universalOfReflectionPredicate rdf:type :UniversalOfReflectionPredicate .
+:concreteUniversality rdf:type :ConcreteUniversality .
+:reflectiveUniversality rdf:type :ReflectiveUniversality .
+:judgmentOfNecessity rdf:type :JudgmentOfNecessity .
+
+# Relationships
+:universalJudgmentOfReflection :hasSubject :universalSubject ;
+                               :hasPredicate :universalOfReflectionPredicate ;
+                               :pointsTowards :judgmentOfNecessity .
+:universalSubject :embodies :concreteUniversality .
+:universalOfReflectionPredicate :expresses :reflectiveUniversality .
+
+# Properties
+:universalJudgmentOfReflection :appliesUniversally "true"^^xsd:boolean ;
+                               :overcomesIndeterminacy "true"^^xsd:boolean ;
+                               :providesScientificBasis "true"^^xsd:boolean ;
+                               :retainsExternality "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-judgment-necessity-ontology#> .
+
+# Classes
+:JudgmentOfNecessity rdf:type owl:Class ;
+    rdfs:label "Judgment of Necessity"@en ;
+    rdfs:comment "A higher stage of judgment expressing the necessary connection between subject and predicate, where the predicate expresses the substance of the subject."@en .
+
+:ConcreteUniversalSubject rdf:type owl:Class ;
+    rdfs:label "Concrete Universal Subject"@en ;
+    rdfs:comment "The subject in a judgment of necessity, understood as a concrete universal containing its particularization."@en .
+
+:SubstantialPredicate rdf:type owl:Class ;
+    rdfs:label "Substantial Predicate"@en ;
+    rdfs:comment "The predicate in a judgment of necessity, expressing the essential nature or substance of the subject."@en .
+
+:NecessaryConnection rdf:type owl:Class ;
+    rdfs:label "Necessary Connection"@en ;
+    rdfs:comment "The internal and essential connection between subject and predicate in a judgment of necessity."@en .
+
+:JudgmentOfReflection rdf:type owl:Class ;
+    rdfs:label "Judgment of Reflection"@en ;
+    rdfs:comment "The preceding stage of judgment from which the judgment of necessity develops."@en .
+
+:JudgmentOfConcept rdf:type owl:Class ;
+    rdfs:label "Judgment of Concept"@en ;
+    rdfs:comment "The highest form of judgment, towards which the judgment of necessity points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a judgment of necessity to its concrete universal subject."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range :ConcreteUniversalSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a judgment of necessity to its substantial predicate."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range :SubstantialPredicate .
+
+:expressesConnectionAs rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses connection as"@en ;
+    rdfs:comment "Indicates that the judgment expresses the connection between subject and predicate as a necessary connection."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range :NecessaryConnection .
+
+:developsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "develops from"@en ;
+    rdfs:comment "Indicates that the judgment of necessity develops from the judgment of reflection."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range :JudgmentOfReflection .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the judgment of necessity points towards the judgment of concept."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range :JudgmentOfConcept .
+
+# Data Properties
+:expressesSubstance rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses substance"@en ;
+    rdfs:comment "Indicates whether the predicate expresses the substance of the subject."@en ;
+    rdfs:domain :SubstantialPredicate ;
+    rdfs:range xsd:boolean .
+
+:containsParticularization rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains particularization"@en ;
+    rdfs:comment "Indicates whether the subject contains its own particularization."@en ;
+    rdfs:domain :ConcreteUniversalSubject ;
+    rdfs:range xsd:boolean .
+
+:revealsInternalConnection rdf:type owl:DatatypeProperty ;
+    rdfs:label "reveals internal connection"@en ;
+    rdfs:comment "Indicates whether the judgment reveals the internal, essential connection between subject and predicate."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range xsd:boolean .
+
+:overcomesExternality rdf:type owl:DatatypeProperty ;
+    rdfs:label "overcomes externality"@en ;
+    rdfs:comment "Indicates whether the judgment overcomes the externality present in previous forms of judgment."@en ;
+    rdfs:domain :JudgmentOfNecessity ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:judgmentOfNecessity rdf:type :JudgmentOfNecessity .
+:concreteUniversalSubject rdf:type :ConcreteUniversalSubject .
+:substantialPredicate rdf:type :SubstantialPredicate .
+:necessaryConnection rdf:type :NecessaryConnection .
+:judgmentOfReflection rdf:type :JudgmentOfReflection .
+:judgmentOfConcept rdf:type :JudgmentOfConcept .
+
+# Relationships
+:judgmentOfNecessity :hasSubject :concreteUniversalSubject ;
+                     :hasPredicate :substantialPredicate ;
+                     :expressesConnectionAs :necessaryConnection ;
+                     :developsFrom :judgmentOfReflection ;
+                     :pointsTowards :judgmentOfConcept .
+
+# Properties
+:substantialPredicate :expressesSubstance "true"^^xsd:boolean .
+:concreteUniversalSubject :containsParticularization "true"^^xsd:boolean .
+:judgmentOfNecessity :revealsInternalConnection "true"^^xsd:boolean ;
+                     :overcomesExternality "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-categorical-judgment-necessity-ontology#> .
+
+# Classes
+:CategoricalJudgment rdf:type owl:Class ;
+    rdfs:label "Categorical Judgment"@en ;
+    rdfs:comment "The first form of judgment of necessity, expressing a direct, necessary relationship between subject and predicate."@en .
+
+:ConcreteUniversalSubject rdf:type owl:Class ;
+    rdfs:label "Concrete Universal Subject"@en ;
+    rdfs:comment "The subject in a categorical judgment, understood as a concrete universal."@en .
+
+:SubstantialPredicate rdf:type owl:Class ;
+    rdfs:label "Substantial Predicate"@en ;
+    rdfs:comment "The predicate in a categorical judgment, expressing the substance or essential nature of the subject."@en .
+
+:Genus rdf:type owl:Class ;
+    rdfs:label "Genus"@en ;
+    rdfs:comment "The essential category or universal nature expressed by the predicate in a categorical judgment."@en .
+
+:NecessaryConnection rdf:type owl:Class ;
+    rdfs:label "Necessary Connection"@en ;
+    rdfs:comment "The internal and essential connection between subject and predicate in a categorical judgment."@en .
+
+:HypotheticalJudgment rdf:type owl:Class ;
+    rdfs:label "Hypothetical Judgment"@en ;
+    rdfs:comment "The next stage in the development of judgments of necessity, to which the categorical judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a categorical judgment to its concrete universal subject."@en ;
+    rdfs:domain :CategoricalJudgment ;
+    rdfs:range :ConcreteUniversalSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a categorical judgment to its substantial predicate."@en ;
+    rdfs:domain :CategoricalJudgment ;
+    rdfs:range :SubstantialPredicate .
+
+:expressesAs rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses as"@en ;
+    rdfs:comment "Indicates that the predicate expresses the genus of the subject."@en ;
+    rdfs:domain :SubstantialPredicate ;
+    rdfs:range :Genus .
+
+:containsConnection rdf:type owl:ObjectProperty ;
+    rdfs:label "contains connection"@en ;
+    rdfs:comment "Indicates that the judgment contains a necessary connection between subject and predicate."@en ;
+    rdfs:domain :CategoricalJudgment ;
+    rdfs:range :NecessaryConnection .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the categorical judgment points towards the hypothetical judgment as its further development."@en ;
+    rdfs:domain :CategoricalJudgment ;
+    rdfs:range :HypotheticalJudgment .
+
+# Data Properties
+:isConcreteUniversal rdf:type owl:DatatypeProperty ;
+    rdfs:label "is concrete universal"@en ;
+    rdfs:comment "Indicates whether the subject is understood as a concrete universal."@en ;
+    rdfs:domain :ConcreteUniversalSubject ;
+    rdfs:range xsd:boolean .
+
+:expressesEssentialNature rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses essential nature"@en ;
+    rdfs:comment "Indicates whether the predicate expresses the essential nature or substance of the subject."@en ;
+    rdfs:domain :SubstantialPredicate ;
+    rdfs:range xsd:boolean .
+
+:containsImplicitContradiction rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains implicit contradiction"@en ;
+    rdfs:comment "Indicates whether the judgment contains an implicit contradiction between identity and difference."@en ;
+    rdfs:domain :CategoricalJudgment ;
+    rdfs:range xsd:boolean .
+
+:retainsImmediacy rdf:type owl:DatatypeProperty ;
+    rdfs:label "retains immediacy"@en ;
+    rdfs:comment "Indicates whether the judgment retains a form of immediacy in its direct assertion."@en ;
+    rdfs:domain :CategoricalJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:categoricalJudgment rdf:type :CategoricalJudgment .
+:concreteUniversalSubject rdf:type :ConcreteUniversalSubject .
+:substantialPredicate rdf:type :SubstantialPredicate .
+:genus rdf:type :Genus .
+:necessaryConnection rdf:type :NecessaryConnection .
+:hypotheticalJudgment rdf:type :HypotheticalJudgment .
+
+# Relationships
+:categoricalJudgment :hasSubject :concreteUniversalSubject ;
+                     :hasPredicate :substantialPredicate ;
+                     :containsConnection :necessaryConnection ;
+                     :pointsTowards :hypotheticalJudgment .
+:substantialPredicate :expressesAs :genus .
+
+# Properties
+:concreteUniversalSubject :isConcreteUniversal "true"^^xsd:boolean .
+:substantialPredicate :expressesEssentialNature "true"^^xsd:boolean .
+:categoricalJudgment :containsImplicitContradiction "true"^^xsd:boolean ;
+                     :retainsImmediacy "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-hypothetical-judgment-necessity-ontology#> .
+
+# Classes
+:HypotheticalJudgment rdf:type owl:Class ;
+    rdfs:label "Hypothetical Judgment"@en ;
+    rdfs:comment "The second form of judgment of necessity, expressing a necessary connection between two entire existences or states."@en .
+
+:Antecedent rdf:type owl:Class ;
+    rdfs:label "Antecedent"@en ;
+    rdfs:comment "The first part of a hypothetical judgment, representing a complete existence or state (If A is)."@en .
+
+:Consequent rdf:type owl:Class ;
+    rdfs:label "Consequent"@en ;
+    rdfs:comment "The second part of a hypothetical judgment, representing a complete existence or state necessarily connected to the antecedent (then B is)."@en .
+
+:NecessaryConnection rdf:type owl:Class ;
+    rdfs:label "Necessary Connection"@en ;
+    rdfs:comment "The essential connection between the antecedent and consequent in a hypothetical judgment."@en .
+
+:CategoricalJudgment rdf:type owl:Class ;
+    rdfs:label "Categorical Judgment"@en ;
+    rdfs:comment "The preceding form of judgment of necessity, from which the hypothetical judgment develops."@en .
+
+:DisjunctiveJudgment rdf:type owl:Class ;
+    rdfs:label "Disjunctive Judgment"@en ;
+    rdfs:comment "The next stage in the development of judgments of necessity, to which the hypothetical judgment points."@en .
+
+# Object Properties
+:hasAntecedent rdf:type owl:ObjectProperty ;
+    rdfs:label "has antecedent"@en ;
+    rdfs:comment "Relates a hypothetical judgment to its antecedent."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range :Antecedent .
+
+:hasConsequent rdf:type owl:ObjectProperty ;
+    rdfs:label "has consequent"@en ;
+    rdfs:comment "Relates a hypothetical judgment to its consequent."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range :Consequent .
+
+:containsConnection rdf:type owl:ObjectProperty ;
+    rdfs:label "contains connection"@en ;
+    rdfs:comment "Indicates that the judgment contains a necessary connection between antecedent and consequent."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range :NecessaryConnection .
+
+:developsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "develops from"@en ;
+    rdfs:comment "Indicates that the hypothetical judgment develops from the categorical judgment."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range :CategoricalJudgment .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the hypothetical judgment points towards the disjunctive judgment as its further development."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range :DisjunctiveJudgment .
+
+# Data Properties
+:isCompleteExistence rdf:type owl:DatatypeProperty ;
+    rdfs:label "is complete existence"@en ;
+    rdfs:comment "Indicates whether the antecedent or consequent represents a complete existence or state."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:expressesNecessaryConnection rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses necessary connection"@en ;
+    rdfs:comment "Indicates whether the judgment expresses a necessary connection between antecedent and consequent."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range xsd:boolean .
+
+:containsTensionIndependenceDependence rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains tension independence dependence"@en ;
+    rdfs:comment "Indicates whether the judgment contains a tension between the independence and dependence of antecedent and consequent."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range xsd:boolean .
+
+:retainsExternality rdf:type owl:DatatypeProperty ;
+    rdfs:label "retains externality"@en ;
+    rdfs:comment "Indicates whether the judgment retains a form of externality in the separation of antecedent and consequent."@en ;
+    rdfs:domain :HypotheticalJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:hypotheticalJudgment rdf:type :HypotheticalJudgment .
+:antecedent rdf:type :Antecedent .
+:consequent rdf:type :Consequent .
+:necessaryConnection rdf:type :NecessaryConnection .
+:categoricalJudgment rdf:type :CategoricalJudgment .
+:disjunctiveJudgment rdf:type :DisjunctiveJudgment .
+
+# Relationships
+:hypotheticalJudgment :hasAntecedent :antecedent ;
+                      :hasConsequent :consequent ;
+                      :containsConnection :necessaryConnection ;
+                      :developsFrom :categoricalJudgment ;
+                      :pointsTowards :disjunctiveJudgment .
+
+# Properties
+:antecedent :isCompleteExistence "true"^^xsd:boolean .
+:consequent :isCompleteExistence "true"^^xsd:boolean .
+:hypotheticalJudgment :expressesNecessaryConnection "true"^^xsd:boolean ;
+                      :containsTensionIndependenceDependence "true"^^xsd:boolean ;
+                      :retainsExternality "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-disjunctive-judgment-necessity-ontology#> .
+
+# Classes
+:DisjunctiveJudgment rdf:type owl:Class ;
+    rdfs:label "Disjunctive Judgment"@en ;
+    rdfs:comment "The third and most advanced form of judgment of necessity, expressing a comprehensive unity of necessity and universality."@en .
+
+:UniversalSubject rdf:type owl:Class ;
+    rdfs:label "Universal Subject"@en ;
+    rdfs:comment "The subject in a disjunctive judgment, representing a universal concept."@en .
+
+:ParticularPredicate rdf:type owl:Class ;
+    rdfs:label "Particular Predicate"@en ;
+    rdfs:comment "A predicate in a disjunctive judgment, representing a particular form of the universal subject."@en .
+
+:TotalityOfParticulars rdf:type owl:Class ;
+    rdfs:label "Totality of Particulars"@en ;
+    rdfs:comment "The complete set of particular predicates in a disjunctive judgment, collectively exhaustive of the universal subject."@en .
+
+:NecessaryConnection rdf:type owl:Class ;
+    rdfs:label "Necessary Connection"@en ;
+    rdfs:comment "The essential connection between the universal subject and its particular predicates in a disjunctive judgment."@en .
+
+:Syllogism rdf:type owl:Class ;
+    rdfs:label "Syllogism"@en ;
+    rdfs:comment "The next stage in the development of logical forms, to which the disjunctive judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a disjunctive judgment to its universal subject."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range :UniversalSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a disjunctive judgment to its particular predicates."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range :ParticularPredicate .
+
+:containsTotality rdf:type owl:ObjectProperty ;
+    rdfs:label "contains totality"@en ;
+    rdfs:comment "Indicates that the disjunctive judgment contains a totality of particular predicates."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range :TotalityOfParticulars .
+
+:expressesConnection rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses connection"@en ;
+    rdfs:comment "Indicates that the judgment expresses a necessary connection between the universal subject and its particular predicates."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range :NecessaryConnection .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the disjunctive judgment points towards the syllogism as its further development."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range :Syllogism .
+
+# Data Properties
+:isMutuallyExclusive rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mutually exclusive"@en ;
+    rdfs:comment "Indicates whether the particular predicates are mutually exclusive."@en ;
+    rdfs:domain :TotalityOfParticulars ;
+    rdfs:range xsd:boolean .
+
+:isCollectivelyExhaustive rdf:type owl:DatatypeProperty ;
+    rdfs:label "is collectively exhaustive"@en ;
+    rdfs:comment "Indicates whether the particular predicates are collectively exhaustive of the universal subject."@en ;
+    rdfs:domain :TotalityOfParticulars ;
+    rdfs:range xsd:boolean .
+
+:containsUnityOfIdentityAndDifference rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains unity of identity and difference"@en ;
+    rdfs:comment "Indicates whether the judgment contains a unity of identity and difference between the universal subject and its particular predicates."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range xsd:boolean .
+
+:representsHighestFormOfJudgment rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents highest form of judgment"@en ;
+    rdfs:comment "Indicates whether the judgment represents the highest form of judgment before transitioning to syllogism."@en ;
+    rdfs:domain :DisjunctiveJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:disjunctiveJudgment rdf:type :DisjunctiveJudgment .
+:universalSubject rdf:type :UniversalSubject .
+:particularPredicate rdf:type :ParticularPredicate .
+:totalityOfParticulars rdf:type :TotalityOfParticulars .
+:necessaryConnection rdf:type :NecessaryConnection .
+:syllogism rdf:type :Syllogism .
+
+# Relationships
+:disjunctiveJudgment :hasSubject :universalSubject ;
+                     :hasPredicate :particularPredicate ;
+                     :containsTotality :totalityOfParticulars ;
+                     :expressesConnection :necessaryConnection ;
+                     :pointsTowards :syllogism .
+
+# Properties
+:totalityOfParticulars :isMutuallyExclusive "true"^^xsd:boolean ;
+                       :isCollectivelyExhaustive "true"^^xsd:boolean .
+:disjunctiveJudgment :containsUnityOfIdentityAndDifference "true"^^xsd:boolean ;
+                     :representsHighestFormOfJudgment "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-judgment-concept-ontology#> .
+
+# Classes
+:JudgmentOfConcept rdf:type owl:Class ;
+    rdfs:label "Judgment of the Concept"@en ;
+    rdfs:comment "The highest form of judgment expressing the unity of concept and reality, and assessing the adequacy of a subject to its concept."@en .
+
+:ConceptualSubject rdf:type owl:Class ;
+    rdfs:label "Conceptual Subject"@en ;
+    rdfs:comment "The subject in a judgment of the concept, representing a reality that is measured against its concept."@en .
+
+:EvaluativePredicate rdf:type owl:Class ;
+    rdfs:label "Evaluative Predicate"@en ;
+    rdfs:comment "The predicate in a judgment of the concept, expressing evaluative notions like good, bad, true, right, etc."@en .
+
+:Concept rdf:type owl:Class ;
+    rdfs:label "Concept"@en ;
+    rdfs:comment "The ideal or standard against which the subject is measured in a judgment of the concept."@en .
+
+:Reality rdf:type owl:Class ;
+    rdfs:label "Reality"@en ;
+    rdfs:comment "The actualized form of the concept as it appears in the world."@en .
+
+:ConceptRealityUnity rdf:type owl:Class ;
+    rdfs:label "Concept-Reality Unity"@en ;
+    rdfs:comment "The unity or agreement between concept and reality expressed in the judgment of the concept."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a judgment of the concept to its conceptual subject."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range :ConceptualSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a judgment of the concept to its evaluative predicate."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range :EvaluativePredicate .
+
+:measuresAgainst rdf:type owl:ObjectProperty ;
+    rdfs:label "measures against"@en ;
+    rdfs:comment "Indicates that the subject is measured against its concept."@en ;
+    rdfs:domain :ConceptualSubject ;
+    rdfs:range :Concept .
+
+:actualizesIn rdf:type owl:ObjectProperty ;
+    rdfs:label "actualizes in"@en ;
+    rdfs:comment "Indicates that the concept is actualized in reality."@en ;
+    rdfs:domain :Concept ;
+    rdfs:range :Reality .
+
+:expressesUnity rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses unity"@en ;
+    rdfs:comment "Indicates that the judgment expresses the unity of concept and reality."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range :ConceptRealityUnity .
+
+# Data Properties
+:isHighestFormOfJudgment rdf:type owl:DatatypeProperty ;
+    rdfs:label "is highest form of judgment"@en ;
+    rdfs:comment "Indicates whether this is the highest form of judgment in Hegel's logical progression."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range xsd:boolean .
+
+:involvesEvaluation rdf:type owl:DatatypeProperty ;
+    rdfs:label "involves evaluation"@en ;
+    rdfs:comment "Indicates whether the judgment involves an evaluation of the subject's adequacy to its concept."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range xsd:boolean .
+
+:bridgesSubjectiveObjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "bridges subjective objective"@en ;
+    rdfs:comment "Indicates whether the judgment bridges the gap between subjective thought and objective reality."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range xsd:boolean .
+
+:containsDialecticalTension rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains dialectical tension"@en ;
+    rdfs:comment "Indicates whether the judgment contains a dialectical tension between concept as ideal and its realization."@en ;
+    rdfs:domain :JudgmentOfConcept ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:judgmentOfConcept rdf:type :JudgmentOfConcept .
+:conceptualSubject rdf:type :ConceptualSubject .
+:evaluativePredicate rdf:type :EvaluativePredicate .
+:concept rdf:type :Concept .
+:reality rdf:type :Reality .
+:conceptRealityUnity rdf:type :ConceptRealityUnity .
+
+# Relationships
+:judgmentOfConcept :hasSubject :conceptualSubject ;
+                   :hasPredicate :evaluativePredicate ;
+                   :expressesUnity :conceptRealityUnity .
+:conceptualSubject :measuresAgainst :concept .
+:concept :actualizesIn :reality .
+
+# Properties
+:judgmentOfConcept :isHighestFormOfJudgment "true"^^xsd:boolean ;
+                   :involvesEvaluation "true"^^xsd:boolean ;
+                   :bridgesSubjectiveObjective "true"^^xsd:boolean ;
+                   :containsDialecticalTension "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-assertoric-judgment-concept-ontology#> .
+
+# Classes
+:AssertoricalJudgment rdf:type owl:Class ;
+    rdfs:label "Assertorical Judgment"@en ;
+    rdfs:comment "The first form of judgment of the concept, making a direct assertion about the agreement or disagreement of an object with its concept."@en .
+
+:ImmediateSingularSubject rdf:type owl:Class ;
+    rdfs:label "Immediate Singular Subject"@en ;
+    rdfs:comment "The subject in an assertorical judgment, representing an immediate singular object or instance."@en .
+
+:EvaluativePredicate rdf:type owl:Class ;
+    rdfs:label "Evaluative Predicate"@en ;
+    rdfs:comment "The predicate in an assertorical judgment, expressing an evaluative concept like good, right, true, etc."@en .
+
+:SubjectiveCertainty rdf:type owl:Class ;
+    rdfs:label "Subjective Certainty"@en ;
+    rdfs:comment "The immediate conviction or certainty expressed in an assertorical judgment."@en .
+
+:ObjectiveValidity rdf:type owl:Class ;
+    rdfs:label "Objective Validity"@en ;
+    rdfs:comment "The demand for objective truth or validity implicit in an assertorical judgment."@en .
+
+:ProblematicJudgment rdf:type owl:Class ;
+    rdfs:label "Problematic Judgment"@en ;
+    rdfs:comment "The next stage in the development of judgments of the concept, to which the assertorical judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates an assertorical judgment to its immediate singular subject."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range :ImmediateSingularSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates an assertorical judgment to its evaluative predicate."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range :EvaluativePredicate .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Indicates that the judgment expresses a subjective certainty."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range :SubjectiveCertainty .
+
+:impliesDemandFor rdf:type owl:ObjectProperty ;
+    rdfs:label "implies demand for"@en ;
+    rdfs:comment "Indicates that the judgment implies a demand for objective validity."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range :ObjectiveValidity .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the assertorical judgment points towards the problematic judgment as its further development."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range :ProblematicJudgment .
+
+# Data Properties
+:isImmediateAssertion rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediate assertion"@en ;
+    rdfs:comment "Indicates whether the judgment is an immediate assertion without explicit justification."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range xsd:boolean .
+
+:containsEvaluativeDimension rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains evaluative dimension"@en ;
+    rdfs:comment "Indicates whether the judgment contains an evaluative dimension not present in earlier forms of judgment."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range xsd:boolean .
+
+:lacksJustification rdf:type owl:DatatypeProperty ;
+    rdfs:label "lacks justification"@en ;
+    rdfs:comment "Indicates whether the judgment lacks explicit justification or grounding."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range xsd:boolean .
+
+:containsImplicitContradiction rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains implicit contradiction"@en ;
+    rdfs:comment "Indicates whether the judgment contains an implicit contradiction between subjective certainty and demand for objective validity."@en ;
+    rdfs:domain :AssertoricalJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:assertoricalJudgment rdf:type :AssertoricalJudgment .
+:immediateSingularSubject rdf:type :ImmediateSingularSubject .
+:evaluativePredicate rdf:type :EvaluativePredicate .
+:subjectiveCertainty rdf:type :SubjectiveCertainty .
+:objectiveValidity rdf:type :ObjectiveValidity .
+:problematicJudgment rdf:type :ProblematicJudgment .
+
+# Relationships
+:assertoricalJudgment :hasSubject :immediateSingularSubject ;
+                      :hasPredicate :evaluativePredicate ;
+                      :expresses :subjectiveCertainty ;
+                      :impliesDemandFor :objectiveValidity ;
+                      :pointsTowards :problematicJudgment .
+
+# Properties
+:assertoricalJudgment :isImmediateAssertion "true"^^xsd:boolean ;
+                      :containsEvaluativeDimension "true"^^xsd:boolean ;
+                      :lacksJustification "true"^^xsd:boolean ;
+                      :containsImplicitContradiction "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-problematic-judgment-concept-ontology#> .
+
+# Classes
+:ProblematicJudgment rdf:type owl:Class ;
+    rdfs:label "Problematic Judgment"@en ;
+    rdfs:comment "The second form of judgment of the concept, expressing uncertainty or contingency in the relation between subject and predicate."@en .
+
+:ConcreteSingularSubject rdf:type owl:Class ;
+    rdfs:label "Concrete Singular Subject"@en ;
+    rdfs:comment "The subject in a problematic judgment, representing a concrete singular entity whose relation to the predicate is questioned."@en .
+
+:ContingentPredicate rdf:type owl:Class ;
+    rdfs:label "Contingent Predicate"@en ;
+    rdfs:comment "The predicate in a problematic judgment, whose application to the subject is seen as possible but not certain."@en .
+
+:Possibility rdf:type owl:Class ;
+    rdfs:label "Possibility"@en ;
+    rdfs:comment "The concept of potential or possible relation between subject and predicate in a problematic judgment."@en .
+
+:Contingency rdf:type owl:Class ;
+    rdfs:label "Contingency"@en ;
+    rdfs:comment "The concept of the subject's contingent nature in relation to its predicate in a problematic judgment."@en .
+
+:ApodictidJudgment rdf:type owl:Class ;
+    rdfs:label "Apodictic Judgment"@en ;
+    rdfs:comment "The next stage in the development of judgments of the concept, to which the problematic judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates a problematic judgment to its concrete singular subject."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range :ConcreteSingularSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates a problematic judgment to its contingent predicate."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range :ContingentPredicate .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Indicates that the judgment expresses a possibility in the subject-predicate relation."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range :Possibility .
+
+:acknowledges rdf:type owl:ObjectProperty ;
+    rdfs:label "acknowledges"@en ;
+    rdfs:comment "Indicates that the judgment acknowledges the contingency in the subject's nature."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range :Contingency .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the problematic judgment points towards the apodictic judgment as its further development."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range :ApodictidJudgment .
+
+# Data Properties
+:expressesUncertainty rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses uncertainty"@en ;
+    rdfs:comment "Indicates whether the judgment expresses uncertainty in the subject-predicate relation."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range xsd:boolean .
+
+:introducesReflection rdf:type owl:DatatypeProperty ;
+    rdfs:label "introduces reflection"@en ;
+    rdfs:comment "Indicates whether the judgment introduces an element of reflection and doubt."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range xsd:boolean .
+
+:addressesJustificationDemand rdf:type owl:DatatypeProperty ;
+    rdfs:label "addresses justification demand"@en ;
+    rdfs:comment "Indicates whether the judgment begins to address the demand for justification implicit in the assertoric judgment."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range xsd:boolean .
+
+:containsDialecticalTension rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains dialectical tension"@en ;
+    rdfs:comment "Indicates whether the judgment contains a tension between the potential and actual state of the subject."@en ;
+    rdfs:domain :ProblematicJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:problematicJudgment rdf:type :ProblematicJudgment .
+:concreteSingularSubject rdf:type :ConcreteSingularSubject .
+:contingentPredicate rdf:type :ContingentPredicate .
+:possibility rdf:type :Possibility .
+:contingency rdf:type :Contingency .
+:apodictidJudgment rdf:type :ApodictidJudgment .
+
+# Relationships
+:problematicJudgment :hasSubject :concreteSingularSubject ;
+                     :hasPredicate :contingentPredicate ;
+                     :expresses :possibility ;
+                     :acknowledges :contingency ;
+                     :pointsTowards :apodictidJudgment .
+
+# Properties
+:problematicJudgment :expressesUncertainty "true"^^xsd:boolean ;
+                     :introducesReflection "true"^^xsd:boolean ;
+                     :addressesJustificationDemand "true"^^xsd:boolean ;
+                     :containsDialecticalTension "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-apodictic-judgment-concept-ontology#> .
+
+# Classes
+:ApodictidJudgment rdf:type owl:Class ;
+    rdfs:label "Apodictic Judgment"@en ;
+    rdfs:comment "The third and highest form of judgment of the concept, expressing the necessary and fully determined relation between subject and predicate."@en .
+
+:ConcreteUniversalSubject rdf:type owl:Class ;
+    rdfs:label "Concrete Universal Subject"@en ;
+    rdfs:comment "The subject in an apodictic judgment, understood as a concrete universal containing its own determination."@en .
+
+:EssentialPredicate rdf:type owl:Class ;
+    rdfs:label "Essential Predicate"@en ;
+    rdfs:comment "The predicate in an apodictic judgment, expressing the essential nature or concept of the subject."@en .
+
+:NecessaryConnection rdf:type owl:Class ;
+    rdfs:label "Necessary Connection"@en ;
+    rdfs:comment "The necessary relation between subject and predicate in an apodictic judgment, grounded in the subject's nature."@en .
+
+:ConceptualDetermination rdf:type owl:Class ;
+    rdfs:label "Conceptual Determination"@en ;
+    rdfs:comment "The full determination of the subject through its concept in an apodictic judgment."@en .
+
+:Syllogism rdf:type owl:Class ;
+    rdfs:label "Syllogism"@en ;
+    rdfs:comment "The next stage in the development of logical forms, to which the apodictic judgment points."@en .
+
+# Object Properties
+:hasSubject rdf:type owl:ObjectProperty ;
+    rdfs:label "has subject"@en ;
+    rdfs:comment "Relates an apodictic judgment to its concrete universal subject."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range :ConcreteUniversalSubject .
+
+:hasPredicate rdf:type owl:ObjectProperty ;
+    rdfs:label "has predicate"@en ;
+    rdfs:comment "Relates an apodictic judgment to its essential predicate."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range :EssentialPredicate .
+
+:expresses rdf:type owl:ObjectProperty ;
+    rdfs:label "expresses"@en ;
+    rdfs:comment "Indicates that the judgment expresses a necessary connection between subject and predicate."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range :NecessaryConnection .
+
+:achieves rdf:type owl:ObjectProperty ;
+    rdfs:label "achieves"@en ;
+    rdfs:comment "Indicates that the judgment achieves full conceptual determination of the subject."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range :ConceptualDetermination .
+
+:pointsTowards rdf:type owl:ObjectProperty ;
+    rdfs:label "points towards"@en ;
+    rdfs:comment "Indicates that the apodictic judgment points towards syllogism as its further development."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range :Syllogism .
+
+# Data Properties
+:expressesNecessity rdf:type owl:DatatypeProperty ;
+    rdfs:label "expresses necessity"@en ;
+    rdfs:comment "Indicates whether the judgment expresses the necessary relation between subject and predicate."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range xsd:boolean .
+
+:providesFullGrounding rdf:type owl:DatatypeProperty ;
+    rdfs:label "provides full grounding"@en ;
+    rdfs:comment "Indicates whether the judgment provides full grounding for the subject-predicate relation."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range xsd:boolean .
+
+:synthesizesImmediacyAndMediation rdf:type owl:DatatypeProperty ;
+    rdfs:label "synthesizes immediacy and mediation"@en ;
+    rdfs:comment "Indicates whether the judgment synthesizes the immediacy of assertoric and the mediation of problematic judgments."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range xsd:boolean .
+
+:representsHighestFormOfJudgment rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents highest form of judgment"@en ;
+    rdfs:comment "Indicates whether the judgment represents the highest form of conceptual judgment before transitioning to syllogism."@en ;
+    rdfs:domain :ApodictidJudgment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:apodictidJudgment rdf:type :ApodictidJudgment .
+:concreteUniversalSubject rdf:type :ConcreteUniversalSubject .
+:essentialPredicate rdf:type :EssentialPredicate .
+:necessaryConnection rdf:type :NecessaryConnection .
+:conceptualDetermination rdf:type :ConceptualDetermination .
+:syllogism rdf:type :Syllogism .
+
+# Relationships
+:apodictidJudgment :hasSubject :concreteUniversalSubject ;
+                   :hasPredicate :essentialPredicate ;
+                   :expresses :necessaryConnection ;
+                   :achieves :conceptualDetermination ;
+                   :pointsTowards :syllogism .
+
+# Properties
+:apodictidJudgment :expressesNecessity "true"^^xsd:boolean ;
+                   :providesFullGrounding "true"^^xsd:boolean ;
+                   :synthesizesImmediacyAndMediation "true"^^xsd:boolean ;
+                   :representsHighestFormOfJudgment "true"^^xsd:boolean .

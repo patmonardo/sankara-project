@@ -1,0 +1,1402 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-ontology#> .
+
+# Classes
+:Syllogism rdf:type owl:Class ;
+    rdfs:label "Syllogism"@en ;
+    rdfs:comment "The restoration of the concept in judgment, representing the unity and truth of the concept."@en .
+
+:Concept rdf:type owl:Class ;
+    rdfs:label "Concept"@en ;
+    rdfs:comment "The fundamental unit of thought in Hegelian logic."@en .
+
+:Judgment rdf:type owl:Class ;
+    rdfs:label "Judgment"@en ;
+    rdfs:comment "A form of thinking where the concept is divided into its moments."@en .
+
+:Understanding rdf:type owl:Class ;
+    rdfs:label "Understanding"@en ;
+    rdfs:comment "The faculty of the determinate concept, held fixed by abstraction and universality."@en .
+
+:Reason rdf:type owl:Class ;
+    rdfs:label "Reason"@en ;
+    rdfs:comment "The faculty where determinate concepts are posited in their totality and unity."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of connecting concepts through an intermediary."@en .
+
+:Moment rdf:type owl:Class ;
+    rdfs:label "Moment"@en ;
+    rdfs:comment "A constituent part or aspect of a concept or syllogism."@en .
+
+# Object Properties
+:restores rdf:type owl:ObjectProperty ;
+    rdfs:label "restores"@en ;
+    rdfs:comment "Indicates that the subject brings back or reestablishes the object."@en ;
+    rdfs:domain :Syllogism ;
+    rdfs:range :Concept .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Expresses that the subject brings together or combines the objects."@en ;
+    rdfs:domain :Syllogism ;
+    rdfs:range owl:Thing .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:comment "Denotes that the subject includes or encompasses the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range :Moment .
+
+:mediates rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates"@en ;
+    rdfs:comment "Indicates that the subject acts as an intermediary between objects."@en ;
+    rdfs:domain :Mediation ;
+    rdfs:range owl:Thing .
+
+:posits rdf:type owl:ObjectProperty ;
+    rdfs:label "posits"@en ;
+    rdfs:comment "Expresses that the subject establishes or asserts the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isRational rdf:type owl:DatatypeProperty ;
+    rdfs:label "is rational"@en ;
+    rdfs:comment "Indicates whether the subject has the quality of being rational."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isMediated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediated"@en ;
+    rdfs:comment "Denotes whether the subject is connected through an intermediary process."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isSublated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is sublated"@en ;
+    rdfs:comment "Indicates whether the subject has been both preserved and transcended."@en ;
+    rdfs:domain :Moment ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogism rdf:type :Syllogism .
+:concept rdf:type :Concept .
+:judgment rdf:type :Judgment .
+:understanding rdf:type :Understanding .
+:reason rdf:type :Reason .
+:mediation rdf:type :Mediation .
+
+# Relationships
+:syllogism :restores :concept ;
+           :unifies :concept, :judgment ;
+           :contains :moment .
+:mediation :mediates :concept, :judgment .
+:reason :posits :concept .
+
+# Properties
+:syllogism :isRational "true"^^xsd:boolean ;
+           :isMediated "true"^^xsd:boolean .
+:moment :isSublated "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-existence-ontology#> .
+
+# Classes
+:SyllogismOfExistence rdf:type owl:Class ;
+    rdfs:label "Syllogism of Existence"@en ;
+    rdfs:comment "The first and immediate form of syllogism with abstract and immediate determinations."@en .
+
+:Moment rdf:type owl:Class ;
+    rdfs:label "Moment"@en ;
+    rdfs:comment "A constituent part or aspect of the syllogism of existence."@en .
+
+:Singularity rdf:type owl:Class ;
+    rdfs:subClassOf :Moment ;
+    rdfs:label "Singularity"@en ;
+    rdfs:comment "The moment representing individual instances or specific cases."@en .
+
+:Particularity rdf:type owl:Class ;
+    rdfs:subClassOf :Moment ;
+    rdfs:label "Particularity"@en ;
+    rdfs:comment "The middle term that unites singularity and universality."@en .
+
+:Universality rdf:type owl:Class ;
+    rdfs:subClassOf :Moment ;
+    rdfs:label "Universality"@en ;
+    rdfs:comment "The moment representing general concepts or categories."@en .
+
+# Object Properties
+:hasMoment rdf:type owl:ObjectProperty ;
+    rdfs:label "has moment"@en ;
+    rdfs:comment "Indicates that the subject includes the object as one of its moments."@en ;
+    rdfs:domain :SyllogismOfExistence ;
+    rdfs:range :Moment .
+
+:unites rdf:type owl:ObjectProperty ;
+    rdfs:label "unites"@en ;
+    rdfs:comment "Expresses that the subject brings together or combines the objects."@en ;
+    rdfs:domain :Particularity ;
+    rdfs:range owl:Thing .
+
+:subsumes rdf:type owl:ObjectProperty ;
+    rdfs:label "subsumes"@en ;
+    rdfs:comment "Indicates that the subject encompasses or includes the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:emergesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges into"@en ;
+    rdfs:comment "Denotes that the subject comes into being or manifests as the object."@en ;
+    rdfs:domain :Singularity ;
+    rdfs:range :Universality .
+
+# Data Properties
+:isImmediate rdf:type owl:DatatypeProperty ;
+    rdfs:label "is immediate"@en ;
+    rdfs:comment "Indicates whether the subject has the quality of being direct or unmediated."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isAbstract rdf:type owl:DatatypeProperty ;
+    rdfs:label "is abstract"@en ;
+    rdfs:comment "Denotes whether the subject is conceptual rather than concrete."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isSubjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is subjective"@en ;
+    rdfs:comment "Indicates whether the subject exists primarily in subjective consciousness."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isContingent rdf:type owl:DatatypeProperty ;
+    rdfs:label "is contingent"@en ;
+    rdfs:comment "Denotes whether the subject is dependent on circumstances rather than necessary."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogismOfExistence rdf:type :SyllogismOfExistence .
+:singularity rdf:type :Singularity .
+:particularity rdf:type :Particularity .
+:universality rdf:type :Universality .
+
+# Relationships
+:syllogismOfExistence :hasMoment :singularity, :particularity, :universality .
+:particularity :unites :singularity, :universality ;
+              :subsumes :singularity .
+:universality :subsumes :particularity .
+:singularity :emergesInto :universality .
+
+# Properties
+:syllogismOfExistence :isImmediate "true"^^xsd:boolean ;
+                      :isAbstract "true"^^xsd:boolean ;
+                      :isSubjective "true"^^xsd:boolean ;
+                      :isContingent "true"^^xsd:boolean .
+:singularity :isImmediate "true"^^xsd:boolean .
+:particularity :isImmediate "true"^^xsd:boolean .
+:universality :isImmediate "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-first-figure-syllogism-ontology#> .
+
+# Classes
+:FirstFigureSyllogism rdf:type owl:Class ;
+    rdfs:label "First Figure Syllogism"@en ;
+    rdfs:comment "The first figure of the syllogism with the schema S-P-U."@en .
+
+:Singularity rdf:type owl:Class ;
+    rdfs:label "Singularity"@en ;
+    rdfs:comment "The moment representing individual instances or specific cases."@en .
+
+:Particularity rdf:type owl:Class ;
+    rdfs:label "Particularity"@en ;
+    rdfs:comment "The middle term that unites singularity and universality."@en .
+
+:Universality rdf:type owl:Class ;
+    rdfs:label "Universality"@en ;
+    rdfs:comment "The moment representing general concepts or categories."@en .
+
+:Extreme rdf:type owl:Class ;
+    rdfs:label "Extreme"@en ;
+    rdfs:comment "A term that stands at either end of the syllogistic structure."@en .
+
+# Object Properties
+:hasStructure rdf:type owl:ObjectProperty ;
+    rdfs:label "has structure"@en ;
+    rdfs:comment "Indicates the structural components of the syllogism."@en ;
+    rdfs:domain :FirstFigureSyllogism ;
+    rdfs:range owl:Thing .
+
+:connectsThrough rdf:type owl:ObjectProperty ;
+    rdfs:label "connects through"@en ;
+    rdfs:comment "Expresses that the subject connects to the object through an intermediary."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:subsumes rdf:type owl:ObjectProperty ;
+    rdfs:label "subsumes"@en ;
+    rdfs:comment "Indicates that the subject encompasses or includes the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:emergesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "emerges into"@en ;
+    rdfs:comment "Denotes that the subject comes into being or manifests as the object."@en ;
+    rdfs:domain :Singularity ;
+    rdfs:range :Universality .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:comment "Expresses that the subject brings together or combines the objects."@en ;
+    rdfs:domain :Particularity ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isSubjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is subjective"@en ;
+    rdfs:comment "Indicates whether the subject exists primarily in subjective consciousness."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:hasSuperficialObjectiveSignificance rdf:type owl:DatatypeProperty ;
+    rdfs:label "has superficial objective significance"@en ;
+    rdfs:comment "Denotes whether the subject has only a surface-level objective meaning."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isMediated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediated"@en ;
+    rdfs:comment "Indicates whether the subject is connected through an intermediary process."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:firstFigureSyllogism rdf:type :FirstFigureSyllogism .
+:singularity rdf:type :Singularity, :Extreme .
+:particularity rdf:type :Particularity .
+:universality rdf:type :Universality, :Extreme .
+
+# Relationships
+:firstFigureSyllogism :hasStructure :singularity, :particularity, :universality .
+:singularity :connectsThrough :particularity, :universality .
+:universality :subsumes :particularity .
+:particularity :subsumes :singularity .
+:singularity :emergesInto :universality .
+:particularity :unifies :singularity, :universality .
+
+# Properties
+:firstFigureSyllogism :isSubjective "true"^^xsd:boolean ;
+                      :hasSuperficialObjectiveSignificance "true"^^xsd:boolean .
+:singularity :isMediated "true"^^xsd:boolean .
+:universality :isMediated "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-second-figure-syllogism-ontology#> .
+
+# Classes
+:SecondFigureSyllogism rdf:type owl:Class ;
+    rdfs:label "Second Figure Syllogism"@en ;
+    rdfs:comment "The second figure of the syllogism with the schema P-S-U."@en .
+
+:Singularity rdf:type owl:Class ;
+    rdfs:label "Singularity"@en ;
+    rdfs:comment "The middle term in the second figure, representing completed singularity."@en .
+
+:Particularity rdf:type owl:Class ;
+    rdfs:label "Particularity"@en ;
+    rdfs:comment "One of the extremes in the second figure syllogism."@en .
+
+:Universality rdf:type owl:Class ;
+    rdfs:label "Universality"@en ;
+    rdfs:comment "One of the extremes in the second figure syllogism."@en .
+
+:Premise rdf:type owl:Class ;
+    rdfs:label "Premise"@en ;
+    rdfs:comment "An immediate connection between an extreme and the middle term."@en .
+
+:Conclusion rdf:type owl:Class ;
+    rdfs:label "Conclusion"@en ;
+    rdfs:comment "The result of the syllogistic inference in the second figure."@en .
+
+# Object Properties
+:hasStructure rdf:type owl:ObjectProperty ;
+    rdfs:label "has structure"@en ;
+    rdfs:comment "Indicates the structural components of the syllogism."@en ;
+    rdfs:domain :SecondFigureSyllogism ;
+    rdfs:range owl:Thing .
+
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :SecondFigureSyllogism ;
+    rdfs:range :Singularity .
+
+:hasPremise rdf:type owl:ObjectProperty ;
+    rdfs:label "has premise"@en ;
+    rdfs:comment "Indicates a premise of the syllogism."@en ;
+    rdfs:domain :SecondFigureSyllogism ;
+    rdfs:range :Premise .
+
+:hasConclusion rdf:type owl:ObjectProperty ;
+    rdfs:label "has conclusion"@en ;
+    rdfs:comment "Specifies the conclusion of the syllogism."@en ;
+    rdfs:domain :SecondFigureSyllogism ;
+    rdfs:range :Conclusion .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:comment "Expresses that the subject includes or encompasses the object."@en ;
+    rdfs:domain :Singularity ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isParticular rdf:type owl:DatatypeProperty ;
+    rdfs:label "is particular"@en ;
+    rdfs:comment "Indicates whether the subject is of a particular nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isPositive rdf:type owl:DatatypeProperty ;
+    rdfs:label "is positive"@en ;
+    rdfs:comment "Denotes whether the subject has a positive quality."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isNegative rdf:type owl:DatatypeProperty ;
+    rdfs:label "is negative"@en ;
+    rdfs:comment "Denotes whether the subject has a negative quality."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:hasLimitedValue rdf:type owl:DatatypeProperty ;
+    rdfs:label "has limited value"@en ;
+    rdfs:comment "Indicates whether the subject has restricted significance or value."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isIndifferent rdf:type owl:DatatypeProperty ;
+    rdfs:label "is indifferent"@en ;
+    rdfs:comment "Denotes whether the subject-predicate relation is indifferent in nature."@en ;
+    rdfs:domain :Premise ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:secondFigureSyllogism rdf:type :SecondFigureSyllogism .
+:singularity rdf:type :Singularity .
+:particularity rdf:type :Particularity .
+:universality rdf:type :Universality .
+:premise1 rdf:type :Premise .
+:premise2 rdf:type :Premise .
+:conclusion rdf:type :Conclusion .
+
+# Relationships
+:secondFigureSyllogism :hasStructure :particularity, :singularity, :universality ;
+                       :hasMiddleTerm :singularity ;
+                       :hasPremise :premise1, :premise2 ;
+                       :hasConclusion :conclusion .
+:singularity :contains :singularity, :universality .
+
+# Properties
+:conclusion :isParticular "true"^^xsd:boolean ;
+            :isPositive "true"^^xsd:boolean ;
+            :isNegative "true"^^xsd:boolean ;
+            :hasLimitedValue "true"^^xsd:boolean .
+:premise1 :isIndifferent "true"^^xsd:boolean .
+:premise2 :isIndifferent "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-third-figure-syllogism-ontology#> .
+
+# Classes
+:ThirdFigureSyllogism rdf:type owl:Class ;
+    rdfs:label "Third Figure Syllogism"@en ;
+    rdfs:comment "The third figure of the syllogism with the schema S-U-P."@en .
+
+:Singularity rdf:type owl:Class ;
+    rdfs:label "Singularity"@en ;
+    rdfs:comment "One of the extremes in the third figure syllogism."@en .
+
+:Universality rdf:type owl:Class ;
+    rdfs:label "Universality"@en ;
+    rdfs:comment "The middle term in the third figure, representing concrete universality."@en .
+
+:Particularity rdf:type owl:Class ;
+    rdfs:label "Particularity"@en ;
+    rdfs:comment "One of the extremes in the third figure syllogism."@en .
+
+:Mediation rdf:type owl:Class ;
+    rdfs:label "Mediation"@en ;
+    rdfs:comment "The process of connecting terms in the syllogism."@en .
+
+:Connection rdf:type owl:Class ;
+    rdfs:label "Connection"@en ;
+    rdfs:comment "A link between terms in the syllogism."@en .
+
+# Object Properties
+:hasStructure rdf:type owl:ObjectProperty ;
+    rdfs:label "has structure"@en ;
+    rdfs:comment "Indicates the structural components of the syllogism."@en ;
+    rdfs:domain :ThirdFigureSyllogism ;
+    rdfs:range owl:Thing .
+
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :ThirdFigureSyllogism ;
+    rdfs:range :Universality .
+
+:presupposes rdf:type owl:ObjectProperty ;
+    rdfs:label "presupposes"@en ;
+    rdfs:comment "Indicates that the subject logically assumes or requires the object."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range owl:Thing .
+
+:hasConnection rdf:type owl:ObjectProperty ;
+    rdfs:label "has connection"@en ;
+    rdfs:comment "Specifies a connection between terms in the syllogism."@en ;
+    rdfs:domain :ThirdFigureSyllogism ;
+    rdfs:range :Connection .
+
+:mediates rdf:type owl:ObjectProperty ;
+    rdfs:label "mediates"@en ;
+    rdfs:comment "Indicates that the subject serves as a mediating element between objects."@en ;
+    rdfs:domain :Mediation ;
+    rdfs:range owl:Thing .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:comment "Expresses that the subject includes or encompasses the object."@en ;
+    rdfs:domain :Universality ;
+    rdfs:range owl:Thing .
+
+# Data Properties
+:isMediated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediated"@en ;
+    rdfs:comment "Indicates whether the subject is connected through an intermediary process."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isConcrete rdf:type owl:DatatypeProperty ;
+    rdfs:label "is concrete"@en ;
+    rdfs:comment "Denotes whether the subject has a specific, tangible nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:completesDetemination rdf:type owl:DatatypeProperty ;
+    rdfs:label "completes determination"@en ;
+    rdfs:comment "Indicates whether the subject brings the syllogistic determination to completion."@en ;
+    rdfs:domain :ThirdFigureSyllogism ;
+    rdfs:range xsd:boolean .
+
+:hasFormAsContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "has form as content"@en ;
+    rdfs:comment "Denotes whether the subject's form determinations appear as content determinations."@en ;
+    rdfs:domain :ThirdFigureSyllogism ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:thirdFigureSyllogism rdf:type :ThirdFigureSyllogism .
+:singularity rdf:type :Singularity .
+:universality rdf:type :Universality .
+:particularity rdf:type :Particularity .
+:mediation rdf:type :Mediation .
+:connectionSU rdf:type :Connection .
+:connectionUP rdf:type :Connection .
+
+# Relationships
+:thirdFigureSyllogism :hasStructure :singularity, :universality, :particularity ;
+                      :hasMiddleTerm :universality ;
+                      :presupposes :thirdFigureSyllogism ;
+                      :hasConnection :connectionSU, :connectionUP .
+:universality :contains :singularity .
+:mediation :mediates :singularity, :universality, :particularity .
+
+# Properties
+:thirdFigureSyllogism :completesDetemination "true"^^xsd:boolean ;
+                      :hasFormAsContent "true"^^xsd:boolean .
+:connectionSU :isMediated "true"^^xsd:boolean .
+:connectionUP :isMediated "true"^^xsd:boolean .
+:universality :isConcrete "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-reflection-ontology#> .
+
+# Classes
+:SyllogismOfReflection rdf:type owl:Class ;
+    rdfs:label "Syllogism of Reflection"@en ;
+    rdfs:comment "A more determined form of syllogism that develops from the syllogism of existence."@en .
+
+:Term rdf:type owl:Class ;
+    rdfs:label "Term"@en ;
+    rdfs:comment "A component of the syllogism of reflection, more determined than in the syllogism of existence."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:subClassOf :Term ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The term that represents the totality of determinations in the syllogism of reflection."@en .
+
+:Connection rdf:type owl:Class ;
+    rdfs:label "Connection"@en ;
+    rdfs:comment "The link between terms in the syllogism of reflection, characterized by mediation and necessity."@en .
+
+:Concept rdf:type owl:Class ;
+    rdfs:label "Concept"@en ;
+    rdfs:comment "The underlying logical structure that the syllogism of reflection approaches but does not fully realize."@en .
+
+# Object Properties
+:hasTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has term"@en ;
+    rdfs:comment "Indicates that the subject includes the object as one of its terms."@en ;
+    rdfs:domain :SyllogismOfReflection ;
+    rdfs:range :Term .
+
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :SyllogismOfReflection ;
+    rdfs:range :MiddleTerm .
+
+:hasConnection rdf:type owl:ObjectProperty ;
+    rdfs:label "has connection"@en ;
+    rdfs:comment "Specifies a connection between terms in the syllogism."@en ;
+    rdfs:domain :SyllogismOfReflection ;
+    rdfs:range :Connection .
+
+:reflectsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "reflects in"@en ;
+    rdfs:comment "Indicates that the subject's determinateness shines reflectively in the object."@en ;
+    rdfs:domain :Term ;
+    rdfs:range :Term .
+
+:approachesButNotReaches rdf:type owl:ObjectProperty ;
+    rdfs:label "approaches but not reaches"@en ;
+    rdfs:comment "Expresses that the subject moves towards but does not fully attain the object."@en ;
+    rdfs:domain :SyllogismOfReflection ;
+    rdfs:range :Concept .
+
+# Data Properties
+:isMediated rdf:type owl:DatatypeProperty ;
+    rdfs:label "is mediated"@en ;
+    rdfs:comment "Indicates whether the subject is connected through an intermediary process."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isNecessary rdf:type owl:DatatypeProperty ;
+    rdfs:label "is necessary"@en ;
+    rdfs:comment "Denotes whether the subject is logically required or inevitable."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isConcrete rdf:type owl:DatatypeProperty ;
+    rdfs:label "is concrete"@en ;
+    rdfs:comment "Indicates whether the subject has a specific, determined nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:representsTotalityOfDeterminations rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents totality of determinations"@en ;
+    rdfs:comment "Denotes whether the subject encompasses all determinations of the syllogism."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range xsd:boolean .
+
+:hasGenuineDeterminatenessOfForm rdf:type owl:DatatypeProperty ;
+    rdfs:label "has genuine determinateness of form"@en ;
+    rdfs:comment "Indicates whether the subject possesses true, developed formal determinateness."@en ;
+    rdfs:domain :SyllogismOfReflection ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogismOfReflection rdf:type :SyllogismOfReflection .
+:term1 rdf:type :Term .
+:term2 rdf:type :Term .
+:middleTerm rdf:type :MiddleTerm .
+:connection rdf:type :Connection .
+:concept rdf:type :Concept .
+
+# Relationships
+:syllogismOfReflection :hasTerm :term1, :term2 ;
+                       :hasMiddleTerm :middleTerm ;
+                       :hasConnection :connection ;
+                       :approachesButNotReaches :concept .
+:term1 :reflectsIn :term2 .
+:term2 :reflectsIn :term1 .
+
+# Properties
+:syllogismOfReflection :hasGenuineDeterminatenessOfForm "true"^^xsd:boolean .
+:connection :isMediated "true"^^xsd:boolean ;
+            :isNecessary "true"^^xsd:boolean .
+:term1 :isConcrete "true"^^xsd:boolean .
+:term2 :isConcrete "true"^^xsd:boolean .
+:middleTerm :representsTotalityOfDeterminations "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-allness-ontology#> .
+
+# Classes
+:SyllogismOfAllness rdf:type owl:Class ;
+    rdfs:label "Syllogism of Allness"@en ;
+    rdfs:comment "The first syllogism of reflection, representing the perfection of the syllogism of understanding."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The concrete and developed middle term in the syllogism of allness."@en .
+
+:Universality rdf:type owl:Class ;
+    rdfs:label "Universality"@en ;
+    rdfs:comment "The form of universality in the syllogism of allness, characterized by external reflection."@en .
+
+:Conclusion rdf:type owl:Class ;
+    rdfs:label "Conclusion"@en ;
+    rdfs:comment "The more determined conclusion in the syllogism of allness."@en .
+
+:SyllogismOfExistence rdf:type owl:Class ;
+    rdfs:label "Syllogism of Existence"@en ;
+    rdfs:comment "The preceding form of syllogism from which the syllogism of allness develops."@en .
+
+# Object Properties
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :SyllogismOfAllness ;
+    rdfs:range :MiddleTerm .
+
+:hasUniversality rdf:type owl:ObjectProperty ;
+    rdfs:label "has universality"@en ;
+    rdfs:comment "Indicates the form of universality in the syllogism."@en ;
+    rdfs:domain :SyllogismOfAllness ;
+    rdfs:range :Universality .
+
+:hasConclusion rdf:type owl:ObjectProperty ;
+    rdfs:label "has conclusion"@en ;
+    rdfs:comment "Specifies the conclusion of the syllogism."@en ;
+    rdfs:domain :SyllogismOfAllness ;
+    rdfs:range :Conclusion .
+
+:developedFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "developed from"@en ;
+    rdfs:comment "Indicates that the subject has evolved from the object."@en ;
+    rdfs:domain :SyllogismOfAllness ;
+    rdfs:range :SyllogismOfExistence .
+
+# Data Properties
+:isConcrete rdf:type owl:DatatypeProperty ;
+    rdfs:label "is concrete"@en ;
+    rdfs:comment "Indicates whether the subject has a specific, determined nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:representsAllness rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents allness"@en ;
+    rdfs:comment "Denotes whether the subject represents totality or allness."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range xsd:boolean .
+
+:isExternalUniversality rdf:type owl:DatatypeProperty ;
+    rdfs:label "is external universality"@en ;
+    rdfs:comment "Indicates whether the subject represents an external form of universality."@en ;
+    rdfs:domain :Universality ;
+    rdfs:range xsd:boolean .
+
+:containsContingency rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains contingency"@en ;
+    rdfs:comment "Denotes whether the subject includes elements of chance or arbitrariness."@en ;
+    rdfs:domain :SyllogismOfAllness ;
+    rdfs:range xsd:boolean .
+
+:isMoreDetermined rdf:type owl:DatatypeProperty ;
+    rdfs:label "is more determined"@en ;
+    rdfs:comment "Indicates whether the subject is more specific or defined compared to previous forms."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogismOfAllness rdf:type :SyllogismOfAllness .
+:middleTerm rdf:type :MiddleTerm .
+:universality rdf:type :Universality .
+:conclusion rdf:type :Conclusion .
+:syllogismOfExistence rdf:type :SyllogismOfExistence .
+
+# Relationships
+:syllogismOfAllness :hasMiddleTerm :middleTerm ;
+                    :hasUniversality :universality ;
+                    :hasConclusion :conclusion ;
+                    :developedFrom :syllogismOfExistence .
+
+# Properties
+:syllogismOfAllness :containsContingency "true"^^xsd:boolean ;
+                    :isMoreDetermined "true"^^xsd:boolean .
+:middleTerm :isConcrete "true"^^xsd:boolean ;
+            :representsAllness "true"^^xsd:boolean .
+:universality :isExternalUniversality "true"^^xsd:boolean .
+:conclusion :isMoreDetermined "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-induction-ontology#> .
+
+# Classes
+:SyllogismOfInduction rdf:type owl:Class ;
+    rdfs:label "Syllogism of Induction"@en ;
+    rdfs:comment "A form of syllogism based on experience and the gathering of singulars into the genus."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The completed singularity serving as the middle term in the syllogism of induction."@en .
+
+:Extreme rdf:type owl:Class ;
+    rdfs:label "Extreme"@en ;
+    rdfs:comment "The terms at either end of the syllogism of induction."@en .
+
+:Genus rdf:type owl:Class ;
+    rdfs:label "Genus"@en ;
+    rdfs:comment "The immediate genus or universal sphere in the syllogism of induction."@en .
+
+:Experience rdf:type owl:Class ;
+    rdfs:label "Experience"@en ;
+    rdfs:comment "The basis of the syllogism of induction, as opposed to mere perception."@en .
+
+:Conclusion rdf:type owl:Class ;
+    rdfs:label "Conclusion"@en ;
+    rdfs:comment "The result of the inductive syllogism, often problematic due to incomplete experience."@en .
+
+# Object Properties
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range :MiddleTerm .
+
+:hasExtreme rdf:type owl:ObjectProperty ;
+    rdfs:label "has extreme"@en ;
+    rdfs:comment "Indicates an extreme term in the syllogism."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range :Extreme .
+
+:basedOn rdf:type owl:ObjectProperty ;
+    rdfs:label "based on"@en ;
+    rdfs:comment "Indicates the foundational element of the syllogism."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range :Experience .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Specifies the conclusion of the syllogism."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range :Conclusion .
+
+:gathersSingularsInto rdf:type owl:ObjectProperty ;
+    rdfs:label "gathers singulars into"@en ;
+    rdfs:comment "Expresses the process of collecting singular instances into a general category."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range :Genus .
+
+# Data Properties
+:isCompletedSingularity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is completed singularity"@en ;
+    rdfs:comment "Indicates whether the subject represents a fully developed singular term."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range xsd:boolean .
+
+:hasObjectiveSignificance rdf:type owl:DatatypeProperty ;
+    rdfs:label "has objective significance"@en ;
+    rdfs:comment "Denotes whether the subject has meaning beyond subjective perception."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range xsd:boolean .
+
+:isSubjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is subjective"@en ;
+    rdfs:comment "Indicates whether the subject is primarily based on individual perception or judgment."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isProblematic rdf:type owl:DatatypeProperty ;
+    rdfs:label "is problematic"@en ;
+    rdfs:comment "Denotes whether the subject is uncertain or questionable due to incomplete information."@en ;
+    rdfs:domain :Conclusion ;
+    rdfs:range xsd:boolean .
+
+:representsIncompleteUniversality rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents incomplete universality"@en ;
+    rdfs:comment "Indicates whether the subject represents a universality that is not fully realized."@en ;
+    rdfs:domain :SyllogismOfInduction ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogismOfInduction rdf:type :SyllogismOfInduction .
+:middleTerm rdf:type :MiddleTerm .
+:extreme1 rdf:type :Extreme .
+:extreme2 rdf:type :Extreme .
+:genus rdf:type :Genus .
+:experience rdf:type :Experience .
+:conclusion rdf:type :Conclusion .
+
+# Relationships
+:syllogismOfInduction :hasMiddleTerm :middleTerm ;
+                      :hasExtreme :extreme1, :extreme2 ;
+                      :basedOn :experience ;
+                      :resultsIn :conclusion ;
+                      :gathersSingularsInto :genus .
+
+# Properties
+:syllogismOfInduction :hasObjectiveSignificance "true"^^xsd:boolean ;
+                      :isSubjective "true"^^xsd:boolean ;
+                      :representsIncompleteUniversality "true"^^xsd:boolean .
+:middleTerm :isCompletedSingularity "true"^^xsd:boolean .
+:conclusion :isProblematic "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-analogy-ontology#> .
+
+# Classes
+:SyllogismOfAnalogy rdf:type owl:Class ;
+    rdfs:label "Syllogism of Analogy"@en ;
+    rdfs:comment "A form of syllogism based on analogical reasoning, representing a higher form of reflection."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The universal term that contains singularity and represents concrete universality in the syllogism of analogy."@en .
+
+:Extreme rdf:type owl:Class ;
+    rdfs:label "Extreme"@en ;
+    rdfs:comment "The terms at either end of the syllogism of analogy, representing singular and universal."@en .
+
+:Similarity rdf:type owl:Class ;
+    rdfs:label "Similarity"@en ;
+    rdfs:comment "The basis of analogical reasoning in the syllogism."@en .
+
+:Conclusion rdf:type owl:Class ;
+    rdfs:label "Conclusion"@en ;
+    rdfs:comment "The result of the analogical syllogism, often probable rather than necessarily true."@en .
+
+# Object Properties
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :SyllogismOfAnalogy ;
+    rdfs:range :MiddleTerm .
+
+:hasExtreme rdf:type owl:ObjectProperty ;
+    rdfs:label "has extreme"@en ;
+    rdfs:comment "Indicates an extreme term in the syllogism."@en ;
+    rdfs:domain :SyllogismOfAnalogy ;
+    rdfs:range :Extreme .
+
+:basedOn rdf:type owl:ObjectProperty ;
+    rdfs:label "based on"@en ;
+    rdfs:comment "Indicates the foundational element of the syllogism."@en ;
+    rdfs:domain :SyllogismOfAnalogy ;
+    rdfs:range :Similarity .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:comment "Specifies the conclusion of the syllogism."@en ;
+    rdfs:domain :SyllogismOfAnalogy ;
+    rdfs:range :Conclusion .
+
+:developedFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "developed from"@en ;
+    rdfs:comment "Indicates the preceding form of syllogism from which this form evolved."@en ;
+    rdfs:domain :SyllogismOfAnalogy ;
+    rdfs:range owl:Class .
+
+# Data Properties
+:containsSingularity rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains singularity"@en ;
+    rdfs:comment "Indicates whether the subject includes singular instances within its universality."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range xsd:boolean .
+
+:isConcrete rdf:type owl:DatatypeProperty ;
+    rdfs:label "is concrete"@en ;
+    rdfs:comment "Denotes whether the subject has a specific, determined nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isSuperficial rdf:type owl:DatatypeProperty ;
+    rdfs:label "is superficial"@en ;
+    rdfs:comment "Indicates whether the subject is based on external or non-essential similarities."@en ;
+    rdfs:domain :Similarity ;
+    rdfs:range xsd:boolean .
+
+:isProbable rdf:type owl:DatatypeProperty ;
+    rdfs:label "is probable"@en ;
+    rdfs:comment "Denotes whether the subject is likely but not necessarily true."@en ;
+    rdfs:domain :Conclusion ;
+    rdfs:range xsd:boolean .
+
+:bridgesEmpiricalAndConceptual rdf:type owl:DatatypeProperty ;
+    rdfs:label "bridges empirical and conceptual"@en ;
+    rdfs:comment "Indicates whether the subject connects empirical observations with conceptual understanding."@en ;
+    rdfs:domain :SyllogismOfAnalogy ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogismOfAnalogy rdf:type :SyllogismOfAnalogy .
+:middleTerm rdf:type :MiddleTerm .
+:singularExtreme rdf:type :Extreme .
+:universalExtreme rdf:type :Extreme .
+:similarity rdf:type :Similarity .
+:conclusion rdf:type :Conclusion .
+
+# Relationships
+:syllogismOfAnalogy :hasMiddleTerm :middleTerm ;
+                    :hasExtreme :singularExtreme, :universalExtreme ;
+                    :basedOn :similarity ;
+                    :resultsIn :conclusion ;
+                    :developedFrom :SyllogismOfInduction .
+
+# Properties
+:syllogismOfAnalogy :bridgesEmpiricalAndConceptual "true"^^xsd:boolean .
+:middleTerm :containsSingularity "true"^^xsd:boolean ;
+            :isConcrete "true"^^xsd:boolean .
+:similarity :isSuperficial "false"^^xsd:boolean .
+:conclusion :isProbable "true"^^xsd:boolean .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-syllogism-necessity-ontology#> .
+
+# Classes
+:SyllogismOfNecessity rdf:type owl:Class ;
+    rdfs:label "Syllogism of Necessity"@en ;
+    rdfs:comment "A higher form of syllogistic reasoning characterized by objective universality and necessity."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The objective universal term that contains the whole determinateness of the different extremes."@en .
+
+:Genus rdf:type owl:Class ;
+    rdfs:label "Genus"@en ;
+    rdfs:comment "The universal nature of the fact represented by the middle term."@en .
+
+:ObjectiveUniversality rdf:type owl:Class ;
+    rdfs:label "Objective Universality"@en ;
+    rdfs:comment "The nature of universality in the syllogism of necessity, characterized by objectivity and completeness."@en .
+
+:Necessity rdf:type owl:Class ;
+    rdfs:label "Necessity"@en ;
+    rdfs:comment "The quality of being necessary or inevitable in the syllogistic process."@en .
+
+# Object Properties
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :SyllogismOfNecessity ;
+    rdfs:range :MiddleTerm .
+
+:representsGenus rdf:type owl:ObjectProperty ;
+    rdfs:label "represents genus"@en ;
+    rdfs:comment "Indicates that the subject represents the universal nature or genus."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range :Genus .
+
+:achieves rdf:type owl:ObjectProperty ;
+    rdfs:label "achieves"@en ;
+    rdfs:comment "Denotes that the subject attains or realizes the object."@en ;
+    rdfs:domain :SyllogismOfNecessity ;
+    rdfs:range :Necessity .
+
+:developsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "develops from"@en ;
+    rdfs:comment "Indicates the preceding forms of syllogism from which this form evolved."@en ;
+    rdfs:domain :SyllogismOfNecessity ;
+    rdfs:range owl:Class .
+
+# Data Properties
+:isObjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is objective"@en ;
+    rdfs:comment "Indicates whether the subject has an objective rather than subjective nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:isContentFull rdf:type owl:DatatypeProperty ;
+    rdfs:label "is content full"@en ;
+    rdfs:comment "Denotes whether the subject is rich in content rather than merely formal."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:unifiesFormAndContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "unifies form and content"@en ;
+    rdfs:comment "Indicates whether the subject brings together form and content in a unified manner."@en ;
+    rdfs:domain :SyllogismOfNecessity ;
+    rdfs:range xsd:boolean .
+
+:overcomesContingency rdf:type owl:DatatypeProperty ;
+    rdfs:label "overcomes contingency"@en ;
+    rdfs:comment "Denotes whether the subject surpasses mere chance or arbitrariness."@en ;
+    rdfs:domain :SyllogismOfNecessity ;
+    rdfs:range xsd:boolean .
+
+:isExistentNecessity rdf:type owl:DatatypeProperty ;
+    rdfs:label "is existent necessity"@en ;
+    rdfs:comment "Indicates whether the necessity is actual and present rather than merely potential."@en ;
+    rdfs:domain :Necessity ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:syllogismOfNecessity rdf:type :SyllogismOfNecessity .
+:middleTerm rdf:type :MiddleTerm .
+:genus rdf:type :Genus .
+:objectiveUniversality rdf:type :ObjectiveUniversality .
+:necessity rdf:type :Necessity .
+
+# Relationships
+:syllogismOfNecessity :hasMiddleTerm :middleTerm ;
+                      :achieves :necessity ;
+                      :developsFrom :SyllogismOfExistence, :SyllogismOfReflection .
+:middleTerm :representsGenus :genus .
+
+# Properties
+:syllogismOfNecessity :isObjective "true"^^xsd:boolean ;
+                      :isContentFull "true"^^xsd:boolean ;
+                      :unifiesFormAndContent "true"^^xsd:boolean ;
+                      :overcomesContingency "true"^^xsd:boolean .
+:middleTerm :isObjective "true"^^xsd:boolean .
+:necessity :isExistentNecessity "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-categorical-syllogism-ontology#> .
+
+# Classes
+:CategoricalSyllogism rdf:type owl:Class ;
+    rdfs:label "Categorical Syllogism"@en ;
+    rdfs:comment "The first syllogism of necessity, based on categorical judgments and representing objective universality."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The term representing objective universality in the categorical syllogism."@en .
+
+:Substance rdf:type owl:Class ;
+    rdfs:label "Substance"@en ;
+    rdfs:comment "The underlying essence that, when elevated to the concept, becomes the universal."@en .
+
+:Universal rdf:type owl:Class ;
+    rdfs:label "Universal"@en ;
+    rdfs:comment "The form that substance takes when elevated to the sphere of the concept."@en .
+
+:Extreme rdf:type owl:Class ;
+    rdfs:label "Extreme"@en ;
+    rdfs:comment "The terms at either end of the syllogism, representing universality and singularity."@en .
+
+:CategoricalJudgment rdf:type owl:Class ;
+    rdfs:label "Categorical Judgment"@en ;
+    rdfs:comment "A type of judgment that forms the basis of the categorical syllogism."@en .
+
+# Object Properties
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range :MiddleTerm .
+
+:hasExtreme rdf:type owl:ObjectProperty ;
+    rdfs:label "has extreme"@en ;
+    rdfs:comment "Indicates an extreme term in the syllogism."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range :Extreme .
+
+:elevatesTo rdf:type owl:ObjectProperty ;
+    rdfs:label "elevates to"@en ;
+    rdfs:comment "Indicates that the subject is raised to the level of the object in conceptual thinking."@en ;
+    rdfs:domain :Substance ;
+    rdfs:range :Universal .
+
+:basedOn rdf:type owl:ObjectProperty ;
+    rdfs:label "based on"@en ;
+    rdfs:comment "Indicates the foundational element of the syllogism."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range :CategoricalJudgment .
+
+# Data Properties
+:isObjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is objective"@en ;
+    rdfs:comment "Indicates whether the subject has an objective rather than subjective nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:representsNecessaryConnection rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents necessary connection"@en ;
+    rdfs:comment "Denotes whether the subject expresses a necessary rather than contingent relationship."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range xsd:boolean .
+
+:isEssentialDifference rdf:type owl:DatatypeProperty ;
+    rdfs:label "is essential difference"@en ;
+    rdfs:comment "Indicates whether the subject represents a fundamental rather than accidental distinction."@en ;
+    rdfs:domain :Extreme ;
+    rdfs:range xsd:boolean .
+
+:existsInAndForItself rdf:type owl:DatatypeProperty ;
+    rdfs:label "exists in and for itself"@en ;
+    rdfs:comment "Denotes whether the subject has an independent and self-determined existence."@en ;
+    rdfs:domain :Universal ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:categoricalSyllogism rdf:type :CategoricalSyllogism .
+:middleTerm rdf:type :MiddleTerm .
+:substance rdf:type :Substance .
+:universal rdf:type :Universal .
+:extreme1 rdf:type :Extreme .
+:extreme2 rdf:type :Extreme .
+:categoricalJudgment rdf:type :CategoricalJudgment .
+
+# Relationships
+:categoricalSyllogism :hasMiddleTerm :middleTerm ;
+                      :hasExtreme :extreme1, :extreme2 ;
+                      :basedOn :categoricalJudgment .
+:substance :elevatesTo :universal .
+
+# Properties
+:categoricalSyllogism :isObjective "true"^^xsd:boolean ;
+                      :representsNecessaryConnection "true"^^xsd:boolean .
+:middleTerm :isObjective "true"^^xsd:boolean .
+:extreme1 :isEssentialDifference "true"^^xsd:boolean .
+:extreme2 :isEssentialDifference "true"^^xsd:boolean .
+:universal :existsInAndForItself "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-categorical-syllogism-ontology#> .
+
+# Classes
+:CategoricalSyllogism rdf:type owl:Class ;
+    rdfs:label "Categorical Syllogism"@en ;
+    rdfs:comment "The first syllogism of necessity, based on categorical judgments and representing objective universality."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The term representing objective universality in the categorical syllogism."@en .
+
+:Substance rdf:type owl:Class ;
+    rdfs:label "Substance"@en ;
+    rdfs:comment "The underlying essence that, when elevated to the concept, becomes the universal."@en .
+
+:Universal rdf:type owl:Class ;
+    rdfs:label "Universal"@en ;
+    rdfs:comment "The form that substance takes when elevated to the sphere of the concept."@en .
+
+:Extreme rdf:type owl:Class ;
+    rdfs:label "Extreme"@en ;
+    rdfs:comment "The terms at either end of the syllogism, representing universality and singularity."@en .
+
+:CategoricalJudgment rdf:type owl:Class ;
+    rdfs:label "Categorical Judgment"@en ;
+    rdfs:comment "A type of judgment that forms the basis of the categorical syllogism."@en .
+
+# Object Properties
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range :MiddleTerm .
+
+:hasExtreme rdf:type owl:ObjectProperty ;
+    rdfs:label "has extreme"@en ;
+    rdfs:comment "Indicates an extreme term in the syllogism."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range :Extreme .
+
+:elevatesTo rdf:type owl:ObjectProperty ;
+    rdfs:label "elevates to"@en ;
+    rdfs:comment "Indicates that the subject is raised to the level of the object in conceptual thinking."@en ;
+    rdfs:domain :Substance ;
+    rdfs:range :Universal .
+
+:basedOn rdf:type owl:ObjectProperty ;
+    rdfs:label "based on"@en ;
+    rdfs:comment "Indicates the foundational element of the syllogism."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range :CategoricalJudgment .
+
+# Data Properties
+:isObjective rdf:type owl:DatatypeProperty ;
+    rdfs:label "is objective"@en ;
+    rdfs:comment "Indicates whether the subject has an objective rather than subjective nature."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:representsNecessaryConnection rdf:type owl:DatatypeProperty ;
+    rdfs:label "represents necessary connection"@en ;
+    rdfs:comment "Denotes whether the subject expresses a necessary rather than contingent relationship."@en ;
+    rdfs:domain :CategoricalSyllogism ;
+    rdfs:range xsd:boolean .
+
+:isEssentialDifference rdf:type owl:DatatypeProperty ;
+    rdfs:label "is essential difference"@en ;
+    rdfs:comment "Indicates whether the subject represents a fundamental rather than accidental distinction."@en ;
+    rdfs:domain :Extreme ;
+    rdfs:range xsd:boolean .
+
+:existsInAndForItself rdf:type owl:DatatypeProperty ;
+    rdfs:label "exists in and for itself"@en ;
+    rdfs:comment "Denotes whether the subject has an independent and self-determined existence."@en ;
+    rdfs:domain :Universal ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:categoricalSyllogism rdf:type :CategoricalSyllogism .
+:middleTerm rdf:type :MiddleTerm .
+:substance rdf:type :Substance .
+:universal rdf:type :Universal .
+:extreme1 rdf:type :Extreme .
+:extreme2 rdf:type :Extreme .
+:categoricalJudgment rdf:type :CategoricalJudgment .
+
+# Relationships
+:categoricalSyllogism :hasMiddleTerm :middleTerm ;
+                      :hasExtreme :extreme1, :extreme2 ;
+                      :basedOn :categoricalJudgment .
+:substance :elevatesTo :universal .
+
+# Properties
+:categoricalSyllogism :isObjective "true"^^xsd:boolean ;
+                      :representsNecessaryConnection "true"^^xsd:boolean .
+:middleTerm :isObjective "true"^^xsd:boolean .
+:extreme1 :isEssentialDifference "true"^^xsd:boolean .
+:extreme2 :isEssentialDifference "true"^^xsd:boolean .
+:universal :existsInAndForItself "true"^^xsd:boolean .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-disjunctive-syllogism-ontology#> .
+
+# Classes
+:DisjunctiveSyllogism rdf:type owl:Class ;
+    rdfs:label "Disjunctive Syllogism"@en ;
+    rdfs:comment "The third and highest form of the syllogism of necessity, based on disjunctive judgments and representing the full development of the concept."@en .
+
+:DisjunctiveJudgment rdf:type owl:Class ;
+    rdfs:label "Disjunctive Judgment"@en ;
+    rdfs:comment "A type of judgment that forms the basis of the disjunctive syllogism, expressing mutually exclusive alternatives."@en .
+
+:MiddleTerm rdf:type owl:Class ;
+    rdfs:label "Middle Term"@en ;
+    rdfs:comment "The term in the disjunctive syllogism that represents universality replete with form and totality."@en .
+
+:Totality rdf:type owl:Class ;
+    rdfs:label "Totality"@en ;
+    rdfs:comment "The comprehensive whole that includes all determinations of the concept."@en .
+
+:ConcreteUniversality rdf:type owl:Class ;
+    rdfs:label "Concrete Universality"@en ;
+    rdfs:comment "The fully developed form of universality that contains all particular determinations."@en .
+
+:Concept rdf:type owl:Class ;
+    rdfs:label "Concept"@en ;
+    rdfs:comment "The fundamental logical structure that reaches its full development in the disjunctive syllogism."@en .
+
+# Object Properties
+:basedOn rdf:type owl:ObjectProperty ;
+    rdfs:label "based on"@en ;
+    rdfs:comment "Indicates the foundational element of the syllogism."@en ;
+    rdfs:domain :DisjunctiveSyllogism ;
+    rdfs:range :DisjunctiveJudgment .
+
+:hasMiddleTerm rdf:type owl:ObjectProperty ;
+    rdfs:label "has middle term"@en ;
+    rdfs:comment "Specifies the middle term of the syllogism."@en ;
+    rdfs:domain :DisjunctiveSyllogism ;
+    rdfs:range :MiddleTerm .
+
+:represents rdf:type owl:ObjectProperty ;
+    rdfs:label "represents"@en ;
+    rdfs:comment "Indicates that the subject embodies or manifests the object."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range :Totality .
+
+:achieves rdf:type owl:ObjectProperty ;
+    rdfs:label "achieves"@en ;
+    rdfs:comment "Denotes that the subject attains or realizes the object."@en ;
+    rdfs:domain :DisjunctiveSyllogism ;
+    rdfs:range :ConcreteUniversality .
+
+:developsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "develops from"@en ;
+    rdfs:comment "Indicates the preceding forms of syllogism from which this form evolved."@en ;
+    rdfs:domain :DisjunctiveSyllogism ;
+    rdfs:range owl:Class .
+
+# Data Properties
+:isHighestFormOfSyllogism rdf:type owl:DatatypeProperty ;
+    rdfs:label "is highest form of syllogism"@en ;
+    rdfs:comment "Indicates whether the subject represents the most advanced form of syllogistic reasoning."@en ;
+    rdfs:domain :DisjunctiveSyllogism ;
+    rdfs:range xsd:boolean .
+
+:unifiesFormAndContent rdf:type owl:DatatypeProperty ;
+    rdfs:label "unifies form and content"@en ;
+    rdfs:comment "Denotes whether the subject brings together form and content in a concrete unity."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+:containsAllDeterminations rdf:type owl:DatatypeProperty ;
+    rdfs:label "contains all determinations"@en ;
+    rdfs:comment "Indicates whether the subject encompasses all specific determinations of the concept."@en ;
+    rdfs:domain :MiddleTerm ;
+    rdfs:range xsd:boolean .
+
+:isDialectical rdf:type owl:DatatypeProperty ;
+    rdfs:label "is dialectical"@en ;
+    rdfs:comment "Denotes whether the subject embodies the dialectical movement of thought."@en ;
+    rdfs:domain :DisjunctiveSyllogism ;
+    rdfs:range xsd:boolean .
+
+:isConcrete rdf:type owl:DatatypeProperty ;
+    rdfs:label "is concrete"@en ;
+    rdfs:comment "Indicates whether the subject has a fully developed, specific nature rather than being abstract."@en ;
+    rdfs:domain owl:Thing ;
+    rdfs:range xsd:boolean .
+
+# Instances
+:disjunctiveSyllogism rdf:type :DisjunctiveSyllogism .
+:disjunctiveJudgment rdf:type :DisjunctiveJudgment .
+:middleTerm rdf:type :MiddleTerm .
+:totality rdf:type :Totality .
+:concreteUniversality rdf:type :ConcreteUniversality .
+:concept rdf:type :Concept .
+
+# Relationships
+:disjunctiveSyllogism :basedOn :disjunctiveJudgment ;
+                      :hasMiddleTerm :middleTerm ;
+                      :achieves :concreteUniversality ;
+                      :developsFrom :CategoricalSyllogism, :HypotheticalSyllogism .
+:middleTerm :represents :totality .
+
+# Properties
+:disjunctiveSyllogism :isHighestFormOfSyllogism "true"^^xsd:boolean ;
+                      :unifiesFormAndContent "true"^^xsd:boolean ;
+                      :isDialectical "true"^^xsd:boolean ;
+                      :isConcrete "true"^^xsd:boolean .
+:middleTerm :containsAllDeterminations "true"^^xsd:boolean ;
+            :isConcrete "true"^^xsd:boolean .
+:concept :isConcrete "true"^^xsd:boolean .

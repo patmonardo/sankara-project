@@ -1,13 +1,13 @@
 //@/ui/view/form.ts
 import { ReactNode } from "react";
-import type { OperationResult } from "@/lib/data/schema/base";
+import type { OperationResult } from "@/data/schema/base";
 import type {
   FormShape,
   FormMode,
   FormContent,
   FormHandler,
-} from "@/ui/graphics/schema/form";
-import { Form } from "@/ui/graphics/form/form";
+} from "@/graphics/schema/form";
+import { Form } from "@/graphics/form/form";
 
 export class FormView<T extends FormShape> {
   constructor(protected readonly form?: Form<T>) {}

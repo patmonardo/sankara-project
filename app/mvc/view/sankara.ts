@@ -1,5 +1,5 @@
 //@/ui/view/sankara.ts
-import { Concept, Commentary, Reference, SankaraText } from '@/lib/schema/sankara';
+import { Concept, Commentary, Reference, SankaraText } from '@/schema/sankara';
 
 export class SankaraView {
   static formatCorpusStats(stats) {

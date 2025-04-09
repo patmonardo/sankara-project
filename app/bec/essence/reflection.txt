@@ -1,0 +1,804 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "Essence as determined reflection, characterized by absolute mediation with itself."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of self-reference and mediation within essence."@en .
+
+:Moment rdf:type owl:Class ;
+    rdfs:label "Moment"@en ;
+    rdfs:comment "Distinct points or aspects within the movement of reflection."@en .
+
+:Determination rdf:type owl:Class ;
+    rdfs:label "Determination"@en ;
+    rdfs:comment "The process of specifying or defining within reflection."@en .
+
+:Difference rdf:type owl:Class ;
+    rdfs:subClassOf :Determination ;
+    rdfs:label "Difference"@en ;
+    rdfs:comment "A form of determination that can be external, indefinite, or opposed."@en .
+
+:Diversity rdf:type owl:Class ;
+    rdfs:subClassOf :Difference ;
+    rdfs:label "Diversity"@en ;
+    rdfs:comment "General or opposed diversity within difference."@en .
+
+:Opposition rdf:type owl:Class ;
+    rdfs:subClassOf :Diversity ;
+    rdfs:label "Opposition"@en ;
+    rdfs:comment "A form of diversity that is reflected into itself and returns to its foundation."@en .
+
+:Identity rdf:type owl:Class ;
+    rdfs:label "Identity"@en ;
+    rdfs:comment "The simple immediacy and self-equality of essence in its absolute negativity."@en .
+
+:Negativity rdf:type owl:Class ;
+    rdfs:label "Negativity"@en ;
+    rdfs:comment "The being of essence, characterized by self-equality and the disappearance of otherness."@en .
+
+:hasMovement rdf:type owl:ObjectProperty ;
+    rdfs:label "has movement"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Reflection .
+
+:hasMoment rdf:type owl:ObjectProperty ;
+    rdfs:label "has moment"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :Moment .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Determination .
+
+:includesDifference rdf:type owl:ObjectProperty ;
+    rdfs:label "includes difference"@en ;
+    rdfs:domain :Determination ;
+    rdfs:range :Difference .
+
+:hasDiversity rdf:type owl:ObjectProperty ;
+    rdfs:label "has diversity"@en ;
+    rdfs:domain :Difference ;
+    rdfs:range :Diversity .
+
+:involvesOpposition rdf:type owl:ObjectProperty ;
+    rdfs:label "involves opposition"@en ;
+    rdfs:domain :Diversity ;
+    rdfs:range :Opposition .
+
+:hasIdentity rdf:type owl:ObjectProperty ;
+    rdfs:label "has identity"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Identity .
+
+:hasNegativity rdf:type owl:ObjectProperty ;
+    rdfs:label "has negativity"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Negativity .
+
+:Essence
+    :hasMovement :Reflection ;
+    :hasDetermination :Determination ;
+    :hasIdentity :Identity ;
+    :hasNegativity :Negativity .
+
+:Reflection
+    :hasMoment :Moment .
+
+:Determination
+    :includesDifference :Difference .
+
+:Difference
+    :hasDiversity :Diversity .
+
+:Diversity
+    :involvesOpposition :Opposition .
+
+:Identity rdfs:comment """Characteristics of Identity:
+1. Simple immediacy as sublated immediacy.
+2. Equal to itself in absolute negativity.
+3. Characterized by pure self-equality.
+4. Absence of otherness and reference to other."""@en .
+
+:Negativity rdfs:comment """Nature of Negativity:
+1. Constitutes the being of essence.
+2. Characterized by self-equality.
+3. Results in the disappearance of otherness."""@en .
+
+:Reflection rdfs:comment """Process of Reflection:
+1. Movement across distinct moments.
+2. Absolute mediation with itself.
+3. Involves determinations reflected into themselves."""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Identity rdf:type owl:Class ;
+    rdfs:label "Identity"@en ;
+    rdfs:comment "The immediacy of reflection, characterized by pure self-production and essential nature."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of self-reference and mediation within essence."@en .
+
+:Being rdf:type owl:Class ;
+    rdfs:label "Being"@en ;
+    rdfs:comment "The concept of existence or reality that has been sublated within essence."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The fundamental nature or truth of something, characterized by self-identity and negativity."@en .
+
+:Negativity rdf:type owl:Class ;
+    rdfs:label "Negativity"@en ;
+    rdfs:comment "The negation inherent in identity and essence, constituting their being."@en .
+
+:Immediacy rdf:type owl:Class ;
+    rdfs:label "Immediacy"@en ;
+    rdfs:comment "The direct, unmediated aspect of identity and essence, yet absolutely mediated in reflection."@en .
+
+:isImmediacyOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is immediacy of"@en ;
+    rdfs:domain :Identity ;
+    rdfs:range :Reflection .
+
+:hasNegativity rdf:type owl:ObjectProperty ;
+    rdfs:label "has negativity"@en ;
+    rdfs:domain :Identity ;
+    rdfs:range :Negativity .
+
+:preservedIn rdf:type owl:ObjectProperty ;
+    rdfs:label "preserved in"@en ;
+    rdfs:domain :Being ;
+    rdfs:range :Essence .
+
+:hasIdentity rdf:type owl:ObjectProperty ;
+    rdfs:label "has identity"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Identity .
+
+:hasImmediacy rdf:type owl:ObjectProperty ;
+    rdfs:label "has immediacy"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Immediacy .
+
+:Identity
+    :isImmediacyOf :Reflection ;
+    :hasNegativity :Negativity .
+
+:Being
+    :preservedIn :Essence .
+
+:Essence
+    :hasIdentity :Identity ;
+    :hasImmediacy :Immediacy .
+
+:Identity rdfs:comment """Characteristics of Identity:
+1. Pure production from itself and within itself.
+2. Not abstract identity or result of relative negation.
+3. Does not leave what it distinguishes existing outside it.
+4. Simple negativity of being in itself."""@en .
+
+:Negativity rdfs:comment """Nature of Negativity in Identity:
+1. Constitutes the being of identity and essence.
+2. Negation of being in itself.
+3. Enables essence to be itself being through infinite negativity."""@en .
+
+:Immediacy rdfs:comment """Nature of Immediacy in Identity and Essence:
+1. Not the immediacy of an existent.
+2. Absolutely mediated or reflective immediacy.
+3. Determinateness of being against mediation."""@en .
+
+:Essence rdfs:comment """Relation of Essence to Being and Identity:
+1. Preserves being within itself.
+2. Has equality with itself through infinite negativity.
+3. Is itself being through this preservation and negativity."""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:AbsoluteDifference rdf:type owl:Class ;
+    rdfs:label "Absolute Difference"@en ;
+    rdfs:comment "The negativity that reflection possesses in itself, an essential moment of identity."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of self-reference and mediation within essence."@en .
+
+:Identity rdf:type owl:Class ;
+    rdfs:label "Identity"@en ;
+    rdfs:comment "The self-sameness and unity within essence, of which difference is an essential moment."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The fundamental nature or truth of something, characterized by self-identity and difference."@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The realm of being where things are posited as lying outside each other."@en .
+
+:Otherness rdf:type owl:Class ;
+    rdfs:label "Otherness"@en ;
+    rdfs:comment "The quality of being other, which in essence is the other in and for itself."@en .
+
+:Determinateness rdf:type owl:Class ;
+    rdfs:label "Determinateness"@en ;
+    rdfs:comment "The quality of being determinate, which in essence is simple determinateness in itself."@en .
+
+:possessesDifference rdf:type owl:ObjectProperty ;
+    rdfs:label "possesses difference"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :AbsoluteDifference .
+
+:hasMoment rdf:type owl:ObjectProperty ;
+    rdfs:label "has moment"@en ;
+    rdfs:domain :Identity ;
+    rdfs:range :AbsoluteDifference .
+
+:containsDifference rdf:type owl:ObjectProperty ;
+    rdfs:label "contains difference"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :AbsoluteDifference .
+
+:hasOtherness rdf:type owl:ObjectProperty ;
+    rdfs:label "has otherness"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Otherness .
+
+:hasDeterminateness rdf:type owl:ObjectProperty ;
+    rdfs:label "has determinateness"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Determinateness .
+
+:differentiatesFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "differentiates from"@en ;
+    rdfs:domain :Existence ;
+    rdfs:range :Existence .
+
+:Reflection
+    :possessesDifference :AbsoluteDifference .
+
+:Identity
+    :hasMoment :AbsoluteDifference .
+
+:Essence
+    :containsDifference :AbsoluteDifference ;
+    :hasOtherness :Otherness ;
+    :hasDeterminateness :Determinateness .
+
+:Existence
+    :differentiatesFrom :Existence .
+
+:AbsoluteDifference rdfs:comment """Characteristics of Absolute Difference:
+1. Negativity that reflection possesses in itself.
+2. Essential moment of identity.
+3. Difference in and for itself, the difference of essence.
+4. Simple concept constituted by the 'not' in A and not-A."""@en .
+
+:Otherness rdfs:comment """Otherness in Essence:
+1. The other in and for itself.
+2. Not the other of some external other.
+3. Simple determinateness in itself."""@en .
+
+:Existence rdfs:comment """Existence and Difference:
+1. Things in existence are posited as lying outside each other.
+2. Otherness in existence is simple determinateness and identical opposition.
+3. In reflection, difference is reflected and posited as it is in itself."""@en .
+
+:Determinateness rdfs:comment """Determinateness in Essence:
+1. Simple determinateness in itself.
+2. In existence, it was simple determinateness and identical opposition.
+3. In reflection, it becomes reflected and posited as it is in itself."""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Diversity rdf:type owl:Class ;
+    rdfs:label "Diversity"@en ;
+    rdfs:comment "The state resulting from identity breaking apart internally, characterized by indifference and subsistence."@en .
+
+:Identity rdf:type owl:Class ;
+    rdfs:label "Identity"@en ;
+    rdfs:comment "The self-sameness that internally breaks apart into diversity due to its absolute difference."@en .
+
+:Difference rdf:type owl:Class ;
+    rdfs:label "Difference"@en ;
+    rdfs:comment "A fundamental aspect of identity that contributes to the formation of diversity."@en .
+
+:Reflection rdf:type owl:Class ;
+    rdfs:label "Reflection"@en ;
+    rdfs:comment "The process of self-reference and mediation within essence, which takes on an external character in diversity."@en .
+
+:Existence rdf:type owl:Class ;
+    rdfs:label "Existence"@en ;
+    rdfs:comment "The realm of immediate being, contrasted with the realm of reflection."@en .
+
+:ExternalReflection rdf:type owl:Class ;
+    rdfs:subClassOf :Reflection ;
+    rdfs:label "External Reflection"@en ;
+    rdfs:comment "The form of reflection that emerges in diversity, characterized by externality and sublated positedness."@en .
+
+:Moment rdf:type owl:Class ;
+    rdfs:label "Moment"@en ;
+    rdfs:comment "A distinct aspect or phase within the dialectical process, such as the moments of difference."@en .
+
+:breaksInto rdf:type owl:ObjectProperty ;
+    rdfs:label "breaks into"@en ;
+    rdfs:domain :Identity ;
+    rdfs:range :Diversity .
+
+:hasMoment rdf:type owl:ObjectProperty ;
+    rdfs:label "has moment"@en ;
+    rdfs:domain :Difference ;
+    rdfs:range :Moment .
+
+:becomesExternal rdf:type owl:ObjectProperty ;
+    rdfs:label "becomes external"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :ExternalReflection .
+
+:isIndifferentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is indifferent to"@en ;
+    rdfs:domain :Diversity ;
+    rdfs:range :Diversity .
+
+:contrastedWith rdf:type owl:ObjectProperty ;
+    rdfs:label "contrasted with"@en ;
+    rdfs:domain :Reflection ;
+    rdfs:range :Existence .
+
+:Identity
+    :breaksInto :Diversity .
+
+:Difference
+    :hasMoment :Identity ;
+    :hasMoment :Difference .
+
+:Reflection
+    :becomesExternal :ExternalReflection ;
+    :contrastedWith :Existence .
+
+:Diversity
+    :isIndifferentTo :Diversity .
+
+:Diversity rdfs:comment """Characteristics of Diversity:
+1. Results from identity breaking apart internally.
+2. The different subsists as diverse and indifferent to any other.
+3. Remains what it is even in its opposite, identity.
+4. Constitutes the otherness of reflection."""@en .
+
+:ExternalReflection rdfs:comment """Nature of External Reflection:
+1. Emerges as diversity becomes external.
+2. Difference in it is only a positedness or as sublated.
+3. Represents the whole reflection.
+4. Refers to itself as sublated positedness."""@en .
+
+:Moment rdfs:comment """Moments of Difference:
+1. Include identity and difference itself.
+2. Are diverse when reflected into themselves.
+3. In the determination of identity, they are only self-referring.
+4. Conduct themselves as indifferent to each other in diversity."""@en .
+
+:Existence rdfs:comment """Contrast with Reflection:
+1. In existence, the other has immediate being.
+2. Negativity is the foundation of the other in existence.
+3. In reflection, self-identity constitutes the subsistence of the negative."""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Opposition rdf:type owl:Class ;
+    rdfs:label "Opposition"@en ;
+    rdfs:comment "The unity of identity and diversity, containing diverse moments within one identity."@en .
+
+:Identity rdf:type owl:Class ;
+    rdfs:label "Identity"@en ;
+    rdfs:comment "A component of opposition, representing self-sameness within difference."@en .
+
+:Diversity rdf:type owl:Class ;
+    rdfs:label "Diversity"@en ;
+    rdfs:comment "A component of opposition, representing difference within identity."@en .
+
+:Positive rdf:type owl:Class ;
+    rdfs:label "Positive"@en ;
+    rdfs:comment "A side of opposition, characterized by positedness reflected into self-likeness."@en .
+
+:Negative rdf:type owl:Class ;
+    rdfs:label "Negative"@en ;
+    rdfs:comment "A side of opposition, characterized by positedness reflected into unlikeness."@en .
+
+:Positedness rdf:type owl:Class ;
+    rdfs:label "Positedness"@en ;
+    rdfs:comment "The state of being posited or determined within opposition."@en .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:domain :Opposition ;
+    rdfs:range :Identity, :Diversity .
+
+:hasSide rdf:type owl:ObjectProperty ;
+    rdfs:label "has side"@en ;
+    rdfs:domain :Opposition ;
+    rdfs:range :Positive, :Negative .
+
+:isNegativeOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is negative of"@en ;
+    rdfs:domain :Positive, :Negative ;
+    rdfs:range :Positive, :Negative .
+
+:hasDetermination rdf:type owl:ObjectProperty ;
+    rdfs:label "has determination"@en ;
+    rdfs:domain :Positive, :Negative ;
+    rdfs:range :Positedness .
+
+:isIndifferentTo rdf:type owl:ObjectProperty ;
+    rdfs:label "is indifferent to"@en ;
+    rdfs:domain :Positive, :Negative ;
+    rdfs:range :Positive, :Negative .
+
+:Opposition
+    :unifies :Identity, :Diversity ;
+    :hasSide :Positive, :Negative .
+
+:Positive
+    :isNegativeOf :Negative ;
+    :hasDetermination :Positedness ;
+    :isIndifferentTo :Negative .
+
+:Negative
+    :isNegativeOf :Positive ;
+    :hasDetermination :Positedness ;
+    :isIndifferentTo :Positive .
+
+:Opposition rdfs:comment """Characteristics of Opposition:
+1. Unity of identity and diversity.
+2. Contains diverse moments within one identity.
+3. These moments are opposites.
+4. Consists of positive and negative sides."""@en .
+
+:Positive rdfs:comment """Nature of the Positive:
+1. Positedness reflected into self-likeness.
+2. Not a simple identity, but contains negation.
+3. Makes itself into a positedness.
+4. Is the negative of the negative."""@en .
+
+:Negative rdfs:comment """Nature of the Negative:
+1. Positedness reflected into unlikeness.
+2. Determined as negative, the negative as negative.
+3. Self-subsistent opposition.
+4. Is the negative of the positive."""@en .
+
+:Positedness rdfs:comment """Role of Positedness in Opposition:
+1. Each side (positive and negative) is a positedness.
+2. In this positedness, each side refers to itself.
+3. Sides are determined through each other.
+4. Sides exist only through this mutual determination."""@en .
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Contradiction rdf:type owl:Class ;
+    rdfs:label "Contradiction"@en ;
+    rdfs:comment "The state where moments of difference are both self-subsisting and mutually determining."@en .
+
+:Difference rdf:type owl:Class ;
+    rdfs:label "Difference"@en ;
+    rdfs:comment "The general concept containing both sides of contradiction as moments."@en .
+
+:Diversity rdf:type owl:Class ;
+    rdfs:label "Diversity"@en ;
+    rdfs:comment "A state where the sides of difference fall apart as indifferent to each other."@en .
+
+:Opposition rdf:type owl:Class ;
+    rdfs:label "Opposition"@en ;
+    rdfs:comment "A state where the moments of difference are determined by each other."@en .
+
+:Moment rdf:type owl:Class ;
+    rdfs:label "Moment"@en ;
+    rdfs:comment "A constituent aspect of contradiction, existing as both self-subsisting and mutually determining."@en .
+
+:Positive rdf:type owl:Class ;
+    rdfs:subClassOf :Moment ;
+    rdfs:label "Positive"@en ;
+    rdfs:comment "One side of contradiction, characterized as positive within itself."@en .
+
+:Negative rdf:type owl:Class ;
+    rdfs:subClassOf :Moment ;
+    rdfs:label "Negative"@en ;
+    rdfs:comment "One side of contradiction, characterized as negative within itself."@en .
+
+:containsMoments rdf:type owl:ObjectProperty ;
+    rdfs:label "contains moments"@en ;
+    rdfs:domain :Difference, :Contradiction ;
+    rdfs:range :Moment .
+
+:hasSides rdf:type owl:ObjectProperty ;
+    rdfs:label "has sides"@en ;
+    rdfs:domain :Diversity ;
+    rdfs:range :Moment .
+
+:determinedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "determined by"@en ;
+    rdfs:domain :Moment ;
+    rdfs:range :Moment .
+
+:excludes rdf:type owl:ObjectProperty ;
+    rdfs:label "excludes"@en ;
+    rdfs:domain :Moment ;
+    rdfs:range :Moment .
+
+:containsReferenceToOther rdf:type owl:ObjectProperty ;
+    rdfs:label "contains reference to other"@en ;
+    rdfs:domain :Moment ;
+    rdfs:range :Moment .
+
+:Difference
+    :containsMoments :Moment .
+
+:Diversity
+    :hasSides :Moment .
+
+:Opposition
+    :containsMoments :Moment .
+
+:Contradiction
+    :containsMoments :Positive, :Negative .
+
+:Positive
+    :determinedBy :Negative ;
+    :excludes :Negative ;
+    :containsReferenceToOther :Negative .
+
+:Negative
+    :determinedBy :Positive ;
+    :excludes :Positive ;
+    :containsReferenceToOther :Positive .
+
+:Contradiction rdfs:comment """Nature of Contradiction:
+1. Contains moments that are both self-subsisting and mutually determining.
+2. Moments are indifferent to each other and mutually exclusive.
+3. Each moment is the whole self-contained opposition.
+4. Involves self-mediation through the other and its non-being."""@en .
+
+:Moment rdfs:comment """Characteristics of Moments in Contradiction:
+1. Equally determined within themselves.
+2. Indifferent to each other and mutually exclusive.
+3. Self-subsisting determinations of reflection.
+4. Each contains the reference to its other moment within it."""@en .
+
+:Positive rdfs:comment """Nature of the Positive in Contradiction:
+1. Characterized as positive within itself.
+2. Has indifferent self-subsistence for itself.
+3. Contains the whole opposition within itself.
+4. Self-mediated through the negative and its non-being."""@en .
+
+:Negative rdfs:comment """Nature of the Negative in Contradiction:
+1. Characterized as negative within itself.
+2. Has indifferent self-subsistence for itself.
+3. Contains the whole opposition within itself.
+4. Self-mediated through the positive and its non-being."""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Contradiction rdf:type owl:Class ;
+    rdfs:label "Contradiction"@en ;
+    rdfs:comment "The unity of the self-identical negative and the self-identical positive, representing one and the same reflection."@en .
+
+:SelfSubsistingDetermination rdf:type owl:Class ;
+    rdfs:label "Self-Subsisting Determination"@en ;
+    rdfs:comment "A determination of reflection that both contains and excludes its other, creating a paradox of self-subsistence."@en .
+
+:Essence rdf:type owl:Class ;
+    rdfs:label "Essence"@en ;
+    rdfs:comment "The unity of determinate identity and negative identity, distinct from its mediation."@en .
+
+:Ground rdf:type owl:Class ;
+    rdfs:label "Ground"@en ;
+    rdfs:comment "Essence posited as the non-posited against positedness."@en .
+
+:Grounded rdf:type owl:Class ;
+    rdfs:label "Grounded"@en ;
+    rdfs:comment "Positedness as positedness, with its reflection into itself being the identity of the ground."@en .
+
+:Positive rdf:type owl:Class ;
+    rdfs:label "Positive"@en ;
+    rdfs:comment "The self-identical positive aspect in contradiction."@en .
+
+:Negative rdf:type owl:Class ;
+    rdfs:label "Negative"@en ;
+    rdfs:comment "The self-identical negative aspect in contradiction, which is also the self-identity of the positive."@en .
+
+:excludes rdf:type owl:ObjectProperty ;
+    rdfs:label "excludes"@en ;
+    rdfs:domain :SelfSubsistingDetermination ;
+    rdfs:range :SelfSubsistingDetermination .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:domain :SelfSubsistingDetermination ;
+    rdfs:range :SelfSubsistingDetermination .
+
+:unifies rdf:type owl:ObjectProperty ;
+    rdfs:label "unifies"@en ;
+    rdfs:domain :Contradiction ;
+    rdfs:range :Positive, :Negative .
+
+:isIdentityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is identity of"@en ;
+    rdfs:domain :Negative ;
+    rdfs:range :Positive .
+
+:hasReflectionInto rdf:type owl:ObjectProperty ;
+    rdfs:label "has reflection into"@en ;
+    rdfs:domain :Grounded ;
+    rdfs:range :Ground .
+
+:isUnityOf rdf:type owl:ObjectProperty ;
+    rdfs:label "is unity of"@en ;
+    rdfs:domain :Essence ;
+    rdfs:range :Ground, :Grounded .
+
+:SelfSubsistingDetermination
+    :excludes :SelfSubsistingDetermination ;
+    :contains :SelfSubsistingDetermination .
+
+:Contradiction
+    :unifies :Positive, :Negative .
+
+:Negative
+    :isIdentityOf :Positive .
+
+:Grounded
+    :hasReflectionInto :Ground .
+
+:Essence
+    :isUnityOf :Ground, :Grounded .
+
+:SelfSubsistingDetermination rdfs:comment """Characteristics of Self-Subsisting Determination:
+1. Excludes the other in the same respect as it contains it.
+2. Self-subsisting precisely because it contains and excludes its other.
+3. In its self-subsistence, it excludes its own self-subsistence from itself.
+4. Creates a contradiction within itself."""@en .
+
+:Contradiction rdfs:comment """Nature of Contradiction:
+1. Unity of the self-identical negative and the self-identical positive.
+2. Represents one and the same reflection.
+3. The self-identical negative is itself the self-identity of the positive."""@en .
+
+:Essence rdfs:comment """Essence in Contradiction:
+1. Unity of determinate identity (ground) and negative identity (grounded).
+2. Distinct from its mediation.
+3. Not itself ground, as ground is essence posited as the non-posited against positedness."""@en .
+
+:Grounded rdfs:comment """Nature of the Grounded:
+1. Positedness as positedness.
+2. Its reflection into itself is the identity of the ground."""@en .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://www.example.org/hegel-ontology#> .
+
+:Contradiction rdf:type owl:Class ;
+    rdfs:label "Contradiction"@en ;
+    rdfs:comment "A dialectical concept that contains both negative and positive aspects, and resolves itself through self-sublation."@en .
+
+:Resolution rdf:type owl:Class ;
+    rdfs:label "Resolution"@en ;
+    rdfs:comment "The process by which contradiction resolves itself through the self-sublation of its opposing elements."@en .
+
+:Unity rdf:type owl:Class ;
+    rdfs:label "Unity"@en ;
+    rdfs:comment "The result of the resolution of contradiction, initially manifesting as the null."@en .
+
+:Positive rdf:type owl:Class ;
+    rdfs:label "Positive"@en ;
+    rdfs:comment "One aspect of contradiction, which sublates itself in the process of resolution."@en .
+
+:Negative rdf:type owl:Class ;
+    rdfs:label "Negative"@en ;
+    rdfs:comment "One aspect of contradiction, which sublates itself in the process of resolution."@en .
+
+:SelfSubsistence rdf:type owl:Class ;
+    rdfs:label "Self-Subsistence"@en ;
+    rdfs:comment "The state of the opposing elements in contradiction, which is both their positedness and their self-negation."@en .
+
+:ImmanentReflection rdf:type owl:Class ;
+    rdfs:label "Immanent Reflection"@en ;
+    rdfs:comment "The process by which the sides of opposition turn into self-subsistent self-references."@en .
+
+:resolvesInto rdf:type owl:ObjectProperty ;
+    rdfs:label "resolves into"@en ;
+    rdfs:domain :Contradiction ;
+    rdfs:range :Resolution .
+
+:resultsIn rdf:type owl:ObjectProperty ;
+    rdfs:label "results in"@en ;
+    rdfs:domain :Resolution ;
+    rdfs:range :Unity .
+
+:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:domain :Contradiction ;
+    rdfs:range :Positive, :Negative .
+
+:sublatesItself rdf:type owl:ObjectProperty ;
+    rdfs:label "sublates itself"@en ;
+    rdfs:domain :Positive, :Negative ;
+    rdfs:range :Resolution .
+
+:constitutes rdf:type owl:ObjectProperty ;
+    rdfs:label "constitutes"@en ;
+    rdfs:domain :Positive, :Negative ;
+    rdfs:range :SelfSubsistence .
+
+:resultsFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "results from"@en ;
+    rdfs:domain :SelfSubsistence ;
+    rdfs:range :ImmanentReflection .
+
+:Contradiction
+    :resolvesInto :Resolution ;
+    :contains :Positive, :Negative .
+
+:Resolution
+    :resultsIn :Unity .
+
+:Positive
+    :sublatesItself :Resolution ;
+    :constitutes :SelfSubsistence .
+
+:Negative
+    :sublatesItself :Resolution ;
+    :constitutes :SelfSubsistence .
+
+:SelfSubsistence
+    :resultsFrom :ImmanentReflection .
+
+:Contradiction rdfs:comment """Nature of Contradiction:
+1. Contains both negative and positive aspects.
+2. Resolves itself through self-sublation of its opposing elements.
+3. The self-excluding reflection is also positing reflection.
+4. The result is not only the null, but includes a positive aspect."""@en .
+
+:Resolution rdfs:comment """Process of Resolution:
+1. Involves the self-sublation of positive and negative elements.
+2. Each element passes over or self-translates into its opposite.
+3. Results in a unity, initially manifesting as the null.
+4. Involves the ceaseless vanishing of the opposites."""@en .
+
+:SelfSubsistence rdfs:comment """Characteristics of Self-Subsistence:
+1. Constituted by the positive and negative elements.
+2. Represents the positedness of the opposing elements.
+3. Is sublated through the self-negation of the elements.
+4. Results from the immanent reflection of opposition."""@en .
+
+:ImmanentReflection rdfs:comment """Role of Immanent Reflection:
+1. Turns the sides of opposition into self-subsistent self-references.
+2. Establishes the self-subsistence of the opposing elements as distinct moments.
+3. Maintains the opposition while establishing self-subsistence.
+4. Reveals self-subsistence as the positedness of the opposing elements."""@en .
+
