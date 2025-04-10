@@ -1,27 +1,118 @@
-import { NeoComponentId } from '@/neo/extension';
+import { NeoComponentId } from "@/neo/extension";
 
-export type NeoRelationId = string;
+export type FormRelationId = string;
 
-export interface NeoRelation<T = any> {
-  id: NeoRelationId;
-  type: string;
-  source: NeoComponentId;
-  target?: NeoComponentId;
-  subtype?: string;
-  content?: T;
-  metadata?: Record<string, any>;
-  timestamp?: number;
-}
+export class FormRelation<T = any> {
+  // Identity properties
+  public id: FormRelationId;
+  public type: string;
+  public source: NeoComponentId;
+  public target?: NeoComponentId;
+  public subtype?: string;
+  public content?: T;
+  public metadata?: Record<string, any>;
+  public timestamp?: number;
+  private static relations: Map<string, FormRelation> = new Map();
 
-export class RelationService {
-  private static relations: Map<string, NeoRelation> = new Map();
+  /**
+   * Create a new relation
+   */
+  constructor(config: {
+    id?: string;
+    type: string;
+    source: NeoComponentId;
+    target?: NeoComponentId;
+    subtype?: string;
+    content?: T;
+    metadata?: Record<string, any>;
+  }) {
+    this.id = config.id || `relation:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
+    this.type = config.type;
+    this.source = config.source;
+    this.target = config.target;
+    this.subtype = config.subtype;
+    this.content = config.content;
+    this.metadata = config.metadata || { created: Date.now() };
+    this.timestamp = Date.now();
+  }
 
+  /**
+   * Get a relation by ID
+   */
+  static getRelation(id: string): FormRelation | undefined {
+    return FormRelation.relations.get(id);
+  }
+
+  /**
+   * Update a relation with new properties
+   */
+  static updateRelation(id: string, updates: Partial<FormRelation>): boolean {
+    const relation = FormRelation.relations.get(id);
+    if (!relation) return false;
+
+    // Create updated relation
+    const updatedRelation = {
+      ...relation,
+      ...updates,
+      // Preserve metadata or create if not present
+      metadata: {
+        ...(relation.metadata || {}),
+        ...(updates.metadata || {}),
+        updated: Date.now(),
+      },
+      timestamp: Date.now(),
+    };
+
+    // Update in storage
+    FormRelation.relations.set(id, updatedRelation);
+
+    return true;
+  }
+
+  /**
+   * Create a relation from configuration
+   */
+  static createRelation(config: {
+    source: { id: string; type: string };
+    target: { id: string; type: string };
+    type: string;
+    content?: any;
+    spaceId?: string;
+  }): string {
+    const relationId = `relation:${Date.now()}:${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+
+    const relation: FormRelation = {
+      id: relationId,
+      type: config.type,
+      source: config.source,
+      target: config.target,
+      subtype: config.type,
+      content: config.content,
+      metadata: {
+        created: Date.now(),
+        spaceId: config.spaceId,
+      },
+      timestamp: Date.now(),
+    };
+
+    FormRelation.relations.set(relationId, relation);
+    return relationId;
+  }
   /**
    * Create a basic relation between two entities
    */
-  static relate(source: NeoComponentId, target: NeoComponentId, type: string, metadata?: Record<string, any>): string {
-    const relationId = `relation:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    const relation: NeoRelation = {
+  static relate(
+    source: NeoComponentId,
+    target: NeoComponentId,
+    type: string,
+    metadata?: Record<string, any>
+  ): string {
+    const relationId = `relation:${Date.now()}:${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+    const relation: FormRelation = {
       id: relationId,
       type,
       source,
@@ -37,9 +128,16 @@ export class RelationService {
   /**
    * Emit an event as a relation
    */
-  static emit(source: NeoComponentId, type: string, content: Record<string, any>, metadata?: Record<string, any>): string {
-    const eventId = `event:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    const event: NeoRelation = {
+  static emit(
+    source: NeoComponentId,
+    type: string,
+    content: Record<string, any>,
+    metadata?: Record<string, any>
+  ): string {
+    const eventId = `event:${Date.now()}:${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+    const event: FormRelation = {
       id: eventId,
       type: "event",
       source,
@@ -56,9 +154,17 @@ export class RelationService {
   /**
    * Send a message as a relation
    */
-  static send(source: NeoComponentId, target: NeoComponentId, type: string, content: Record<string, any>, metadata?: Record<string, any>): string {
-    const messageId = `message:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    const message: NeoRelation = {
+  static send(
+    source: NeoComponentId,
+    target: NeoComponentId,
+    type: string,
+    content: Record<string, any>,
+    metadata?: Record<string, any>
+  ): string {
+    const messageId = `message:${Date.now()}:${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+    const message: FormRelation = {
       id: messageId,
       type: "message",
       source,
@@ -76,7 +182,13 @@ export class RelationService {
   /**
    * Broadcast a message to all targets in a context
    */
-  static broadcast(source: NeoComponentId, targets: NeoComponentId[], type: string, content: Record<string, any>, metadata?: Record<string, any>): string[] {
+  static broadcast(
+    source: NeoComponentId,
+    targets: NeoComponentId[],
+    type: string,
+    content: Record<string, any>,
+    metadata?: Record<string, any>
+  ): string[] {
     const messageIds: string[] = [];
     for (const target of targets) {
       const messageId = this.send(source, target, type, content, metadata);
@@ -88,11 +200,17 @@ export class RelationService {
   /**
    * Query relations by type, source, or target
    */
-  static query(filter: { type?: string; sourceId?: string; targetId?: string }): NeoRelation[] {
-    return Array.from(this.relations.values()).filter(relation => {
+  static query(filter: {
+    type?: string;
+    sourceId?: string;
+    targetId?: string;
+  }): FormRelation[] {
+    return Array.from(this.relations.values()).filter((relation) => {
       if (filter.type && relation.type !== filter.type) return false;
-      if (filter.sourceId && relation.source.id !== filter.sourceId) return false;
-      if (filter.targetId && relation.target?.id !== filter.targetId) return false;
+      if (filter.sourceId && relation.source.id !== filter.sourceId)
+        return false;
+      if (filter.targetId && relation.target?.id !== filter.targetId)
+        return false;
       return true;
     });
   }

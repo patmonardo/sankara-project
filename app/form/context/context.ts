@@ -1,103 +1,28 @@
 /**
- * NeoContext implementation expressing BEC · MVC · NEO unity
+ * FormContext implementation expressing BEC · MVC · NEO unity
  *
- * A NeoContext represents a bounded operational environment
+ * A FormContext represents a bounded operational environment
  * within which entities and relations operate.
  */
-import { NeoCore } from "./neo";
-import { createNeoComponentId, NeoComponentId } from "./dialectic";
-import { NeoEntityService , NeoEntity} from "./entity";
-import { NeoRelationService, NeoRelation } from "./relation";
-import { NeoEvent } from "./event";
+import { NeoCore } from "@/neo/neo";
+import { NeoComponentId } from "@/neo/extension";
+import { FormEntity } from "../entity/entity";
+import { FormRelation } from "../relation/relation";
+//import { FormContext } from "../schema/context";
+import { NeoEvent } from "@/neo/event";
 import { EventEmitter } from "events";
 
 /**
- * NeoContextEvent interface for context lifecycle events
+ * FormContextEvent interface for context lifecycle events
  */
-export interface NeoContextEvent {
+export interface FormContextEvent {
   type: "created" | "activated" | "deactivated" | "updated" | "deleted";
   contextId: string;
   timestamp: number;
   metadata?: Record<string, any>;
 }
 
-/**
- * NeoContext unified interface
- * Combines context and space capabilities
- */
-export interface NeoContext<T = any> {
-  // Identity properties
-  id: string;
-  type: string;
-  name?: string;
-
-  // Hierarchical structure
-  parentId?: string;
-  children?: Set<string>;
-
-  // Status
-  active: boolean;
-  timestamp: number;
-
-  // Metadata
-  metadata?: Record<string, any>;
-
-  // Content/configuration
-  config?: T;
-
-  // Optional space-specific properties
-  spaceId?: NeoComponentId;
-  members?: Set<NeoComponentId>;
-  state?: Record<string, any>;
-  events?: NeoEvent[];
-
-  // Core lifecycle methods
-  activate(options?: { 
-    activateChildren?: boolean; 
-    recursive?: boolean;
-    silent?: boolean;
-    preserveActiveContext?: boolean;
-  }): boolean;
-  
-  deactivate(options?: { 
-    deactivateChildren?: boolean; 
-    recursive?: boolean;
-    silent?: boolean;
-    activateParent?: boolean;
-  }): boolean;
-  
-  // Hierarchical methods
-  addChild?(childId: string): boolean;
-  removeChild?(childId: string): boolean;
-  getChildren?(): NeoContext[];
-  getParent?(): NeoContext | undefined;
-  getAncestors?(): NeoContext[];
-  
-  // Entity and relation management
-  registerEntity?(entityId: string): boolean;
-  registerRelation?(relationId: string): boolean;
-  getEntities?(): NeoEntity[];
-  getRelations?(): NeoRelation[];
-  createEntity?(data: Record<string, any>): string;
-  createRelation?(source: string, target: string, type: string, data?: Record<string, any>): string;
-  
-  // Space-specific methods
-  isSpace?(): boolean;
-  addMember?(componentId: NeoComponentId): boolean;
-  removeMember?(componentId: string | NeoComponentId): boolean;
-  isMember?(componentId: string | NeoComponentId): boolean;
-  updateState?(updates: Record<string, any>): boolean;
-  
-  // Utility methods
-  run<R>(fn: () => R): R;
-  update(updates: { name?: string; metadata?: Record<string, any>; config?: T }): boolean;
-  delete?(): boolean;
-  on?(event: "created" | "activated" | "deactivated" | "updated" | "deleted", 
-     handler: (event: NeoContextEvent) => void): () => void;
-  toJSON(): any;
-}
-
-export class NeoContextService<T = any> implements NeoContext<T> {
+export class FormContext<T = any> {
   // Identity properties
   id: string;
   type: string;
@@ -131,7 +56,7 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   private eventEmitter: EventEmitter = new EventEmitter();
 
   // Static context registry
-  private static contexts: Map<string, NeoContext> = new Map();
+  private static contexts: Map<string, FormContext> = new Map();
   private static activeContextId: string | null = null;
 
   // Core reference
@@ -164,30 +89,17 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     this.config = options.config;
     this.timestamp = Date.now();
 
-    // Initialize space features if requested
-    if (options.enableSpaceFeatures || options.spaceId) {
-      this.initializeSpaceFeatures({
-        spaceId:
-          options.spaceId ||
-          createNeoComponentId(
-            this.id,
-            "space"
-          ),
-        name: options.name,
-      });
-    }
-
     // Set core reference
     this.core = options.core!;
 
     // Register in context registry
-    NeoContextService.contexts.set(this.id, this);
+    FormContext.contexts.set(this.id, this);
 
     // Add as child to parent if exists
     if (this.parentId) {
-      const parent = NeoContextService.contexts.get(this.parentId);
-      if (parent && (parent as NeoContextService).children) {
-        (parent as NeoContextService).children.add(this.id);
+      const parent = FormContext.contexts.get(this.parentId);
+      if (parent && (parent as FormContext).children) {
+        (parent as FormContext).children.add(this.id);
       }
     }
 
@@ -201,54 +113,27 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   }
 
   /**
-   * Initialize space-specific features
-   */
-  private initializeSpaceFeatures(options: {
-    spaceId: NeoComponentId;
-    name?: string;
-  }): void {
-    // Set space ID
-    this.spaceId = options.spaceId;
-
-    // Initialize space collections
-    this.members = new Set<NeoComponentId>();
-    this.state = {};
-    this.events = [];
-
-    // Set space type if not specified
-    if (this.type === "neo:context") {
-      this.type = "neo:space";
-    }
-  }
-
-  /**
-   * Check if this context has space capabilities
-   */
-  isSpace(): boolean {
-    return !!this.spaceId && !!this.members;
-  }
-
-  /**
    * Get the active context or null if none is active
    */
-  static getActiveContext(): NeoContext | null {
-    return NeoContextService.activeContextId
-      ? NeoContextService.contexts.get(NeoContextService.activeContextId) || null
+  static getActiveContext(): FormContext | null {
+    return FormContext.activeContextId
+      ? FormContext.contexts.get(FormContext.activeContextId) ||
+          null
       : null;
   }
 
   /**
    * Get a context by ID
    */
-  static getContext(id: string): NeoContext | undefined {
-    return NeoContextService.contexts.get(id);
+  static getContext(id: string): FormContext | undefined {
+    return FormContext.contexts.get(id);
   }
 
   /**
    * Find contexts by type
    */
-  static findContextsByType(type: string): NeoContext[] {
-    return Array.from(NeoContextService.contexts.values()).filter(
+  static findContextsByType(type: string): FormContext[] {
+    return Array.from(FormContext.contexts.values()).filter(
       (context) => context.type === type
     );
   }
@@ -256,72 +141,185 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   /**
    * Find child contexts
    */
-  static findChildContexts(parentId: string): NeoContextService[] {
-    return Array.from(NeoContextService.contexts.values())
+  static findChildContexts(parentId: string): FormContext[] {
+    return Array.from(FormContext.contexts.values())
       .filter((context) => context.parentId === parentId)
-      .map(context => context as NeoContextService);
+      .map((context) => context as FormContext);
+  }
+  // Add these methods to the FormContext class
+
+  /**
+   * Switch the active context to the specified context
+   * This is a static method to control the active context globally
+   */
+  static switchContext(
+    contextId: string,
+    options: {
+      preserveParentContext?: boolean;
+      silent?: boolean;
+    } = {}
+  ): boolean {
+    const context = FormContext.getContext(contextId);
+    if (!context) {
+      console.error(`Cannot switch to context: ${contextId} - not found`);
+      return false;
+    }
+
+    // Check if this context is already active
+    if (FormContext.activeContextId === contextId) {
+      return true; // Already active
+    }
+
+    // Deactivate current context if one is active
+    if (FormContext.activeContextId) {
+      const currentContext = FormContext.getContext(
+        FormContext.activeContextId
+      );
+      if (currentContext) {
+        (currentContext as FormContext).deactivate({
+          deactivateChildren: false,
+          silent: options.silent,
+          activateParent: false,
+        });
+      }
+    }
+
+    // Activate the new context
+    return (context as FormContext).activate({
+      preserveActiveContext: options.preserveParentContext,
+      silent: options.silent,
+    });
   }
 
   /**
+   * Execute a function within a specific context
+   * This is a static method to execute code in a context without changing the current active context
+   */
+  static withContext<R>(contextId: string, fn: () => R): R {
+    const context = FormContext.getContext(contextId);
+    if (!context) {
+      throw new Error(`Context not found: ${contextId}`);
+    }
+
+    // Store the previous active context
+    const previousContextId = FormContext.activeContextId;
+
+    try {
+      // Activate the target context temporarily
+      (context as FormContext).activate({
+        silent: true,
+        preserveActiveContext: false,
+      });
+
+      // Execute the function
+      return fn();
+    } finally {
+      // Restore the previous context
+      if (previousContextId) {
+        const previousContext =
+          FormContext.getContext(previousContextId);
+        if (previousContext) {
+          (previousContext as FormContext).activate({
+            silent: true,
+            preserveActiveContext: false,
+          });
+        }
+      } else {
+        // No previous context, just deactivate the current one
+        (context as FormContext).deactivate({
+          silent: true,
+          activateParent: false,
+        });
+      }
+    }
+  }
+
+  /**
+   * Create a new FormContext instance
+   * This is a static factory method for creating contexts
+   */
+  static createContext(options: {
+    id?: string;
+    type?: string;
+    name?: string;
+    parentId?: string;
+    metadata?: Record<string, any>;
+    config?: any;
+    autoActivate?: boolean;
+    core?: NeoCore;
+    enableSpaceFeatures?: boolean;
+    spaceId?: NeoComponentId;
+  }): FormContext {
+    return new FormContext(options);
+  }
+  /**
    * Activate this context
-   * 
+   *
    * @param options Configuration options for activation
    * @param options.activateChildren Whether to also activate child contexts
    * @param options.recursive Whether to recursively activate all descendants
    * @param options.silent Whether to suppress events
    * @param options.preserveActiveContext Whether to preserve the currently active context
    */
-  activate(options: { 
-    activateChildren?: boolean; 
-    recursive?: boolean;
-    silent?: boolean;
-    preserveActiveContext?: boolean;
-  } = {}): boolean {
+  activate(
+    options: {
+      activateChildren?: boolean;
+      recursive?: boolean;
+      silent?: boolean;
+      preserveActiveContext?: boolean;
+    } = {}
+  ): boolean {
     if (this.active) {
       return false; // Already active
     }
 
     // Check for circular context activation
     if (this.parentId) {
-      const parent = NeoContextService.getContext(this.parentId) as NeoContextService;
+      const parent = FormContext.getContext(
+        this.parentId
+      ) as FormContext;
       if (parent && !parent.active && !options.preserveActiveContext) {
         // Auto-activate parent first to maintain hierarchy
-        parent.activate({ 
+        parent.activate({
           activateChildren: false, // Don't activate siblings
           silent: options.silent,
-          preserveActiveContext: true // Preserve the current active context during parent activation
+          preserveActiveContext: true, // Preserve the current active context during parent activation
         });
       }
     }
 
     // Deactivate current active context if exists and we're not preserving it
-    if (!options.preserveActiveContext && NeoContextService.activeContextId) {
-      const activeContext = NeoContextService.contexts.get(NeoContextService.activeContextId);
+    if (!options.preserveActiveContext && FormContext.activeContextId) {
+      const activeContext = FormContext.contexts.get(
+        FormContext.activeContextId
+      );
       if (activeContext && activeContext.id !== this.id) {
-        (activeContext as NeoContextService).deactivate({ silent: options.silent });
+        (activeContext as FormContext).deactivate({
+          silent: options.silent,
+        });
       }
     }
 
     // Set as active
     this.active = true;
-    NeoContextService.activeContextId = this.id;
+    FormContext.activeContextId = this.id;
     this.timestamp = Date.now();
 
     // Emit context activated event if not silent
     if (!options.silent) {
       this.emitContextEvent("activated");
     }
-    
+
     // Activate children if requested
     if (options.activateChildren && this.children.size > 0) {
       for (const childId of this.children) {
-        const child = NeoContextService.getContext(childId);
+        const child = FormContext.getContext(childId);
         if (child) {
-          (child as NeoContextService).activate({ 
+          (child as FormContext).activate({
             activateChildren: options.recursive,
             recursive: options.recursive,
             silent: options.silent,
-            preserveActiveContext: true // Preserve this context as active
+            preserveActiveContext: true, // Preserve this context as active
           });
         }
       }
@@ -332,52 +330,57 @@ export class NeoContextService<T = any> implements NeoContext<T> {
 
   /**
    * Deactivate this context
-   * 
+   *
    * @param options Configuration options for deactivation
    * @param options.deactivateChildren Whether to also deactivate child contexts
    * @param options.recursive Whether to recursively deactivate all descendants
    * @param options.silent Whether to suppress events
    * @param options.activateParent Whether to activate parent context after deactivation
    */
-  deactivate(options: { 
-    deactivateChildren?: boolean; 
-    recursive?: boolean;
-    silent?: boolean;
-    activateParent?: boolean;
-  } = {}): boolean {
+  deactivate(
+    options: {
+      deactivateChildren?: boolean;
+      recursive?: boolean;
+      silent?: boolean;
+      activateParent?: boolean;
+    } = {}
+  ): boolean {
     if (!this.active) {
       return false; // Not active
     }
 
     // Save parent reference before deactivation
     const parentId = this.parentId;
-    
+
     // Deactivate children first if requested
-    if ((options.deactivateChildren || options.recursive) && this.children.size > 0) {
+    if (
+      (options.deactivateChildren || options.recursive) &&
+      this.children.size > 0
+    ) {
       for (const childId of this.children) {
-        const child = NeoContextService.getContext(childId);
-        if (child && (child as NeoContextService).active) {
-          (child as NeoContextService).deactivate({
+        const child = FormContext.getContext(childId);
+        if (child && (child as FormContext).active) {
+          (child as FormContext).deactivate({
             deactivateChildren: options.recursive,
             recursive: options.recursive,
             silent: options.silent,
-            activateParent: false // Don't activate this context from child
+            activateParent: false, // Don't activate this context from child
           });
         }
       }
     }
-    
+
     this.active = false;
-    
+
     // Clear active context reference if we're the active context
-    if (NeoContextService.activeContextId === this.id) {
-      NeoContextService.activeContextId = null;
-      
+    if (FormContext.activeContextId === this.id) {
+      FormContext.activeContextId = null;
+
       // Activate parent if requested and available
       if (options.activateParent !== false && parentId) {
-        const parent = NeoContextService.getContext(parentId);
+        const parent = FormContext.getContext(parentId);
         if (parent) {
-          (parent as NeoContextService).activate({ silent: options.silent });
+          (parent as FormContext).activate({ silent: options.silent });
         }
       }
     }
@@ -421,7 +424,7 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     this.timestamp = Date.now();
 
     // Update in registry
-    NeoContextService.contexts.set(this.id, this);
+    FormContext.contexts.set(this.id, this);
 
     // Emit context updated event
     this.emitContextEvent("updated");
@@ -440,24 +443,24 @@ export class NeoContextService<T = any> implements NeoContext<T> {
 
     // Remove from parent's children list
     if (this.parentId) {
-      const parent = NeoContextService.contexts.get(this.parentId);
-      if (parent && (parent as NeoContextService).children) {
-        (parent as NeoContextService).children.delete(this.id);
+      const parent = FormContext.contexts.get(this.parentId);
+      if (parent && (parent as FormContext).children) {
+        (parent as FormContext).children.delete(this.id);
       }
     }
 
     // Transfer children to parent or make them root contexts
     if (this.children.size > 0) {
       for (const childId of this.children) {
-        const child = NeoContextService.contexts.get(childId);
+        const child = FormContext.contexts.get(childId);
         if (child) {
           child.parentId = this.parentId; // Move to grandparent
 
           // Add as child to new parent if exists
           if (this.parentId) {
-            const parent = NeoContextService.contexts.get(this.parentId);
-            if (parent && (parent as NeoContextService).children) {
-              (parent as NeoContextService).children.add(childId);
+            const parent = FormContext.contexts.get(this.parentId);
+            if (parent && (parent as FormContext).children) {
+              (parent as FormContext).children.add(childId);
             }
           }
         }
@@ -468,7 +471,7 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     this.emitContextEvent("deleted");
 
     // Remove from registry
-    return NeoContextService.contexts.delete(this.id);
+    return FormContext.contexts.delete(this.id);
   }
 
   /**
@@ -478,14 +481,14 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     if (!entityId) return false;
 
     // Get entity to validate it exists
-    const entity = NeoEntityService.getEntity(entityId);
+    const entity = FormEntity.getEntity(entityId);
     if (!entity) return false;
 
     // Add to entities set
     this.entities.add(entityId);
 
     // Update entity with context
-    NeoEntityService.updateEntity(entityId, {
+    FormEntity.updateEntity(entityId, {
       contextId: this.id,
     });
 
@@ -499,16 +502,14 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     if (!relationId) return false;
 
     // Get relation to validate it exists
-    const relation = NeoRelationService.getRelation(relationId);
+    const relation = FormRelation.getRelation(relationId);
     if (!relation) return false;
 
     // Add to relations set
     this.relations.add(relationId);
 
     // Update relation with context
-    NeoRelationService.updateRelation(relationId, {
-      spaceId: this.id,
-    });
+    FormRelation.updateRelation(relationId, {});
 
     return true;
   }
@@ -516,19 +517,19 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   /**
    * Get all entities in this context
    */
-  getEntities(): NeoEntity[] {
+  getEntities(): FormEntity[] {
     return Array.from(this.entities)
-      .map((id) => NeoEntityService.getEntity(id))
-      .filter((entity) => entity !== undefined) as NeoEntity[];
+      .map((id) => FormEntity.getEntity(id))
+      .filter((entity) => entity !== undefined) as FormEntity[];
   }
 
   /**
    * Get all relations in this context
    */
-  getRelations(): NeoRelation[] {
+  getRelations(): FormRelation[] {
     return Array.from(this.relations)
-      .map((id) => NeoRelationService.getRelation(id))
-      .filter((relation) => relation !== undefined) as NeoRelation[];
+      .map((id) => FormRelation.getRelation(id))
+      .filter((relation) => relation !== undefined) as FormRelation[];
   }
 
   /**
@@ -645,8 +646,8 @@ export class NeoContextService<T = any> implements NeoContext<T> {
    * Create a new entity in this context
    */
   createEntity(data: Record<string, any>): string {
-    // Create entity with NeoEntity
-    const entityId = NeoEntityService.createEntity({
+    // Create entity with FormEntity
+    const entityId = FormEntity.createEntity({
       ...data,
       contextId: this.id,
     });
@@ -666,8 +667,8 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     type: string,
     data: Record<string, any> = {}
   ): string {
-    // Create relation with NeoRelation
-    const relationId = NeoRelationService.createRelation({
+    // Create relation with FormRelation
+    const relationId = FormRelation.createRelation({
       source: { id: source, type: "entity" },
       target: { id: target, type: "entity" },
       type,
@@ -686,7 +687,7 @@ export class NeoContextService<T = any> implements NeoContext<T> {
    */
   on(
     event: "created" | "activated" | "deactivated" | "updated" | "deleted",
-    handler: (event: NeoContextEvent) => void
+    handler: (event: FormContextEvent) => void
   ): () => void {
     this.eventEmitter.on(event, handler);
     return () => this.eventEmitter.off(event, handler);
@@ -698,7 +699,7 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   protected emitContextEvent(
     type: "created" | "activated" | "deactivated" | "updated" | "deleted"
   ): void {
-    const event: NeoContextEvent = {
+    const event: FormContextEvent = {
       type,
       contextId: this.id,
       timestamp: Date.now(),
@@ -726,7 +727,7 @@ export class NeoContextService<T = any> implements NeoContext<T> {
    */
   run<T>(fn: () => T): T {
     // Store previous active context
-    const previousActiveContext = NeoContextService.activeContextId;
+    const previousActiveContext = FormContext.activeContextId;
 
     // Activate this context
     this.activate();
@@ -737,7 +738,9 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     } finally {
       // Restore previous context if there was one
       if (previousActiveContext) {
-        const prevContext = NeoContextService.contexts.get(previousActiveContext);
+        const prevContext = FormContext.contexts.get(
+          previousActiveContext
+        );
         if (prevContext) {
           prevContext.activate();
         }
@@ -749,153 +752,34 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   }
 
   /**
-   * Add a member to this space (space-specific)
-   */
-  addMember(componentId: NeoComponentId): boolean {
-    if (!this.isSpace()) {
-      return false; // Not a space
-    }
-
-    // Convert string ID to componentId if needed
-    const member =
-      typeof componentId === "string"
-        ? { id: componentId, type: "unknown" }
-        : componentId;
-
-    // Add to members set
-    this.members!.add(member);
-
-    // Emit member added event
-    this.emitSpaceEvent("member-added", {
-      memberId: member.id,
-      memberType: member.type,
-    });
-
-    return true;
-  }
-
-  /**
-   * Remove a member from this space (space-specific)
-   */
-  removeMember(componentId: string | NeoComponentId): boolean {
-    if (!this.isSpace()) {
-      return false; // Not a space
-    }
-
-    // Get member ID
-    const memberId =
-      typeof componentId === "string" ? componentId : componentId.id;
-
-    // Find member in set
-    const foundMember = Array.from(this.members!).find(
-      (member) => member.id === memberId
-    );
-
-    if (!foundMember) {
-      return false;
-    }
-
-    // Remove from set
-    this.members!.delete(foundMember);
-
-    // Emit member removed event
-    this.emitSpaceEvent("member-removed", {
-      memberId,
-      memberType: foundMember.type,
-    });
-
-    return true;
-  }
-
-  /**
-   * Check if a component is a member of this space (space-specific)
-   */
-  isMember(componentId: string | NeoComponentId): boolean {
-    if (!this.isSpace()) {
-      return false; // Not a space
-    }
-
-    const memberId =
-      typeof componentId === "string" ? componentId : componentId.id;
-
-    return Array.from(this.members!).some((member) => member.id === memberId);
-  }
-
-  /**
-   * Record an event in this space (space-specific)
-   */
-  recordEvent(event: NeoEvent): boolean {
-    if (!this.isSpace()) {
-      return false; // Not a space
-    }
-
-    // Add event to history
-    this.events!.push(event);
-
-    // Trim history if too large
-    if (this.events!.length > 100) {
-      this.events = this.events!.slice(-100);
-    }
-
-    return true;
-  }
-
-  /**
-   * Emit a space-specific event (space-specific)
-   */
-  private emitSpaceEvent(subtype: string, content: any): void {
-    if (!this.isSpace()) {
-      return; // Not a space
-    }
-
-    // Create event with proper structure
-    const event: NeoEvent = {
-      id: `space:${this.id}:${Date.now()}`,
-      type: "space",
-      subtype,
-      source: { id: this.id, type: "space" },
-      timestamp: Date.now(),
-      content,
-    };
-
-    // Record event in space history
-    this.recordEvent(event);
-
-    // Emit through core if available
-    if (this.core) {
-      this.core.emit(event);
-    }
-  }
-
-  /**
    * Add a child context to this context
    */
   addChild(childId: string): boolean {
     if (!childId) return false;
-    
+
     // Validate child exists
-    const child = NeoContextService.getContext(childId);
+    const child = FormContext.getContext(childId);
     if (!child) return false;
-    
+
     // Don't allow circular references
     if (this.hasAncestor(childId)) {
       return false;
     }
-    
+
     // Update child's parent reference
-    const childInstance = child as NeoContextService;
+    const childInstance = child as FormContext;
     if (childInstance.parentId && childInstance.parentId !== this.id) {
       // Remove from previous parent
-      const prevParent = NeoContextService.getContext(childInstance.parentId);
+      const prevParent = FormContext.getContext(childInstance.parentId);
       if (prevParent) {
-        (prevParent as NeoContextService).children.delete(childId);
+        (prevParent as FormContext).children.delete(childId);
       }
     }
-    
+
     // Set new parent
     childInstance.parentId = this.id;
     this.children.add(childId);
-    
+
     return true;
   }
 
@@ -906,16 +790,16 @@ export class NeoContextService<T = any> implements NeoContext<T> {
     if (!this.children.has(childId)) {
       return false;
     }
-    
-    const child = NeoContextService.getContext(childId);
+
+    const child = FormContext.getContext(childId);
     if (child) {
       // Remove parent reference
-      (child as NeoContextService).parentId = undefined;
+      (child as FormContext).parentId = undefined;
     }
-    
+
     // Remove from children set
     this.children.delete(childId);
-    
+
     return true;
   }
 
@@ -925,39 +809,43 @@ export class NeoContextService<T = any> implements NeoContext<T> {
   private hasAncestor(contextId: string): boolean {
     if (!this.parentId) return false;
     if (this.parentId === contextId) return true;
-    
-    const parent = NeoContextService.getContext(this.parentId);
-    return parent ? (parent as NeoContextService).hasAncestor(contextId) : false;
+
+    const parent = FormContext.getContext(this.parentId);
+    return parent
+      ? (parent as FormContext).hasAncestor(contextId)
+      : false;
   }
 
   /**
    * Get all child contexts
    */
-  getChildren(): NeoContext[] {
+  getChildren(): FormContext[] {
     return Array.from(this.children)
-      .map(id => NeoContextService.getContext(id))
-      .filter(context => context !== undefined) as NeoContext[];
+      .map((id) => FormContext.getContext(id))
+      .filter((context) => context !== undefined) as FormContext[];
   }
 
   /**
    * Get parent context
    */
-  getParent(): NeoContext | undefined {
-    return this.parentId ? NeoContextService.getContext(this.parentId) : undefined;
+  getParent(): FormContext | undefined {
+    return this.parentId
+      ? FormContext.getContext(this.parentId)
+      : undefined;
   }
 
   /**
    * Get all ancestor contexts (parents up the tree)
    */
-  getAncestors(): NeoContext[] {
-    const ancestors: NeoContext[] = [];
+  getAncestors(): FormContext[] {
+    const ancestors: FormContext[] = [];
     let current = this.getParent();
-    
+
     while (current) {
       ancestors.push(current);
-      current = (current as NeoContextService).getParent();
+      current = (current as FormContext).getParent();
     }
-    
+
     return ancestors;
   }
 
@@ -979,25 +867,14 @@ export class NeoContextService<T = any> implements NeoContext<T> {
       relationCount: this.relations.size,
     };
 
-    // Add space properties if this is a space
-    if (this.isSpace()) {
-      return {
-        ...base,
-        spaceId: this.spaceId,
-        memberCount: this.members!.size,
-        eventCount: this.events!.length,
-        state: this.state,
-      };
-    }
-
     return base;
   }
 }
 
 /**
- * Create a NeoContext instance
+ * Create a FormContext instance
  */
-export function createNeoContext(config: {
+export function createFormContext(config: {
   id?: string;
   type?: string;
   name?: string;
@@ -1005,12 +882,26 @@ export function createNeoContext(config: {
   metadata?: Record<string, any>;
   config?: any;
   autoActivate?: boolean;
-}): NeoContext {
-  return new NeoContextService(config);
+}): FormContext {
+  return new FormContext(config);
 }
 
 /**
- * Create a NeoSpace instance (now just a specialized NeoContext)
+ * Get a context by ID
+ * Helper function that delegates to FormContext
+ */
+export function getContext(id: string): FormContext | undefined {
+  return FormContext.getContext(id);
+}
+
+/**
+ * Get the currently active context
+ */
+export function getActiveContext(): FormContext | null {
+  return FormContext.getActiveContext();
+}
+/**
+ * Create a NeoSpace instance (now just a specialized FormContext)
  */
 export function createNeoSpace(config: {
   id?: string;
@@ -1021,8 +912,8 @@ export function createNeoSpace(config: {
   config?: any;
   autoActivate?: boolean;
   spaceId?: NeoComponentId;
-}): NeoContext {
-  return new NeoContextService({
+}): FormContext {
+  return new FormContext({
     ...config,
     enableSpaceFeatures: true,
     type: config.type || "neo:space",
@@ -1030,17 +921,10 @@ export function createNeoSpace(config: {
 }
 
 /**
- * Get the currently active context
- */
-export function getActiveContext(): NeoContext | null {
-  return NeoContextService.getActiveContext();
-}
-
-/**
  * Run a function in the context of a specific space
  */
 export function withContext<T>(contextId: string, fn: () => T): T {
-  const context = NeoContextService.getContext(contextId);
+  const context = FormContext.getContext(contextId);
   if (!context) {
     throw new Error(`Context with ID ${contextId} not found`);
   }
