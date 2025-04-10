@@ -1,7 +1,6 @@
-import { NeoNode, createNeoNode } from '../../neo/node';
-import { NeoEntityId } from '../../neo/dialectic';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
+import { NeoNode, createNeoNode } from '../../neo/entity';
 
 // Import subsystems
 import { ReflectionSystem, Reflection, DeterminationOfReflection, Shine } from './reflection';

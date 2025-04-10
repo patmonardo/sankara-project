@@ -1,7 +1,5 @@
-import { NeoNode, createNeoNode } from '../../neo/node';
-import { NeoEntityId } from '../../neo/dialectic';
-import { Being, BeingCategory, Characteristic, createCharacteristic } from './being';
-import { Existence } from './existence';
+import { NeoNode, createNeoNode } from '../../neo/entity';
+import { Being, Characteristic, createCharacteristic } from './being';
 
 /**
  * Hegelian Being-for-Self System
@@ -91,6 +89,7 @@ export const SELF_COMPLETION = createCharacteristic(
  */
 export interface BeingForSelf extends Being {
   category: BeingForSelfCategory;
+  subtype: string; // Added subtype property to base interface
   
   // Core characteristics of all Being-for-Self forms
   sublatesExistence: boolean;

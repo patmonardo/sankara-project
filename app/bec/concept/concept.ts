@@ -1,5 +1,4 @@
-import { NeoNode, createNeoNode } from '../../neo/node';
-import { NeoEntityId } from '../../neo/dialectic';
+import { NeoNode, createNeoNode } from '../../neo/entity';
 
 /**
  * Hegelian Concept System
@@ -118,7 +117,7 @@ export interface Concept {
   essence: {
     reflection?: boolean;
     appearance?: string;
-    mediation?: boolean;
+    mediated?: boolean; // Changed from mediation to mediated
   };
   concept: {
     universal?: string;
@@ -208,7 +207,7 @@ export function createUniversalConcept(
     essence: {
       reflection: true,
       appearance: 'universal form',
-      mediation: false
+      mediated: false
     },
     concept: {
       universal: name,
@@ -312,7 +311,7 @@ export function createParticularConcept(
     essence: {
       reflection: true,
       appearance: 'differentiated form',
-      mediation: true
+      mediated: true
     },
     concept: {
       universal: name.split(' ').pop() || name, // Extract genus
@@ -405,7 +404,7 @@ export function createSingularConcept(
     essence: {
       reflection: true,
       appearance: 'concrete individual',
-      mediation: true
+      mediated: true
     },
     concept: {
       universal: name.split(' ').pop() || name, // Extract genus

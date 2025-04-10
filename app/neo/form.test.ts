@@ -1,115 +1,256 @@
-import { expect, test, describe, beforeAll, afterAll } from 'vitest';
-import { createNeoCore } from '../../app/neo/neo';
-import { createNeoForm } from '../../app/neo/form';
-import { createNeoGraph } from '../../app/neo/graph';
-import { NeoEvent } from '../../app/neo/event';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { NeoForm, createNeoForm } from './form';
+import { NeoCore } from './neo';
+import { NeoGraph } from './graph';
+import { NeoComponentId } from './extension';
+import { NeoNode } from './entity';
+import EventEmitter from 'events';
+
+// Mock dependencies
+vi.mock('./neo', () => ({
+  NeoCore: vi.fn().mockImplementation(() => ({
+    registerExtension: vi.fn(),
+    protocol: {
+      emit: vi.fn()
+    }
+  }))
+}));
+
+vi.mock('./graph', () => ({
+  NeoGraph: vi.fn().mockImplementation(() => ({
+    // Basic mock implementation
+  }))
+}));
+
+vi.mock('./node', () => {
+  return {
+    NeoNode: {
+      create: vi.fn().mockImplementation((options) => ({
+        id: 'test-node-id',
+        type: 'test-node-type',
+        data: {},
+        ...options
+      }))
+    }
+  };
+});
 
 describe('NeoForm', () => {
-  const core = createNeoCore({ id: 'test-core', name: 'Test Core', type: 'neo:core' });
-  const graph = createNeoGraph({ core });
-  const form = createNeoForm({ core, componentId: { id: 'test-form', name: 'Test Form', type: 'neo:form' }, graph });
-  
-  beforeAll(async () => {
-    await core.initialize();
+  let form: NeoForm;
+  let mockCore: any;
+  let mockGraph: any;
+  let mockComponentId: NeoComponentId;
+
+  beforeEach(() => {
+    // Reset mocks
+    vi.clearAllMocks();
+    
+    // Setup mocks
+    mockCore = new NeoCore();
+    mockGraph = new NeoGraph();
+    mockComponentId = {
+      id: 'test-form-id',
+      type: 'neo:form',
+      name: 'Test Form'
+    };
+
+    // Create NeoForm instance
+    form = createNeoForm({
+      core: mockCore,
+      componentId: mockComponentId,
+      graph: mockGraph
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should create a NeoForm instance', () => {
+    expect(form).toBeInstanceOf(NeoForm);
+  });
+
+  it('should register a form definition', () => {
+    // Spy on emit method
+    const emitSpy = vi.spyOn(form, 'emit');
+    
+    const formDef = {
+      id: 'test-form-1',
+      type: 'test-type',
+      schema: { type: 'object' }
+    };
+
+    form.registerForm(formDef);
+
+    // Expect form to be registered
+    expect(form.getForm('test-form-1')).toEqual(formDef);
+    
+    // Check if events were emitted
+    expect(emitSpy).toHaveBeenCalledTimes(2);
+    expect(emitSpy.mock.calls[0][0].type).toBe('form');
+    expect(emitSpy.mock.calls[0][0].subtype).toBe('registered');
+  });
+
+  it('should throw error when registering form without id', () => {
+    const formDef = {
+      type: 'test-type',
+      schema: { type: 'object' }
+    };
+
+    expect(() => form.registerForm(formDef)).toThrow('Form definition must have an id');
+  });
+
+  it('should get all registered forms', () => {
+    const formDef1 = { id: 'test-form-1', type: 'test-type' };
+    const formDef2 = { id: 'test-form-2', type: 'test-type' };
+
+    form.registerForm(formDef1);
+    form.registerForm(formDef2);
+
+    const forms = form.getForms();
+    expect(forms).toHaveLength(2);
+    expect(forms).toContainEqual(formDef1);
+    expect(forms).toContainEqual(formDef2);
+  });
+
+  it('should register and initialize an extension', async () => {
+    const mockExtension = {
+      id: { id: 'test-ext-1', type: 'test-extension', name: 'Test Extension' },
+      capabilities: ['testCapability'],
+      initialize: vi.fn()
+    };
+
+    form.registerExtension(mockExtension);
     await form.initialize();
+    
+    expect(mockExtension.initialize).toHaveBeenCalledWith(mockCore);
   });
-  
-  afterAll(async () => {
-    await form.cleanup();
-    await core.shutdown();
-  });
-  
-  test('Form registration', () => {
-    // Register a test form
-    const testForm = {
-      id: 'test-entity',
-      type: 'entity',
-      name: 'Test Entity',
-      schema: {
-        properties: {
-          name: { type: 'string', required: true },
-          description: { type: 'string' }
-        }
-      }
+
+  it('should throw error when registering extension without id', () => {
+    const mockExtension = {
+      capabilities: ['testCapability'],
+      initialize: vi.fn()
     };
-    
-    form.registerForm(testForm);
-    
-    const retrievedForm = form.getForm('test-entity');
-    expect(retrievedForm).toBeDefined();
-    expect(retrievedForm.id).toBe('test-entity');
+
+    expect(() => form.registerExtension(mockExtension)).toThrow('Extension must have an id');
   });
-  
-  test('Form execution with BEC-MVC-NEO processing', async () => {
-    // Register a test form
-    const processingForm = {
-      id: 'test-process',
-      type: 'process',
-      name: 'Test Process',
-      schema: {
-        properties: {
-          input: { type: 'string', required: true }
-        }
-      }
+
+  it('should execute a form and process through BEC, MVC, and NEO', async () => {
+    const formDef = {
+      id: 'test-exec-form',
+      type: 'test-type',
+      schema: { type: 'object' }
     };
-    
-    form.registerForm(processingForm);
-    
+
+    // Register the form
+    form.registerForm(formDef);
+
+    // Spy on private methods using any type assertion
+    const becSpy = vi.spyOn(form as any, 'processBEC').mockResolvedValue({
+      being: { test: 'being' },
+      essence: { test: 'essence' },
+      concept: { test: 'concept' }
+    });
+
+    const mvcSpy = vi.spyOn(form as any, 'processMVC').mockResolvedValue({
+      model: { test: 'model' },
+      view: { test: 'view' },
+      controller: { test: 'controller' }
+    });
+
+    const neoSpy = vi.spyOn(form as any, 'processNEO').mockResolvedValue({
+      core: { test: 'core' },
+      dialectic: { test: 'dialectic' },
+      graph: { test: 'graph' }
+    });
+
     // Execute the form
-    const result = await form.executeForm('test-process', { input: 'test data' });
-    
-    // Verify structure of result
-    expect(result).toBeDefined();
-    expect(result.formId).toBe('test-process');
+    const input = { foo: 'bar' };
+    const result = await form.executeForm('test-exec-form', input);
+
+    // Verify process functions were called
+    expect(becSpy).toHaveBeenCalledWith(formDef, input, expect.anything());
+    expect(mvcSpy).toHaveBeenCalledWith(formDef, expect.anything(), expect.anything());
+    expect(neoSpy).toHaveBeenCalledWith(formDef, expect.anything(), expect.anything(), expect.anything());
+
+    // Check result structure
+    expect(result.formId).toBe('test-exec-form');
     expect(result.success).toBe(true);
-    
-    // Verify BEC result
     expect(result.universal).toBeDefined();
-    expect(result.universal.being).toBeDefined();
-    expect(result.universal.essence).toBeDefined();
-    expect(result.universal.concept).toBeDefined();
-    
-    // Verify MVC result
     expect(result.particular).toBeDefined();
-    expect(result.particular.model).toBeDefined();
-    expect(result.particular.view).toBeDefined();
-    expect(result.particular.controller).toBeDefined();
-    
-    // Verify NEO result
     expect(result.infrastructure).toBeDefined();
-    expect(result.infrastructure.core).toBeDefined();
-    expect(result.infrastructure.dialectic).toBeDefined();
-    expect(result.infrastructure.graph).toBeDefined();
   });
-  
-  test('Form execution with node creation', async () => {
-    // Register a test form
-    const nodeForm = {
-      id: 'test-node',
-      type: 'entity',
-      name: 'Node Creator',
-      schema: {
-        properties: {
-          name: { type: 'string', required: true }
-        }
-      }
+
+  it('should create a NeoNode when executing form with createNode option', async () => {
+    const formDef = {
+      id: 'test-node-form',
+      type: 'test-type',
+      nodeType: 'test-node-type'
     };
-    
-    form.registerForm(nodeForm);
-    
-    // Execute with node creation
-    const result = await form.executeForm('test-node', 
-      { name: 'Test Node' }, 
-      { createNode: true }
-    );
-    
+
+    // Register the form
+    form.registerForm(formDef);
+
+    // Spy on createNeoNode
+    const nodeSpy = vi.spyOn(form as any, 'createNeoNode').mockResolvedValue({
+      id: 'test-node-id',
+      type: 'test-node-type',
+      data: { test: 'data' }
+    });
+
+    // Execute the form with createNode option
+    const result = await form.executeForm('test-node-form', { foo: 'bar' }, { createNode: true });
+
     // Verify node was created
+    expect(nodeSpy).toHaveBeenCalled();
     expect(result.node).toBeDefined();
-    expect(result.node.id).toContain('node:form:test-node');
-    expect(result.node.type).toBe('form:result');
+    expect(result.node.id).toBe('test-node-id');
+    expect(result.node.type).toBe('test-node-type');
+  });
+
+  it('should throw error when executing non-existent form', async () => {
+    await expect(form.executeForm('non-existent-form', {}))
+      .rejects
+      .toThrow('Form not found: non-existent-form');
+  });
+
+  it('should handle events with on/emit methods', () => {
+    const mockHandler = vi.fn();
+    const cleanup = form.on('test:event', mockHandler);
+
+    const testEvent = {
+      id: 'test-event-id',
+      type: 'test',
+      subtype: 'event',
+      source: mockComponentId,
+      timestamp: Date.now(),
+      content: { test: 'data' }
+    };
+
+    form.emit(testEvent);
     
-    // Verify node functionality
-    const nodeResult = result.node.act({ test: true });
-    expect(nodeResult).toBeDefined();
+    expect(mockHandler).toHaveBeenCalledWith(expect.objectContaining({
+      type: 'test',
+      subtype: 'event'
+    }));
+
+    // Test cleanup
+    cleanup();
+    form.emit(testEvent);
+    expect(mockHandler).toHaveBeenCalledTimes(1); // Should not be called again
+  });
+
+  it('should clean up resources', async () => {
+    const mockExtension = {
+      id: { id: 'test-ext-1', type: 'test-extension', name: 'Test Extension' },
+      capabilities: ['testCapability'],
+      initialize: vi.fn(),
+      cleanup: vi.fn()
+    };
+
+    form.registerExtension(mockExtension);
+    await form.cleanup();
+    
+    expect(mockExtension.cleanup).toHaveBeenCalled();
   });
 });

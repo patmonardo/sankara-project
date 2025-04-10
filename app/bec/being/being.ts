@@ -1,5 +1,4 @@
-import { NeoNode, createNeoNode } from '../../neo/node';
-import { NeoEntityId } from '../../neo/dialectic';
+import { NeoNode, createNeoNode } from '@/neo/entity';
 
 /**
  * Hegelian Being System

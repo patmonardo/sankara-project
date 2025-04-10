@@ -1,5 +1,4 @@
-import { NeoNode, createNeoNode } from '../../neo/node';
-import { NeoEntityId } from '../../neo/dialectic';
+import { NeoNode, createNeoNode } from '../../neo/entity';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 

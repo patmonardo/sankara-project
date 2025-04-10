@@ -1,10 +1,11 @@
 import { NeoEvent } from "./event";
-import { NeoProtocol } from "./dialectic";
+import { NeoComponentId, NeoProtocol } from "./extension";
 
 // Graph node types
 export interface NeoGraphNode {
   id: string;
   type: string;
+  label?: string; // Adding label as an optional property
   properties: Record<string, any>;
   metadata?: Record<string, any>;
 }
@@ -12,9 +13,10 @@ export interface NeoGraphNode {
 // Graph edge types
 export interface NeoGraphEdge {
   id: string;
-  source: string;
-  target: string;
+  source: NeoComponentId;
+  target: NeoComponentId;
   type: string;
+  label?: string; // Adding label as an optional property
   properties: Record<string, any>;
   metadata?: Record<string, any>;
 }
@@ -27,21 +29,12 @@ export class NeoGraph {
   private nodes: Map<string, NeoGraphNode> = new Map();
   private edges: Map<string, NeoGraphEdge> = new Map();
   private neoProtocol: NeoProtocol;
-  private graphSpaceId: string;
+  private graphSpaceId: NeoComponentId;
+  private eventUnsubscribers: Array<() => void> = [];
 
-  constructor(neoProtocol: NeoProtocol, graphSpaceId: string = "graph") {
+  constructor(neoProtocol: NeoProtocol, graphSpaceId: NeoComponentId) {
     this.neoProtocol = neoProtocol;
     this.graphSpaceId = graphSpaceId;
-
-    // Create graph space if it doesn't exist
-    try {
-      this.neoProtocol.createSpace(graphSpaceId, "Graph Space");
-    } catch (e) {
-      // Space might already exist
-    }
-
-    // Join graph space
-    this.neoProtocol.joinSpace(graphSpaceId);
 
     // Set up event listeners
     this.setupEventListeners();
@@ -49,7 +42,7 @@ export class NeoGraph {
 
   private setupEventListeners() {
     // Listen for node events
-    this.neoProtocol.onEvent("graph:node", (event) => {
+    const nodeListener = this.neoProtocol.on("graph:node", (event) => {
       switch (event.subtype) {
         case "create":
           this.handleNodeCreate(event);
@@ -62,9 +55,10 @@ export class NeoGraph {
           break;
       }
     });
+    this.eventUnsubscribers.push(nodeListener);
 
     // Listen for edge events
-    this.neoProtocol.onEvent("graph:edge", (event) => {
+    const edgeListener = this.neoProtocol.on("graph:edge", (event) => {
       switch (event.subtype) {
         case "create":
           this.handleEdgeCreate(event);
@@ -77,9 +71,10 @@ export class NeoGraph {
           break;
       }
     });
+    this.eventUnsubscribers.push(edgeListener);
 
     // Listen for property events
-    this.neoProtocol.onEvent("graph:property", (event) => {
+    const propertyListener = this.neoProtocol.on("graph:property", (event) => {
       switch (event.subtype) {
         case "set":
           this.handlePropertySet(event);
@@ -89,6 +84,20 @@ export class NeoGraph {
           break;
       }
     });
+    this.eventUnsubscribers.push(propertyListener);
+  }
+
+  /**
+   * Shutdown the graph system and clean up resources
+   */
+  async shutdown(): Promise<void> {
+    // Unsubscribe from all events
+    this.eventUnsubscribers.forEach(unsubscribe => unsubscribe());
+    this.eventUnsubscribers = [];
+    
+    // Clear data structures
+    this.nodes.clear();
+    this.edges.clear();
   }
 
   // Node operations
@@ -99,16 +108,20 @@ export class NeoGraph {
   createNode(node: Omit<NeoGraphNode, "id">): string {
     const nodeId = `node-${Date.now()}-${Math.random()
       .toString(36)
-      .substr(2, 9)}`;
+      .substring(2, 9)}`;
 
     // Emit node creation event
     this.neoProtocol.emit({
-      type: "system",
+      id: `graph:node:${nodeId}:${Date.now()}`,
+      type: "graph:node",
       subtype: "create",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         node: {
           id: nodeId,
           ...node,
+          properties: node.properties || {}
         },
       },
     });
@@ -127,8 +140,11 @@ export class NeoGraph {
 
     // Emit node update event
     this.neoProtocol.emit({
-      type: "system",
+      id: `graph:node:${nodeId}:${Date.now()}`,
+      type: "graph:node",
       subtype: "update",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         nodeId,
         updates,
@@ -147,8 +163,11 @@ export class NeoGraph {
 
     // Emit node delete event
     this.neoProtocol.emit({
-      type: "system",
+      id: `graph:node:${nodeId}:${Date.now()}`,
+      type: "graph:node",
       subtype: "delete",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         nodeId,
       },
@@ -162,24 +181,28 @@ export class NeoGraph {
    */
   createEdge(edge: Omit<NeoGraphEdge, "id">): string {
     // Check if source and target nodes exist
-    if (!this.nodes.has(edge.source)) {
-      throw new Error(`Source node not found: ${edge.source}`);
+    if (!this.nodes.has(edge.source.id)) {
+      throw new Error(`Source node not found: ${edge.source.id}`);
     }
 
-    if (!this.nodes.has(edge.target)) {
-      throw new Error(`Target node not found: ${edge.target}`);
+    if (!this.nodes.has(edge.target.id)) {
+      throw new Error(`Target node not found: ${edge.target.id}`);
     }
 
-    const edgeId = `edge-${Date.now()}-${Math.random().toString(36)}.substr(2, 9)`;
+    const edgeId = `edge-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
     // Emit edge creation event
     this.neoProtocol.emit({
-      type: "system",
+      id: `graph:edge:${edgeId}:${Date.now()}`,
+      type: "graph:edge",
       subtype: "create",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         edge: {
           id: edgeId,
           ...edge,
+          properties: edge.properties || {}
         },
       },
     });
@@ -201,8 +224,11 @@ export class NeoGraph {
 
     // Emit edge update event
     this.neoProtocol.emit({
-      type: "system",
+      id: `graph:edge:${edgeId}:${Date.now()}`,
+      type: "graph:edge",
       subtype: "update",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         edgeId,
         updates,
@@ -221,8 +247,11 @@ export class NeoGraph {
 
     // Emit edge delete event
     this.neoProtocol.emit({
-      type: "system",
-      subtype: "delete",
+      id: `graph:edge:${edgeId}:${Date.now()}`,
+      type: "graph:edge",
+      subtype: "delete", 
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         edgeId,
       },
@@ -242,8 +271,11 @@ export class NeoGraph {
 
     // Emit property set event
     this.neoProtocol.emit({
-      type: "property",
+      id: `graph:property:${elementId}:${key}:${Date.now()}`,
+      type: "graph:property",
       subtype: "set",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         elementId,
         key,
@@ -263,8 +295,11 @@ export class NeoGraph {
 
     // Emit property delete event
     this.neoProtocol.emit({
-      type: "property",
+      id: `graph:property:${elementId}:${key}:${Date.now()}`,
+      type: "graph:property",
       subtype: "delete",
+      source: this.graphSpaceId,
+      timestamp: Date.now(),
       content: {
         elementId,
         key,
@@ -304,7 +339,7 @@ export class NeoGraph {
       // Match properties if specified
       if (criteria.properties) {
         for (const [key, value] of Object.entries(criteria.properties)) {
-          if (node.properties[key] !== value) {
+          if (!node.properties || node.properties[key] !== value) {
             return false;
           }
         }
@@ -323,11 +358,11 @@ export class NeoGraph {
   ): NeoGraphEdge[] {
     return Array.from(this.edges.values()).filter((edge) => {
       if (direction === "outgoing" || direction === "both") {
-        if (edge.source === nodeId) return true;
+        if (edge.source.id === nodeId) return true;
       }
 
       if (direction === "incoming" || direction === "both") {
-        if (edge.target === nodeId) return true;
+        if (edge.target.id === nodeId) return true;
       }
 
       return false;
@@ -337,11 +372,22 @@ export class NeoGraph {
   // Event handlers
 
   private handleNodeCreate(event: NeoEvent) {
+    if (!event.content || !event.content.node) return;
+    
     const node = event.content.node as NeoGraphNode;
+    if (!node.id || !node.type) return;
+    
+    // Ensure properties exists
+    if (!node.properties) {
+      node.properties = {};
+    }
+    
     this.nodes.set(node.id, node);
   }
 
   private handleNodeUpdate(event: NeoEvent) {
+    if (!event.content || !event.content.nodeId || !event.content.updates) return;
+    
     const { nodeId, updates } = event.content;
     const node = this.nodes.get(nodeId);
 
@@ -362,6 +408,8 @@ export class NeoGraph {
   }
 
   private handleNodeDelete(event: NeoEvent) {
+    if (!event.content || !event.content.nodeId) return;
+    
     const { nodeId } = event.content;
     this.nodes.delete(nodeId);
 
@@ -374,11 +422,22 @@ export class NeoGraph {
   }
 
   private handleEdgeCreate(event: NeoEvent) {
+    if (!event.content || !event.content.edge) return;
+    
     const edge = event.content.edge as NeoGraphEdge;
+    if (!edge.id || !edge.source || !edge.target || !edge.type) return;
+    
+    // Ensure properties exists
+    if (!edge.properties) {
+      edge.properties = {};
+    }
+    
     this.edges.set(edge.id, edge);
   }
 
   private handleEdgeUpdate(event: NeoEvent) {
+    if (!event.content || !event.content.edgeId || !event.content.updates) return;
+    
     const { edgeId, updates } = event.content;
     const edge = this.edges.get(edgeId);
 
@@ -399,11 +458,15 @@ export class NeoGraph {
   }
 
   private handleEdgeDelete(event: NeoEvent) {
+    if (!event.content || !event.content.edgeId) return;
+    
     const { edgeId } = event.content;
     this.edges.delete(edgeId);
   }
 
   private handlePropertySet(event: NeoEvent) {
+    if (!event.content || !event.content.elementId || !event.content.key) return;
+    
     const { elementId, key, value } = event.content;
 
     // Update node property
@@ -421,6 +484,8 @@ export class NeoGraph {
   }
 
   private handlePropertyDelete(event: NeoEvent) {
+    if (!event.content || !event.content.elementId || !event.content.key) return;
+    
     const { elementId, key } = event.content;
 
     // Delete node property
@@ -443,7 +508,7 @@ export class NeoGraph {
  */
 export function createNeoGraph(
   neoProtocol: NeoProtocol,
-  graphSpaceId?: string
+  graphSpaceId: NeoComponentId
 ): NeoGraph {
   return new NeoGraph(neoProtocol, graphSpaceId);
 }

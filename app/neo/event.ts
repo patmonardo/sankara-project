@@ -1,67 +1,66 @@
 import { EventEmitter } from "events";
-import { NeoComponentId, NeoSpaceId } from "./dialectic";
+import { type NeoRelation } from "@/form/relation/relation";
+import { NeoComponentId } from "./extension";
 
 /**
  * Core event types for the Neo event system
  */
 export type NeoEventType =
-  | "system" // System events
-  | "extension" // Extension events
-  | "space" // Space events
-  | "form" // Form events
-  | "entity" // Entity events (creation, updates)
-  | "relation" // Relation events
-  | "graph" // Graph events
-  | "property" // Property events
-  | "message" // Message events
-  | "dialectic" // Dialectical events
-  | "consensus" // Consensus events
-  | "custom"; // Custom events
+  | "test"       // Test events
+  | "system"     // System events
+  | "extension"  // Extension events
+  | "form"       // Form events
+  | "entity"     // Entity events (creation, updates)
+  | "relation"   // Relation events
+  | "context"    // Space events
+  | "graph"      // Graph events
+  | "property"   // Property events
+  | "message"    // Message events
+  | "dialectic"  // Dialectical events
+  | "consensus"  // Consensus events
+  | "custom"     // Custom events
+  | string;      // Allow for extensibility
 
 /**
- * Neo Event Interface
- *
- * Represents any event in the Neo system
+ * Type alias - A NeoEvent is just a specialized NeoRelation
+ * This maintains backward compatibility while emphasizing the relation nature
  */
-export interface NeoEvent<T = any> {
-  // Identity
-  id: string;
+export type NeoEvent<T = any> = NeoRelation<T>;
 
-  // Timing
-  timestamp?: number;
+// ...existing code for NeoEventEmitter interfaces and implementations...
 
-  // Classification
-  type: NeoEventType;
-  subtype?: string;
-
-  // Context
-  source?: NeoComponentId;
-  target?: NeoComponentId;
-  spaceId?: NeoSpaceId;
-
-  // Content
-  content?: T;
-
-  // Relations to other events
-  relations?: {
-    requestId?: string;
-    replyTo?: string;
-    refersTo?: string;
-    follows?: string;
-    inThread?: string;
-    causedBy?: string;
-  };
-
-  // Additional attributes
-  metadata?: Record<string, any>;
+/**
+ * Consensus vote type definition
+ */
+export interface ConsensusVote {
+  voter: NeoComponentId;
+  vote: boolean;
+  timestamp: number;
+  reason?: string;
 }
+
 /**
- * Neo event emitter interface
+ * Consensus process status
  */
-export interface NeoEventEmitter {
-  emit<T>(event: NeoEvent<T>): string;
-  onEvent<T>(type: string, callback: (event: NeoEvent<T>) => void): () => void;
-  offEvent(type: string, callback: Function): void;
+export type ConsensusStatus = 'pending' | 'passed' | 'rejected' | 'timeout' | 'canceled';
+
+/**
+ * Consensus process state
+ */
+export interface ConsensusState<T = any> {
+  id: string;
+  spaceId: string;
+  proposal: T;
+  threshold: number;
+  votes: Record<string, ConsensusVote>;
+  voters?: string[];
+  timeout?: number;
+  timeoutId?: NodeJS.Timeout;
+  startTime: number;
+  endTime?: number;
+  status: ConsensusStatus;
+  result?: boolean;
+  initiator: NeoComponentId;
 }
 
 /**
@@ -107,15 +106,23 @@ export interface NeoEventService {
     }
   ): Promise<string>; // Start consensus process
 
-  vote(consensusId: string, vote: boolean): Promise<void>; // Cast a vote
+  vote(
+    consensusId: string, 
+    vote: boolean, 
+    options?: { reason?: string }
+  ): Promise<void>; // Cast a vote
 
-  getConsensusState(consensusId: string): Promise<{
+  cancelConsensus(consensusId: string): Promise<boolean>; // Cancel a consensus process
+
+  getConsensusState<T>(consensusId: string): Promise<{
     id: string;
-    proposal: any;
-    votes: { userId: string; vote: boolean }[];
+    proposal: T;
+    votes: ConsensusVote[];
     threshold: number;
+    startTime: number;
+    endTime?: number;
     result?: boolean;
-    status: "pending" | "passed" | "rejected" | "timeout";
+    status: ConsensusStatus;
   }>; // Get consensus state
 
   // System info
@@ -131,7 +138,7 @@ export class LocalNeoEventService implements NeoEventService {
   private emitter = new EventEmitter();
   private events: Record<string, NeoEvent[]> = {};
   private spaces: Set<string> = new Set();
-  private consensusProcesses: Record<string, any> = {};
+  private consensusProcesses: Record<string, ConsensusState> = {};
   private componentId: NeoComponentId;
 
   constructor(componentId: NeoComponentId) {
@@ -237,10 +244,11 @@ export class LocalNeoEventService implements NeoEventService {
 
     // Emit a join event
     this.emit({
-      id: spaceId,
+      id: `join-${spaceId}-${Date.now()}`,
       type: "space",
       subtype: "join",
       spaceId,
+      source: this.componentId,
       content: {
         componentId: this.componentId,
         action: "join",
@@ -256,14 +264,16 @@ export class LocalNeoEventService implements NeoEventService {
 
     // Emit a leave event
     this.emit({
-      id: spaceId,
+      id: `leave-${spaceId}-${Date.now()}`,
       type: "space",
       subtype: "leave",
       spaceId,
+      source: this.componentId,
       content: {
         componentId: this.componentId,
         action: "leave",
       },
+      timestamp: Date.now(),
     });
   }
 
@@ -281,10 +291,11 @@ export class LocalNeoEventService implements NeoEventService {
 
     // Emit creation event
     this.emit({
-      id: spaceId,
+      id: `create-${spaceId}-${Date.now()}`,
       type: "space",
       subtype: "create",
       spaceId,
+      source: this.componentId,
       content: {
         name,
         creator: this.componentId,
@@ -381,21 +392,32 @@ export class LocalNeoEventService implements NeoEventService {
       .toString(36)
       .substring(2, 9)}`;
     const spaceId = options.spaceId || "system";
-
-    // Create consensus process
-    this.consensusProcesses[consensusId] = {
+    const threshold = options.threshold || 0.51;
+    const timeout = options.timeout || 0; // 0 means no timeout
+    
+    // Create consensus process state
+    const consensusState: ConsensusState<T> = {
       id: consensusId,
       spaceId,
       proposal,
-      threshold: options.threshold || 0.51,
-      timeout: options.timeout,
-      timeoutId: options.timeout
-        ? setTimeout(() => this.resolveConsensus(consensusId), options.timeout)
-        : undefined,
+      threshold,
       votes: {},
       voters: options.voters || [],
-      status: "pending" as "pending" | "passed" | "rejected" | "timeout",
+      timeout,
+      startTime: Date.now(),
+      status: 'pending',
+      initiator: this.componentId
     };
+    
+    // Set timeout if specified
+    if (timeout > 0) {
+      consensusState.timeoutId = setTimeout(() => {
+        this.resolveConsensus(consensusId, undefined, 'timeout');
+      }, timeout);
+    }
+    
+    // Store the consensus process
+    this.consensusProcesses[consensusId] = consensusState;
 
     // Emit consensus start event
     this.emit({
@@ -403,12 +425,14 @@ export class LocalNeoEventService implements NeoEventService {
       type: "consensus",
       subtype: "start",
       spaceId,
+      source: this.componentId,
       content: {
         consensusId,
         proposal,
-        threshold: options.threshold || 0.51,
-        timeout: options.timeout,
+        threshold,
+        timeout,
         voters: options.voters || [],
+        initiator: this.componentId
       },
     });
 
@@ -416,31 +440,82 @@ export class LocalNeoEventService implements NeoEventService {
   }
 
   /**
-   * Cast a vote in a consensus process
+   * Cancel an ongoing consensus process
    */
-  async vote(consensusId: string, vote: boolean): Promise<void> {
+  async cancelConsensus(consensusId: string): Promise<boolean> {
     const consensus = this.consensusProcesses[consensusId];
     if (!consensus) {
       throw new Error(`Consensus process ${consensusId} not found`);
     }
 
-    if (consensus.status !== "pending") {
-      throw new Error(`Consensus process ${consensusId} is not pending`);
+    if (consensus.status !== 'pending') {
+      return false; // Can't cancel a finished consensus
     }
 
-    // Record the vote
-    consensus.votes[this.componentId.id] = vote;
+    // Clear timeout if it exists
+    if (consensus.timeoutId) {
+      clearTimeout(consensus.timeoutId);
+    }
+
+    // Update status
+    consensus.status = 'canceled';
+    consensus.endTime = Date.now();
+
+    // Emit cancellation event
+    this.emit({
+      id: `cancel-${consensusId}-${Date.now()}`,
+      type: "consensus",
+      subtype: "cancel",
+      spaceId: consensus.spaceId,
+      source: this.componentId,
+      content: {
+        consensusId,
+        reason: "explicitly canceled",
+        votes: Object.values(consensus.votes)
+      },
+    });
+
+    return true;
+  }
+
+  /**
+   * Cast a vote in a consensus process
+   */
+  async vote(
+    consensusId: string, 
+    vote: boolean, 
+    options: { reason?: string } = {}
+  ): Promise<void> {
+    const consensus = this.consensusProcesses[consensusId];
+    if (!consensus) {
+      throw new Error(`Consensus process ${consensusId} not found`);
+    }
+
+    if (consensus.status !== 'pending') {
+      throw new Error(`Consensus process ${consensusId} is not pending (current status: ${consensus.status})`);
+    }
+
+    // Create vote object
+    const voteObj: ConsensusVote = {
+      voter: this.componentId,
+      vote,
+      timestamp: Date.now(),
+      reason: options.reason
+    };
+
+    // Record the vote using component ID
+    consensus.votes[this.componentId.id] = voteObj;
 
     // Emit vote event
     this.emit({
-      id: consensusId,
+      id: `vote-${consensusId}-${Date.now()}`,
       type: "consensus",
       subtype: "vote",
       spaceId: consensus.spaceId,
+      source: this.componentId,
       content: {
         consensusId,
-        componentId: this.componentId,
-        vote,
+        vote: voteObj
       },
     });
 
@@ -453,62 +528,83 @@ export class LocalNeoEventService implements NeoEventService {
    */
   private checkConsensusThreshold(consensusId: string): void {
     const consensus = this.consensusProcesses[consensusId];
-    if (!consensus || consensus.status !== "pending") return;
+    if (!consensus || consensus.status !== 'pending') return;
 
-    const votes = Object.values(consensus.votes) as boolean[];
+    // If specific voters are defined, check if we have votes from all of them
+    const allRequiredVotesIn = consensus.voters && consensus.voters.length > 0 
+      ? consensus.voters.every(voterId => 
+          Object.keys(consensus.votes).includes(voterId))
+      : false;
+
+    const votes = Object.values(consensus.votes).map(v => v.vote);
     const totalVotes = votes.length;
-    const yesVotes = votes.filter((v) => v).length;
+    const yesVotes = votes.filter(v => v).length;
 
     // Calculate vote percentage
     const yesPercentage = totalVotes > 0 ? yesVotes / totalVotes : 0;
+    const noPercentage = totalVotes > 0 ? (totalVotes - yesVotes) / totalVotes : 0;
 
     // If we have enough votes to decide either way
     if (yesPercentage >= consensus.threshold) {
-      this.resolveConsensus(consensusId, true);
-    } else if (1 - yesPercentage > consensus.threshold) {
-      this.resolveConsensus(consensusId, false);
+      this.resolveConsensus(consensusId, true, 'passed');
+    } else if (noPercentage > consensus.threshold) {
+      this.resolveConsensus(consensusId, false, 'rejected');
+    } else if (allRequiredVotesIn) {
+      // If all required voters have voted but threshold not met, resolve based on majority
+      this.resolveConsensus(consensusId, yesVotes > (totalVotes - yesVotes), 
+        yesVotes > (totalVotes - yesVotes) ? 'passed' : 'rejected');
     }
   }
 
   /**
    * Resolve a consensus process
    */
-  private resolveConsensus(consensusId: string, result?: boolean): void {
+  private resolveConsensus(
+    consensusId: string, 
+    result?: boolean, 
+    status: ConsensusStatus = 'pending'
+  ): void {
     const consensus = this.consensusProcesses[consensusId];
-    if (!consensus || consensus.status !== "pending") return;
+    if (!consensus || consensus.status !== 'pending') return;
 
     // Clear timeout if it exists
     if (consensus.timeoutId) {
       clearTimeout(consensus.timeoutId);
+      consensus.timeoutId = undefined;
     }
 
-    // Determine result if not provided
-    if (result === undefined) {
-      const votes = Object.values(consensus.votes) as boolean[];
+    // Record end time
+    consensus.endTime = Date.now();
+
+    // Determine result if not provided and status is still pending
+    if (result === undefined && status === 'pending') {
+      const votes = Object.values(consensus.votes).map(v => v.vote);
       const totalVotes = votes.length;
-      const yesVotes = votes.filter((v) => v).length;
+      const yesVotes = votes.filter(v => v).length;
       result = totalVotes > 0 && yesVotes / totalVotes >= consensus.threshold;
-
-      // Update status
-      consensus.status = result ? "passed" : "rejected";
-    } else {
-      consensus.status = result ? "passed" : "rejected";
+      status = result ? 'passed' : 'rejected';
+    } else if (status === 'timeout' && result === undefined) {
+      // For timeouts, default to rejection unless specified
+      result = false;
     }
+    
+    // Update consensus state
+    consensus.status = status;
+    consensus.result = result;
 
     // Emit consensus result event
     this.emit({
-      id: consensusId,
+      id: `result-${consensusId}-${Date.now()}`,
       type: "consensus",
       subtype: "result",
       spaceId: consensus.spaceId,
+      source: this.componentId,
       content: {
         consensusId,
         result,
-        status: consensus.status,
-        votes: Object.entries(consensus.votes).map(([componentId, vote]) => ({
-          userId: componentId,
-          vote,
-        })),
+        status,
+        votes: Object.values(consensus.votes),
+        duration: consensus.endTime - consensus.startTime
       },
     });
   }
@@ -516,15 +612,17 @@ export class LocalNeoEventService implements NeoEventService {
   /**
    * Get the current state of a consensus process
    */
-  async getConsensusState(consensusId: string): Promise<{
+  async getConsensusState<T>(consensusId: string): Promise<{
     id: string;
-    proposal: any;
-    votes: { userId: string; vote: boolean }[];
+    proposal: T;
+    votes: ConsensusVote[];
     threshold: number;
+    startTime: number;
+    endTime?: number;
     result?: boolean;
-    status: "pending" | "passed" | "rejected" | "timeout";
+    status: ConsensusStatus;
   }> {
-    const consensus = this.consensusProcesses[consensusId];
+    const consensus = this.consensusProcesses[consensusId] as ConsensusState<T>;
     if (!consensus) {
       throw new Error(`Consensus process ${consensusId} not found`);
     }
@@ -532,15 +630,11 @@ export class LocalNeoEventService implements NeoEventService {
     return {
       id: consensusId,
       proposal: consensus.proposal,
-      votes: Object.entries(consensus.votes).map(([userId, vote]) => ({
-        userId,
-        vote: vote as boolean,
-      })),
+      votes: Object.values(consensus.votes),
       threshold: consensus.threshold,
-      result:
-        consensus.status === "pending"
-          ? undefined
-          : consensus.status === "passed",
+      startTime: consensus.startTime,
+      endTime: consensus.endTime,
+      result: consensus.result,
       status: consensus.status,
     };
   }
@@ -551,6 +645,84 @@ export class LocalNeoEventService implements NeoEventService {
   getComponentId(): NeoComponentId {
     return this.componentId;
   }
+}
+
+/**
+ * Event creation function that creates an event using NeoRelation as its foundation
+ */
+export function createNeoEvent<T = any>(config: {
+  id?: string;
+  type: string;
+  subtype?: string;
+  source: NeoComponentId;
+  target?: NeoComponentId;
+  spaceId?: string;
+  content?: T;
+  relations?: {
+    requestId?: string;
+    replyTo?: string;
+    refersTo?: string;
+    follows?: string;
+    inThread?: string;
+    causedBy?: string;
+  };
+  metadata?: Record<string, any>;
+}): NeoEvent<T> {
+  // Import dynamically to avoid circular dependency
+  const { createNeoRelation } = require('./relation');
+  
+  // Extract source ID if it exists
+  const sourceId = config.source?.id;
+  
+  // Extract target ID if it exists
+  const targetId = config.target?.id;
+  
+  // Create a relation first
+  const relation = createNeoRelation({
+    id: config.id,
+    type: config.type,
+    source: sourceId,
+    target: targetId,
+    properties: {
+      subtype: config.subtype,
+      spaceId: config.spaceId,
+      content: config.content,
+      source: config.source,
+      target: config.target,
+      relations: config.relations,
+    },
+    metadata: {
+      ...config.metadata,
+      timestamp: Date.now(),
+      eventType: true
+    },
+    context: config.spaceId
+  });
+  
+  // Create the event based on the relation
+  const event: NeoEvent<any> = {
+    // Core relation properties
+    id: relation.id,
+    type: relation.type,
+    
+    // Event-specific properties
+    source: config.source,
+    target: config.target,
+    spaceId: config.spaceId,
+    subtype: config.subtype,
+    content: config.content,
+    timestamp: Date.now(),
+    relations: config.relations,
+    
+    // Metadata
+    metadata: {
+      ...config.metadata,
+      timestamp: Date.now(),
+      eventType: true
+    }
+  };
+  
+  return event;
 }
 
 /**

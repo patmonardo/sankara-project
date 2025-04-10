@@ -1,9 +1,10 @@
 import EventEmitter from "events";
 import { NeoEvent } from "./event";
 import { NeoCore } from "./neo";
-import { NeoExtension, NeoComponentId } from "./dialectic";
+import { NeoComponentId } from "./extension";
 import { NeoGraph } from "./graph";
-import { NeoNode } from "./node";
+import { NeoEntityService, NeoEntity } from "./entity";
+import { NeoContextService, getActiveContext } from "./context";
 
 /**
  * NeoForm - The Absolute Middle Mediating Machine
@@ -12,32 +13,27 @@ import { NeoNode } from "./node";
  * - BEC (Transcendental Logic)
  * - MVC (Ordinary Logic)
  * - NEO (Infrastructure)
- *
- * To produce NeoNode as concrete universal
  */
 export class NeoForm {
   // Core references
-  private core: NeoCore | null = null;
+  private core: NeoCore;
   private componentId: NeoComponentId;
-  private graph: NeoGraph | null = null;
-
-  // Form storage
-  private forms: Map<string, NeoForm> = new Map();
+  private graph: NeoGraph;
 
   // Event system
   private eventEmitter: EventEmitter = new EventEmitter();
-
-  // Extensions
-  private extensions: Map<NeoComponentId, NeoExtension> = new Map();
 
   /**
    * Create a new NeoForm instance
    */
   constructor(options: {
     core: NeoCore;
-    componentId: NeoComponentId;
-    graph: NeoGraph;
+    componentId?: NeoComponentId;
+    graph?: NeoGraph;
   }) {
+    // Set core reference (required)
+    this.core = options.core;
+
     // Set component ID
     this.componentId = options.componentId || {
       id: `form:${Date.now()}`,
@@ -45,135 +41,34 @@ export class NeoForm {
       name: "Neo Form",
     };
 
-    // Set core reference if provided
-    if (options.core) {
-      this.setCore(options.core);
-    }
-
     // Set graph reference if provided
-    if (options.graph) {
-      this.setGraph(options.graph);
-    }
+    this.graph = options.graph || this.core.graph;
+
+    // Set up event handlers
+    this.setupEventHandlers();
   }
 
   /**
-   * Set NeoCore reference
+   * Set up event handlers for form processing
    */
-  setCore(core: NeoCore): void {
-    this.core = core;
-
-    // Register form with core if needed
-    if (core) {
-      try {
-        // Register as extension if core supports it
-        if (typeof core.registerExtension === "function") {
-          core.registerExtension(this.createFormExtension());
-        }
-      } catch (error) {
-        console.warn("[NeoForm] Failed to register with core:", error);
+  private setupEventHandlers(): void {
+    // Listen for form execution requests
+    this.core.on("form", (event: NeoEvent) => {
+      if (event.subtype === "execute") {
+        this.handleFormExecutionEvent(event);
       }
-    }
-  }
-
-  /**
-   * Set NeoGraph reference
-   */
-  setGraph(graph: NeoGraph): void {
-    this.graph = graph;
+    });
   }
 
   /**
    * Initialize the form system
    */
   async initialize(): Promise<void> {
-    console.log("[NeoForm] Initializing...");
-
-    // Initialize extensions
-    for (const extension of this.extensions.values()) {
-      if (typeof extension.initialize === "function") {
-        await extension.initialize(this.core!);
-      }
-    }
-
-    // Load forms from graph if available
-    if (this.graph) {
-      await this.loadFormsFromGraph();
-    }
-
-    console.log("[NeoForm] Initialization complete");
-  }
-
-  /**
-   * Register a form definition
-   */
-  registerForm(formDef: any): void {
-    // Validate form definition
-    if (!formDef.id) {
-      throw new Error("Form definition must have an id");
-    }
-
-    console.log(`[NeoForm] Registering form: ${formDef.id}`);
-
-    // Store form
-    this.forms.set(formDef.id, formDef);
-
-    // Emit form registration event
-    this.emit({
-      id: `form:${formDef.id}`,
-      type: "form",
-      subtype: "registered",
-      source: this.componentId,
-      timestamp: Date.now(),
-      content: {
-        formId: formDef.id,
-        formType: formDef.type,
-      },
-    });
-
-    // Persist to graph if available
-    if (this.graph) {
-      this.emit({
-        id: `form:${formDef.id}`,
-        type: "form",
-        subtype: "definition:create",
-        source: this.componentId,
-        timestamp: Date.now(),
-        content: formDef,
-      });
-    }
-  }
-
-  /**
-   * Register an extension
-   */
-  registerExtension(extension: NeoExtension): void {
-    if (!extension.id) {
-      throw new Error("Extension must have an id");
-    }
-
-    console.log(`[NeoForm] Registering extension: ${extension.id}`);
-
-    // Register extension
-    this.extensions.set(extension.id, extension);
-
-    // Initialize if we're already initialized
-    if (this.core) {
-      extension.initialize(this.core);
-    }
-  }
-
-  /**
-   * Get a registered form
-   */
-  getForm(formId: string): any {
-    return this.forms.get(formId);
-  }
-
-  /**
-   * Get all registered forms
-   */
-  getForms(): any[] {
-    return Array.from(this.forms.values());
+    this.logVerbose("Initializing...");
+    
+    // Nothing else to initialize - we're just a processor
+    
+    this.logVerbose("Initialization complete");
   }
 
   /**
@@ -185,108 +80,76 @@ export class NeoForm {
     input: any,
     options: any = {}
   ): Promise<any> {
-    console.log(`[NeoForm] Executing form: ${formId}`);
+    this.logVerbose(`Executing form: ${formId}`);
 
-    // Get form definition
-    const formDef = this.forms.get(formId);
+    // Get form definition from core/graph
+    const formDef = await this.getFormDefinition(formId);
     if (!formDef) {
-      if (options.allowMissing) {
-        // Try to load from graph
-        if (this.graph) {
-          try {
-            const graphForm = await this.loadFormFromGraph(formId);
-            if (graphForm) {
-              this.forms.set(formId, graphForm);
-              return this.executeForm(formId, input, options);
-            }
-          } catch (error) {
-            console.warn(`[NeoForm] Error loading form from graph: ${error}`);
-          }
-        }
-      }
-
       throw new Error(`Form not found: ${formId}`);
     }
 
     // Create execution context
-    const context = {
-      id:
-        options.contextId ||
-        `form:exec:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`,
+    const contextId = options.contextId || (getActiveContext()?.id);
+    const executionContext = {
+      id: `form:exec:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`,
       formId,
       input,
       options,
+      contextId,
       timestamp: Date.now(),
     };
 
     try {
       // Announce execution start
-      this.emit({
-        id: `form:${formId}`,
+      this.emitEvent({
         type: "form",
         subtype: "execution:start",
-        source: this.componentId,
-        timestamp: Date.now(),
-        content: context,
+        content: executionContext,
       });
 
       // 1. UNIVERSAL MOMENT (BEC) - Process through Transcendental Logic
-      const becResult = await this.processBEC(formDef, input, context);
+      const becResult = await this.processBEC(formDef, input, executionContext);
 
       // 2. PARTICULAR MOMENT (MVC) - Process through Ordinary Logic
-      const mvcResult = await this.processMVC(formDef, becResult, context);
+      const mvcResult = await this.processMVC(formDef, becResult, executionContext);
 
       // 3. INFRASTRUCTURE MOMENT (NEO) - Process through Infrastructure Logic
       const neoResult = await this.processNEO(
         formDef,
         becResult,
         mvcResult,
-        context
+        executionContext
       );
 
       // 4. Combine results
       let result = {
         formId,
-        contextId: context.id,
+        contextId: executionContext.contextId,
+        executionId: executionContext.id,
         success: true,
         universal: becResult, // Transcendental Logic result
         particular: mvcResult, // Ordinary Logic result
         infrastructure: neoResult, // Infrastructure Logic result
-        node: null as NeoNode | null 
+        entity: null as NeoEntity | null 
       };
 
-      // 5. INDIVIDUAL MOMENT - Create NeoNode if requested
-      if (options.createNode) {
-        const node = await this.createNeoNode(formDef, result, context);
+      // 5. INDIVIDUAL MOMENT - Create NeoEntity if requested
+      if (options.createEntity) {
+        const entity = await this.createNeoEntity(formDef, result, executionContext);
         
-        // Add node to result
+        // Add entity to result
         result = {
           ...result,
-          node: node
+          entity
         };
-      
-        // Persist node if graph is available
-        if (this.graph && options.persistNode) {
-          this.emit({
-            id: `form:${formId}`,
-            type: "graph",
-            subtype: "node:create",
-            source: this.componentId,
-            timestamp: Date.now(),
-            content: { node },
-          });
-        }
       }
 
       // Announce execution completion
-      this.emit({
-        id: `form:${formId}`,
+      this.emitEvent({
         type: "form",
         subtype: "execution:complete",
-        source: this.componentId,
-        timestamp: Date.now(),
         content: {
-          contextId: context.id,
+          executionId: executionContext.id,
           success: true,
           result,
         },
@@ -294,23 +157,60 @@ export class NeoForm {
 
       return result;
     } catch (error) {
-      console.error(`[NeoForm] Execution error:`, error);
+      this.logVerbose(`Execution error: ${error}`);
 
       // Announce execution error
-      this.emit({
-        id: `form:${formId}`,
+      this.emitEvent({
         type: "form",
         subtype: "execution:error",
-        source: this.componentId,
-        timestamp: Date.now(),
         content: {
-          contextId: context.id,
-          error: error,
+          executionId: executionContext.id,
+          error,
         },
       });
 
       throw error;
     }
+  }
+
+  /**
+   * Get a form definition from the system
+   */
+  private async getFormDefinition(formId: string): Promise<any> {
+    // First check if we have a form extension that can provide this
+    const formExt = this.core.getExtensionsByType('form:provider')
+      .find((ext) => ext.capabilities?.includes('formDefinitions'));
+
+    if (formExt) {
+      // Ask extension for form definition
+      try {
+        return await this.requestFromExtension(formExt.id, 'form:get', { formId });
+      } catch (err) {
+        this.logVerbose(`Error getting form from extension: ${err}`);
+        // Fall through to other methods
+      }
+    }
+
+    // Next, try to get it from graph via a query
+    if (this.graph) {
+      try {
+        // We'll assume forms are stored as entities with type 'form:definition'
+        const formEntities = NeoEntityService.queryEntities({
+          type: 'form:definition',
+          properties: { id: formId }
+        });
+
+        if (formEntities.length > 0) {
+          return formEntities[0].properties;
+        }
+      } catch (err) {
+        this.logVerbose(`Error getting form from graph: ${err}`);
+        // Fall through to default
+      }
+    }
+
+    // No form found
+    return null;
   }
 
   /**
@@ -321,51 +221,36 @@ export class NeoForm {
     input: any,
     context: any
   ): Promise<any> {
-    console.log(`[NeoForm] Processing BEC for form: ${formDef.id}`);
+    this.logVerbose(`Processing BEC for form: ${formDef.id}`);
 
     // Find BEC extensions
-    const becExtensions = Array.from(this.extensions.values()).filter((ext) =>
-      ext.capabilities?.includes("becProcessing")
-    );
+    const becExtensions = this.core.getExtensionsByType('bec:processor')
+      .filter(ext => ext.capabilities?.includes('becProcessing'));
 
     if (becExtensions.length === 0) {
-      console.log("[NeoForm] No BEC extensions found, using default processor");
-
       // Default BEC processing
       return this.defaultBECProcess(formDef, input, context);
     }
 
-    // Process through all BEC extensions
-    let becResult = { ...input };
-    for (const extension of becExtensions) {
-      try {
-        // Send processing event to extension
-        const result = await this.processWithExtension(
-          extension.id,
-          "bec:process",
-          {
-            formDef,
-            input: becResult,
-            context,
-          }
-        );
+    // Process through available BEC extension
+    try {
+      const primaryProcessor = becExtensions[0];
+      const result = await this.requestFromExtension(
+        primaryProcessor.id,
+        "bec:process",
+        {
+          formDef,
+          input,
+          context,
+        }
+      );
 
-        becResult = result || becResult;
-      } catch (error) {
-        console.warn(
-          `[NeoForm] Error in BEC processing with extension ${extension.id}:`,
-          error
-        );
-      }
+      return result || this.defaultBECProcess(formDef, input, context);
+    } catch (error) {
+      this.logVerbose(`Error in BEC processing: ${error}`);
+      // Fall back to default processor
+      return this.defaultBECProcess(formDef, input, context);
     }
-
-    return {
-      being: becResult.being || {},
-      essence: becResult.essence || {},
-      concept: becResult.concept || {},
-      _processed: true,
-      _timestamp: Date.now(),
-    };
   }
 
   /**
@@ -376,51 +261,36 @@ export class NeoForm {
     becResult: any,
     context: any
   ): Promise<any> {
-    console.log(`[NeoForm] Processing MVC for form: ${formDef.id}`);
+    this.logVerbose(`Processing MVC for form: ${formDef.id}`);
 
     // Find MVC extensions
-    const mvcExtensions = Array.from(this.extensions.values()).filter((ext) =>
-      ext.capabilities?.includes("mvcProcessing")
-    );
+    const mvcExtensions = this.core.getExtensionsByType('mvc:processor')
+      .filter(ext => ext.capabilities?.includes('mvcProcessing'));
 
     if (mvcExtensions.length === 0) {
-      console.log("[NeoForm] No MVC extensions found, using default processor");
-
       // Default MVC processing
       return this.defaultMVCProcess(formDef, becResult, context);
     }
 
-    // Process through all MVC extensions
-    let mvcResult = { ...becResult };
-    for (const extension of mvcExtensions) {
-      try {
-        // Send processing event to extension
-        const result = await this.processWithExtension(
-          extension.id,
-          "mvc:process",
-          {
-            formDef,
-            becResult,
-            context,
-          }
-        );
+    // Process through available MVC extension
+    try {
+      const primaryProcessor = mvcExtensions[0];
+      const result = await this.requestFromExtension(
+        primaryProcessor.id,
+        "mvc:process",
+        {
+          formDef,
+          becResult,
+          context,
+        }
+      );
 
-        mvcResult = result || mvcResult;
-      } catch (error) {
-        console.warn(
-          `[NeoForm] Error in MVC processing with extension ${extension.id}:`,
-          error
-        );
-      }
+      return result || this.defaultMVCProcess(formDef, becResult, context);
+    } catch (error) {
+      this.logVerbose(`Error in MVC processing: ${error}`);
+      // Fall back to default processor
+      return this.defaultMVCProcess(formDef, becResult, context);
     }
-
-    return {
-      model: mvcResult.model || {},
-      view: mvcResult.view || {},
-      controller: mvcResult.controller || {},
-      _processed: true,
-      _timestamp: Date.now(),
-    };
   }
 
   /**
@@ -432,116 +302,86 @@ export class NeoForm {
     mvcResult: any,
     context: any
   ): Promise<any> {
-    console.log(`[NeoForm] Processing NEO for form: ${formDef.id}`);
+    this.logVerbose(`Processing NEO for form: ${formDef.id}`);
 
     // Find NEO extensions
-    const neoExtensions = Array.from(this.extensions.values()).filter((ext) =>
-      ext.capabilities?.includes("neoProcessing")
-    );
+    const neoExtensions = this.core.getExtensionsByType('neo:processor')
+      .filter(ext => ext.capabilities?.includes('neoProcessing'));
 
     if (neoExtensions.length === 0) {
-      console.log("[NeoForm] No NEO extensions found, using default processor");
-
       // Default NEO processing
       return this.defaultNEOProcess(formDef, becResult, mvcResult, context);
     }
 
-    // Process through all NEO extensions
-    let neoResult = { ...mvcResult };
-    for (const extension of neoExtensions) {
-      try {
-        // Send processing event to extension
-        const result = await this.processWithExtension(
-          extension.id,
-          "neo:process",
-          {
-            formDef,
-            becResult,
-            mvcResult,
-            context,
-          }
-        );
+    // Process through available NEO extension
+    try {
+      const primaryProcessor = neoExtensions[0];
+      const result = await this.requestFromExtension(
+        primaryProcessor.id,
+        "neo:process",
+        {
+          formDef,
+          becResult,
+          mvcResult,
+          context,
+        }
+      );
 
-        neoResult = result || neoResult;
-      } catch (error) {
-        console.warn(
-          `[NeoForm] Error in NEO processing with extension ${extension.id}:`,
-          error
-        );
-      }
+      return result || this.defaultNEOProcess(formDef, becResult, mvcResult, context);
+    } catch (error) {
+      this.logVerbose(`Error in NEO processing: ${error}`);
+      // Fall back to default processor
+      return this.defaultNEOProcess(formDef, becResult, mvcResult, context);
     }
-
-    return {
-      core: neoResult.core || {},
-      dialectic: neoResult.dialectic || {},
-      graph: neoResult.graph || {},
-      _processed: true,
-      _timestamp: Date.now(),
-    };
   }
-  // In the createNeoNode method of NeoForm class:
 
   /**
-   * Create NeoNode from form results
+   * Create NeoEntity from form results
    */
-  private async createNeoNode(
+  private async createNeoEntity(
     formDef: any,
     result: any,
     context: any
-  ): Promise<NeoNode> {
-    console.log(`[NeoForm] Creating NeoNode for form: ${formDef.id}`);
+  ): Promise<NeoEntity> {
+    this.logVerbose(`Creating NeoEntity for form: ${formDef.id}`);
 
-    // Create NeoNode instance
-    const node = NeoNode.create({
-      // BEC aspects - from universal result
-      being: {
-        process: (input: any) => result.universal.being,
+    // Create NeoEntity instance with BEC · MVC · NEO unity
+    const entity = NeoEntityService.create({
+      // BEC aspects
+      being: result.universal.being,
+      essence: result.universal.essence,
+      concept: result.universal.concept,
+      
+      // MVC aspects
+      model: result.particular.model,
+      view: result.particular.view,
+      controller: result.particular.controller,
+      
+      // NEO aspects
+      core: result.infrastructure.core,
+      dialectic: result.infrastructure.dialectic,
+      context: result.infrastructure.context,
+      
+      // Identity properties
+      id: context.options?.entityId || `entity:form:${formDef.id}:${Date.now()}`,
+      type: formDef.entityType || "form:result",
+      properties: {
+        formId: formDef.id,
+        formName: formDef.name,
+        contextId: context.contextId,
+        executionId: context.id,
+        input: context.input,
+        timestamp: Date.now()
       },
-      essence: {
-        process: (being: any, input: any) => result.universal.essence,
-      },
-      concept: {
-        process: (being: any, essence: any, input: any) =>
-          result.universal.concept,
-      },
-
-      // MVC aspects - from particular result
-      model: {
-        process: (input: any) => result.particular.model,
-      },
-      view: {
-        process: (model: any, input: any) => result.particular.view,
-      },
-      controller: {
-        process: (model: any, view: any, input: any) =>
-          result.particular.controller,
-      },
-
-      // NEO aspects - from infrastructure result
-      core: {
-        process: (input: any) => result.infrastructure.core,
-      },
-      dialectic: {
-        process: (core: any, input: any) => result.infrastructure.dialectic,
-      },
-      graph: {
-        process: (dialectic: any, core: any, input: any) =>
-          result.infrastructure.graph,
-      },
+      contextId: context.contextId
     });
 
-    // Set node properties
-    node.id =
-      context.options?.nodeId || `node:form:${formDef.id}:${Date.now()}`;
-    node.type = formDef.nodeType || "form:result";
-    node.data = {
-      formId: formDef.id,
-      contextId: context.id,
-      input: context.input,
-      timestamp: Date.now(),
-    };
+    // Persist if requested
+    if (context.options?.persist) {
+      entity.persist();
+    }
 
-    return node;
+    return entity;
   }
 
   /**
@@ -649,31 +489,26 @@ export class NeoForm {
       },
     };
 
-    const graph = {
-      nodes: [
-        {
-          id: `node:form:${formDef.id}:${Date.now()}`,
-          type: "form:result",
-          properties: {
-            formId: formDef.id,
-            timestamp: Date.now(),
-          },
-        },
-      ],
-      edges: [],
-    };
+    // Create a contextual reference
+    const contextRef = context.contextId ? 
+      NeoContextService.getContext(context.contextId) : 
+      getActiveContext();
 
     return {
       core,
       dialectic,
-      graph,
+      context: contextRef ? {
+        id: contextRef.id,
+        type: contextRef.type,
+        active: contextRef.active
+      } : null,
       _processed: true,
       _timestamp: Date.now(),
     };
   }
 
   /**
-   * Helper: Extract relations from being
+   * Helper methods for default implementations
    */
   private extractRelations(being: any, schema: any): any[] {
     const relations = [];
@@ -693,9 +528,6 @@ export class NeoForm {
     return relations;
   }
 
-  /**
-   * Helper: Determine reflection
-   */
   private determineReflection(being: any, schema: any): any {
     return {
       type: schema.type || "unknown",
@@ -703,9 +535,6 @@ export class NeoForm {
     };
   }
 
-  /**
-   * Helper: Determine universal
-   */
   private determineUniversal(being: any, essence: any, schema: any): any {
     return {
       category: schema.category || "default",
@@ -713,9 +542,6 @@ export class NeoForm {
     };
   }
 
-  /**
-   * Helper: Determine particular
-   */
   private determineParticular(being: any, essence: any, schema: any): any {
     return {
       instance: {
@@ -726,9 +552,6 @@ export class NeoForm {
     };
   }
 
-  /**
-   * Helper: Determine individual
-   */
   private determineSingular(being: any, essence: any, schema: any): any {
     return {
       concrete: {
@@ -739,9 +562,6 @@ export class NeoForm {
     };
   }
 
-  /**
-   * Helper: Generate view components
-   */
   private generateComponents(model: any, viewDefs: any): any[] {
     const components = [];
 
@@ -760,74 +580,54 @@ export class NeoForm {
   }
 
   /**
-   * Load forms from graph
+   * Handle form execution event from NeoCore
    */
-  private async loadFormsFromGraph(): Promise<void> {
-    if (!this.graph) return;
+  private handleFormExecutionEvent(event: NeoEvent): void {
+    const { formId, input, options } = event.content || {};
 
-    try {
-      console.log("[NeoForm] Loading forms from graph...");
-
-      // Use graph extension if available
-      const graphExt = Array.from(this.extensions.values()).find((ext) =>
-        ext.capabilities?.includes("formDefinitions")
-      );
-
-      if (graphExt) {
-        const forms = await this.processWithExtension(
-          graphExt.id,
-          "forms:get",
-          {}
-        );
-
-        if (Array.isArray(forms)) {
-          for (const form of forms) {
-            this.forms.set(form.id, form);
-          }
-          console.log(`[NeoForm] Loaded ${forms.length} forms from graph`);
-        }
-      }
-    } catch (error) {
-      console.warn("[NeoForm] Error loading forms from graph:", error);
+    if (!formId) {
+      this.emitEvent({
+        type: "form",
+        subtype: "execution:error",
+        content: {
+          error: "No formId provided",
+          requestId: event.id
+        },
+      });
+      return;
     }
-  }
 
-  /**
-   * Load form from graph
-   */
-  private async loadFormFromGraph(formId: string): Promise<any> {
-    if (!this.graph) return null;
-
-    try {
-      console.log(`[NeoForm] Loading form from graph: ${formId}`);
-
-      // Use graph extension if available
-      const graphExt = Array.from(this.extensions.values()).find((ext) =>
-        ext.capabilities?.includes("formDefinitions")
-      );
-
-      if (graphExt) {
-        const form = await this.processWithExtension(graphExt.id, "form:get", {
-          formId,
+    // Execute form
+    this.executeForm(formId, input, options)
+      .then((result) => {
+        // Send response
+        this.emitEvent({
+          type: "form",
+          subtype: "execution:response",
+          content: { 
+            result,
+            requestId: event.id 
+          },
         });
-
-        if (form) {
-          return form;
-        }
-      }
-
-      return null;
-    } catch (error) {
-      console.warn(`[NeoForm] Error loading form ${formId} from graph:`, error);
-      return null;
-    }
+      })
+      .catch((error) => {
+        // Send error
+        this.emitEvent({
+          type: "form",
+          subtype: "execution:error",
+          content: {
+            error: error.message || "Form execution failed",
+            requestId: event.id
+          },
+        });
+      });
   }
 
   /**
-   * Process with extension
+   * Make a request to an extension and wait for a response
    */
-  private processWithExtension(
-    extensionId: NeoComponentId,
+  private requestFromExtension(
+    extensionId: string | NeoComponentId,
     type: string,
     content: any
   ): Promise<any> {
@@ -838,16 +638,17 @@ export class NeoForm {
         .substring(2, 9)}`;
 
       // Set up listener for response
-      const cleanup = this.on(`${type}:response`, (event) => {
-        if (event.relations?.requestId === requestId) {
+      const cleanup = this.core.on(`${type}:response`, (event) => {
+        if (event.content?.requestId === requestId) {
           cleanup(); // Remove listener
+          errorCleanup(); // Remove error listener
           resolve(event.content?.result);
         }
       });
 
       // Set up listener for error
-      const errorCleanup = this.on(`${type}:error`, (event) => {
-        if (event.relations?.requestId === requestId) {
+      const errorCleanup = this.core.on(`${type}:error`, (event) => {
+        if (event.content?.requestId === requestId) {
           cleanup(); // Remove listener
           errorCleanup(); // Remove error listener
           reject(new Error(event.content?.error || "Unknown error"));
@@ -855,234 +656,59 @@ export class NeoForm {
       });
 
       // Send request to extension
-      this.emit({
-        type: "extension",
-        subtype: type,
-        target: extensionId,
-        source: this.componentId,
-        id: requestId,
-        timestamp: Date.now(),
-        content,
+      this.core.sendToExtension(extensionId, type, {
+        ...content,
+        requestId
       });
 
       // Set timeout
       setTimeout(() => {
         cleanup();
         errorCleanup();
-        reject(new Error(`Request to extension ${extensionId} timed out`));
+        reject(new Error(`Request timed out`));
       }, 10000); // 10 second timeout
     });
   }
 
   /**
-   * Register node type with form system
+   * Emit an event through the core
    */
-  registerNodeType(nodeType: any): void {
-    // Placeholder for node type registration
-    console.log(`[NeoForm] Registered node type: ${nodeType.name}`);
-  }
-
-  /**
-   * Create form extension for NeoCore
-   */
-  private createFormExtension(): NeoExtension {
-    return {
-      id: this.componentId,
-      type: "neo:form",
-      capabilities: [
-        "formProcessing",
-        "nodeCreation",
-        "becProcessing",
-        "mvcProcessing",
-        "neoProcessing",
-      ],
-
-      initialize: (core: NeoCore) => {
-        console.log("[NeoForm] Initializing as NeoCore extension");
-      },
-
-      handleEvent: (event: NeoEvent) => {
-        switch (event.subtype) {
-          case "execute":
-            this.handleFormExecutionEvent(event);
-            break;
-
-          case "register":
-            this.handleFormRegistrationEvent(event);
-            break;
-
-          default:
-            // Forward to event handler
-            this.eventEmitter.emit(event.type, event);
-            this.eventEmitter.emit(`${event.type}:${event.subtype}`, event);
-        }
-      },
-    };
-  }
-
-  /**
-   * Handle form execution event from NeoCore
-   */
-  private handleFormExecutionEvent(event: NeoEvent): void {
-    const { formId, input, options } = event.content || {};
-
-    if (!formId) {
-      this.emit({
-        id: `form:${Date.now()}`,
-        type: "form",
-        subtype: "execution:error",
-        source: this.componentId,
-        timestamp: Date.now(),
-        content: {
-          error: "No formId provided",
-        },
-        relations: { requestId: event.id },
-      });
-      return;
-    }
-
-    // Execute form
-    this.executeForm(formId, input, options)
-      .then((result) => {
-        // Send response
-        this.emit({
-          id: `form:${Date.now()}`,
-          type: "form",
-          subtype: "execution:response",
-          source: this.componentId,
-          timestamp: Date.now(),
-          content: { result },
-          relations: { requestId: event.id },
-        });
-      })
-      .catch((error) => {
-        // Send error
-        this.emit({
-          id: `form:${Date.now()}`,
-          type: "form",
-          subtype: "execution:error",
-          source: this.componentId,
-          timestamp: Date.now(),
-          content: {
-            error: error,
-          },
-          relations: { requestId: event.id },
-        });
-      });
-  }
-
-  /**
-   * Handle form registration event from NeoCore
-   */
-  private handleFormRegistrationEvent(event: NeoEvent): void {
-    const formDef = event.content;
-
-    if (!formDef || !formDef.id) {
-      this.emit({
-        id: `form:${Date.now()}`,
-        type: "form",
-        subtype: "registration:error",
-        source: this.componentId,
-        timestamp: Date.now(),
-        content: {
-          error: "Invalid form definition",
-        },
-        relations: { requestId: event.id },
-      });
-      return;
-    }
-
-    // Register form
-    try {
-      this.registerForm(formDef);
-
-      // Send response
-      this.emit({
-        id: `form:${Date.now()}`,
-        type: "form",
-        subtype: "registration:response",
-        source: this.componentId,
-        timestamp: Date.now(),
-        content: {
-          formId: formDef.id,
-        },
-        relations: { requestId: event.id },
-      });
-    } catch (error) {
-      // Send error
-      this.emit({
-        id: `form:${Date.now()}`,
-        type: "form",
-        subtype: "registration:error",
-        source: this.componentId,
-        timestamp: Date.now(),
-        content: {
-          error: error,
-          formId: formDef.id,
-        },
-        relations: { requestId: event.id },
-      });
-    }
-  }
-
-  /**
-   * Emit an event
-   */
-  emit(event: NeoEvent): void {
-    // Ensure event has required properties
-    const completeEvent = {
-      ...event,
-      id:
-        event.id ||
-        `event:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`,
-      source: event.source || this.componentId,
-      timestamp: event.timestamp || Date.now(),
-    };
-
-    // If we have a core reference, emit through core
-    if (this.core) {
-      this.core.protocol.emit(completeEvent);
-    }
-
+  private emitEvent(event: {
+    type: string;
+    subtype: string;
+    content: any;
+  }): void {
+    this.core.emit({
+      type: event.type,
+      subtype: event.subtype,
+      source: this.componentId,
+      content: event.content,
+    });
+    
     // Also emit locally
-    this.eventEmitter.emit(event.type, completeEvent);
-    this.eventEmitter.emit(`${event.type}:${event.subtype}`, completeEvent);
+    this.eventEmitter.emit(event.type, event);
+    this.eventEmitter.emit(`${event.type}:${event.subtype}`, event);
   }
 
   /**
-   * Listen for events
+   * Log message if verbose mode is enabled
    */
-  on(eventType: string, handler: (event: NeoEvent) => void): () => void {
-    this.eventEmitter.on(eventType, handler);
-
-    // Return cleanup function
-    return () => {
-      this.eventEmitter.off(eventType, handler);
-    };
+  private logVerbose(message: string): void {
+    if (this.core.getConfig<boolean>('verbose', false)) {
+      console.log(`[NeoForm] ${message}`);
+    }
   }
 
   /**
    * Clean up resources
    */
-  async cleanup(): Promise<void> {
-    console.log("[NeoForm] Cleaning up...");
-
-    // Clean up extensions in reverse order
-    const extensions = Array.from(this.extensions.values());
-    for (let i = extensions.length - 1; i >= 0; i--) {
-      const extension = extensions[i];
-      if (typeof (extension as any).cleanup === "function") {
-        await (extension as any).cleanup();
-      }
-    }
-
-    // Clear forms
-    this.forms.clear();
-
+  async shutdown(): Promise<void> {
+    this.logVerbose("Shutting down...");
+    
     // Remove all event listeners
     this.eventEmitter.removeAllListeners();
-
-    console.log("[NeoForm] Cleanup complete");
+    
+    this.logVerbose("Shutdown complete");
   }
 }
 
@@ -1091,8 +717,8 @@ export class NeoForm {
  */
 export function createNeoForm(options: {
   core: NeoCore;
-  componentId: NeoComponentId;
-  graph: NeoGraph;
+  componentId?: NeoComponentId;
+  graph?: NeoGraph;
 }): NeoForm {
   return new NeoForm(options);
 }

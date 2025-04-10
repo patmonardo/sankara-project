@@ -1,8 +1,8 @@
-i// Fix 1: Add proper import for NeoComponentId
-import { NeoComponentId, NeoEntityId } from '../../neo/dialectic';
+// Fix 1: Add proper import for NeoComponentId
+import { NeoComponentId, NeoEntityId } from '../../neo/extension';
 
 // Fix 2: Fix NeoNode import
-import { NeoNode, createNeoNode } from '../../neo/node'; // This was ./node
+import { NeoNode, createNeoNode } from '../../neo/entity';
 
 // Fix 3: Add missing interface for FormTree and FormReference 
 export interface FormTree {
@@ -99,6 +99,7 @@ export interface Predicate {
     appearance?: string;
     reflection?: boolean;
     expressesEssence?: boolean;
+    mediated?: boolean;
   };
   concept: {
     genus?: string;
@@ -223,7 +224,8 @@ export function createPositiveJudgment(
         universal: true
       },
       essence: {
-        expressesEssence: false
+        expressesEssence: false,
+        mediated: false
       },
       concept: {}
     },

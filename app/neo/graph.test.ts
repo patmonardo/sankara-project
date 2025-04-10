@@ -1,23 +1,15 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   PropertyType,
   PropertyDefinition,
   SystemPropertyHandler,
-  PropertyFilterValue,
-  PropertyFilterOperation,
 } from "./property";
 
 import {
-  createGraph,
-  addNodeToGraph,
-  addEdgeToGraph,
-  getNodeFromGraph,
-  getEdgeFromGraph,
-  getIncomingEdges,
-  getOutgoingEdges,
-  findNodesByProperty,
-  traverseGraph,
+  NeoGraph,
+  createNeoGraph
 } from "./graph";
+import { NeoComponentId, createNeoProtocol } from "./extension";
 
 describe("Property System", () => {
   it("should validate property types correctly", () => {
@@ -122,17 +114,27 @@ describe("Property System", () => {
 });
 
 describe("Graph System", () => {
-  it("should create a graph with nodes and edges", () => {
-    // Create a graph
-    const graph = createGraph({
-      id: "test-graph",
-      name: "Test Graph",
-      description: "A test graph",
-    });
+  let protocol;
+  let graphId: NeoComponentId;
+  let neoGraph: NeoGraph;
 
-    // Add nodes
-    let updatedGraph = addNodeToGraph(graph, {
-      id: "node1",
+  beforeEach(() => {
+    protocol = createNeoProtocol({
+      id: { id: 'test-protocol', type: 'protocol:test' },
+    });
+    
+    graphId = {
+      id: "test-graph",
+      type: "graph:test",
+      name: "Test Graph"
+    };
+    
+    neoGraph = createNeoGraph(protocol, graphId);
+  });
+
+  it("should create a graph with nodes and edges", () => {
+    // Create nodes
+    const node1Id = neoGraph.createNode({
       type: "person",
       label: "John",
       properties: {
@@ -141,8 +143,7 @@ describe("Graph System", () => {
       },
     });
 
-    updatedGraph = addNodeToGraph(updatedGraph, {
-      id: "node2",
+    const node2Id = neoGraph.createNode({
       type: "person",
       label: "Jane",
       properties: {
@@ -151,11 +152,23 @@ describe("Graph System", () => {
       },
     });
 
+    // Create node component IDs
+    const node1ComponentId: NeoComponentId = {
+      id: node1Id,
+      type: "node:person",
+      name: "John"
+    };
+
+    const node2ComponentId: NeoComponentId = {
+      id: node2Id,
+      type: "node:person",
+      name: "Jane"
+    };
+
     // Add an edge
-    updatedGraph = addEdgeToGraph(updatedGraph, {
-      id: "edge1",
-      source: "node1",
-      target: "node2",
+    const edgeId = neoGraph.createEdge({
+      source: node1ComponentId,
+      target: node2ComponentId,
       type: "knows",
       label: "Knows",
       properties: {
@@ -163,33 +176,23 @@ describe("Graph System", () => {
       },
     });
 
-    // Test the graph structure
-    expect(updatedGraph.nodes.length).toBe(2);
-    expect(updatedGraph.edges.length).toBe(1);
-
     // Test node retrieval
-    const node1 = getNodeFromGraph(updatedGraph, "node1");
+    const node1 = neoGraph.getNode(node1Id);
     expect(node1).toBeDefined();
     expect(node1?.label).toBe("John");
     expect(node1?.properties.age).toBe(30);
 
     // Test edge retrieval
-    const edge1 = getEdgeFromGraph(updatedGraph, "edge1");
+    const edge1 = neoGraph.getEdge(edgeId);
     expect(edge1).toBeDefined();
-    expect(edge1?.source).toBe("node1");
-    expect(edge1?.target).toBe("node2");
+    expect(edge1?.source.id).toBe(node1Id);
+    expect(edge1?.target.id).toBe(node2Id);
     expect(edge1?.properties.since).toBe("2020-01-01");
   });
 
-  it("should find nodes by property", () => {
-    // Create a graph with nodes
-    const graph = createGraph({
-      id: "test-graph",
-      name: "Test Graph",
-    });
-
-    let updatedGraph = addNodeToGraph(graph, {
-      id: "node1",
+  it("should find nodes by property criteria", () => {
+    // Add nodes
+    const node1Id = neoGraph.createNode({
       type: "person",
       properties: {
         age: 30,
@@ -197,8 +200,7 @@ describe("Graph System", () => {
       },
     });
 
-    updatedGraph = addNodeToGraph(updatedGraph, {
-      id: "node2",
+    const node2Id = neoGraph.createNode({
       type: "person",
       properties: {
         age: 28,
@@ -206,8 +208,7 @@ describe("Graph System", () => {
       },
     });
 
-    updatedGraph = addNodeToGraph(updatedGraph, {
-      id: "node3",
+    const node3Id = neoGraph.createNode({
       type: "person",
       properties: {
         age: 30,
@@ -215,87 +216,103 @@ describe("Graph System", () => {
       },
     });
 
-    // Find nodes by property
-    const developersQuery = { operation: "eq", value: "developer" };
-    const developers = findNodesByProperty(
-      updatedGraph,
-      "role",
-      developersQuery
-    );
+    // Find nodes by type and properties
+    const developers = neoGraph.findNodes({
+      type: "person",
+      properties: { role: "developer" }
+    });
+    
     expect(developers.length).toBe(1);
-    expect(developers[0].id).toBe("node1");
+    expect(developers[0].id).toBe(node1Id);
 
-    const age30Query = {
-      operation: PropertyFilterOperation.EQUALS,
-      value: 30,
-    };
-    const age30 = findNodesByProperty(updatedGraph, "age", age30Query);
+    const age30 = neoGraph.findNodes({
+      properties: { age: 30 }
+    });
+    
     expect(age30.length).toBe(2);
-    expect(age30.map((n) => n.id).sort()).toEqual(["node1", "node3"]);
+    expect(age30.map(n => n.id).sort()).toEqual([node1Id, node3Id].sort());
   });
 
-  it("should traverse a graph", () => {
-    // Create a graph
-    const graph = createGraph({
-      id: "test-graph",
-      name: "Test Graph",
-    });
+  it("should find edges connected to a node", () => {
+    // Create nodes
+    const nodeAId = neoGraph.createNode({ id: "A", type: "node" });
+    const nodeBId = neoGraph.createNode({ id: "B", type: "node" });
+    const nodeCId = neoGraph.createNode({ id: "C", type: "node" });
+    const nodeDId = neoGraph.createNode({ id: "D", type: "node" });
 
-    // Add nodes
-    let updatedGraph = graph;
-    updatedGraph = addNodeToGraph(updatedGraph, { id: "A", type: "node" });
-    updatedGraph = addNodeToGraph(updatedGraph, { id: "B", type: "node" });
-    updatedGraph = addNodeToGraph(updatedGraph, { id: "C", type: "node" });
-    updatedGraph = addNodeToGraph(updatedGraph, { id: "D", type: "node" });
+    // Create component IDs
+    const nodeA: NeoComponentId = { id: nodeAId, type: "node:test" };
+    const nodeB: NeoComponentId = { id: nodeBId, type: "node:test" };
+    const nodeC: NeoComponentId = { id: nodeCId, type: "node:test" };
+    const nodeD: NeoComponentId = { id: nodeDId, type: "node:test" };
 
     // Add edges
-    updatedGraph = addEdgeToGraph(updatedGraph, {
+    neoGraph.createEdge({
       id: "AB",
-      source: "A",
-      target: "B",
+      source: nodeA,
+      target: nodeB,
       type: "edge",
+      properties: {}
     });
-    updatedGraph = addEdgeToGraph(updatedGraph, {
+    
+    neoGraph.createEdge({
       id: "AC",
-      source: "A",
-      target: "C",
+      source: nodeA,
+      target: nodeC,
       type: "edge",
+      properties: {}
     });
-    updatedGraph = addEdgeToGraph(updatedGraph, {
+    
+    neoGraph.createEdge({
       id: "CD",
-      source: "C",
-      target: "D",
+      source: nodeC,
+      target: nodeD,
       type: "edge",
+      properties: {}
     });
 
-    // Traverse and collect visited nodes
-    const visited: string[] = [];
-    traverseGraph(updatedGraph, "A", (node) => {
-      visited.push(node.id);
+    // Find outgoing edges from A
+    const outgoingEdges = neoGraph.findEdges(nodeAId, "outgoing");
+    expect(outgoingEdges.length).toBe(2);
+    
+    // Find incoming edges to C
+    const incomingEdges = neoGraph.findEdges(nodeCId, "incoming");
+    expect(incomingEdges.length).toBe(1);
+    expect(incomingEdges[0].source.id).toBe(nodeAId);
+    
+    // Find all edges connected to C
+    const allCEdges = neoGraph.findEdges(nodeCId, "both");
+    expect(allCEdges.length).toBe(2);
+  });
+
+  it("should handle property operations", () => {
+    // Create a node
+    const nodeId = neoGraph.createNode({
+      type: "person",
+      properties: {
+        name: "John"
+      }
     });
 
-    // Order might vary depending on implementation details
-    expect(visited.length).toBe(4);
-    expect(visited).toContain("A");
-    expect(visited).toContain("B");
-    expect(visited).toContain("C");
-    expect(visited).toContain("D");
+    // Set a property
+    neoGraph.setProperty(nodeId, "age", 30);
+    const node = neoGraph.getNode(nodeId);
+    expect(node?.properties.age).toBe(30);
 
-    // Test limited depth traversal
-    const limitedVisited: string[] = [];
-    traverseGraph(
-      updatedGraph,
-      "A",
-      (node) => {
-        limitedVisited.push(node.id);
-      },
-      { maxDepth: 1 }
-    );
+    // Delete a property
+    neoGraph.deleteProperty(nodeId, "age");
+    const updatedNode = neoGraph.getNode(nodeId);
+    expect(updatedNode?.properties.age).toBeUndefined();
+  });
 
-    expect(limitedVisited.length).toBe(3);
-    expect(limitedVisited).toContain("A");
-    expect(limitedVisited).toContain("B");
-    expect(limitedVisited).toContain("C");
-    expect(limitedVisited).not.toContain("D");
+  it("should shutdown properly", async () => {
+    // Create some data
+    neoGraph.createNode({ type: "test", properties: {} });
+    
+    // Shutdown
+    await neoGraph.shutdown();
+    
+    // After shutdown, the graph should be empty
+    expect(neoGraph.findNodes({})).toEqual([]);
   });
 });

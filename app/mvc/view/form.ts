@@ -6,8 +6,8 @@ import type {
   FormMode,
   FormContent,
   FormHandler,
-} from "@/graphics/schema/form";
-import { Form } from "@/graphics/form/form";
+} from "@/form/schema/form";
+import { Form } from "@/form/form/form";
 
 export class FormView<T extends FormShape> {
   constructor(protected readonly form?: Form<T>) {}

@@ -1,7 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { createNeoEventEmitter, NeoEvent } from "./event";
+import { createNeoComponentId, NeoComponentId } from "./extension";
 
 describe("Neo Event System", () => {
+  let testSource: NeoComponentId;
+  
+  beforeEach(() => {
+    testSource = createNeoComponentId("test-component", "test-instance");
+  });
+  
   it("should emit and receive events", () => {
     const emitter = createNeoEventEmitter();
     const events: NeoEvent[] = [];
@@ -13,7 +20,7 @@ describe("Neo Event System", () => {
     emitter.emit({
       id: 'test:1',
       type: 'test',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
@@ -38,14 +45,14 @@ describe("Neo Event System", () => {
     emitter.emit({
       id: 'test:1',
       type: 'test',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
     emitter.emit({
       id: 'other:1',
       type: 'other',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
@@ -66,7 +73,7 @@ describe("Neo Event System", () => {
     emitter.emit({
       id: 'test:1',
       type: 'test',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
@@ -77,7 +84,7 @@ describe("Neo Event System", () => {
     emitter.emit({
       id: 'test:2',
       type: 'test',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
@@ -99,7 +106,7 @@ describe("Neo Event System", () => {
     emitter.emit({
       id: 'test:1',
       type: 'test',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
@@ -108,7 +115,7 @@ describe("Neo Event System", () => {
       id: 'test:2',
       type: 'test',
       subtype: 'special',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
@@ -128,7 +135,7 @@ describe("Neo Event System", () => {
     emitter.emit({
       id: 'test:1',
       type: 'test',
-      source: 'test-source',
+      source: testSource,
       timestamp: Date.now()
     });
     
