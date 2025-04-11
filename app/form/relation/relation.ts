@@ -1,18 +1,17 @@
-import { NeoComponentId } from "@/neo/extension";
+import { FormEntity } from "@/form/entity/entity";
 
 export type FormRelationId = string;
 
 export class FormRelation<T = any> {
-  // Identity properties
+  private static relations: Map<string, FormRelation> = new Map();
   public id: FormRelationId;
   public type: string;
-  public source: NeoComponentId;
-  public target?: NeoComponentId;
+  public source: FormEntity;
+  public target?: FormEntity;
   public subtype?: string;
   public content?: T;
   public metadata?: Record<string, any>;
   public timestamp?: number;
-  private static relations: Map<string, FormRelation> = new Map();
 
   /**
    * Create a new relation
@@ -20,8 +19,8 @@ export class FormRelation<T = any> {
   constructor(config: {
     id?: string;
     type: string;
-    source: NeoComponentId;
-    target?: NeoComponentId;
+    source: FormEntity;
+    target?: FormEntity;
     subtype?: string;
     content?: T;
     metadata?: Record<string, any>;
@@ -77,7 +76,6 @@ export class FormRelation<T = any> {
     target: { id: string; type: string };
     type: string;
     content?: any;
-    spaceId?: string;
   }): string {
     const relationId = `relation:${Date.now()}:${Math.random()
       .toString(36)
@@ -92,7 +90,6 @@ export class FormRelation<T = any> {
       content: config.content,
       metadata: {
         created: Date.now(),
-        spaceId: config.spaceId,
       },
       timestamp: Date.now(),
     };
@@ -104,8 +101,8 @@ export class FormRelation<T = any> {
    * Create a basic relation between two entities
    */
   static relate(
-    source: NeoComponentId,
-    target: NeoComponentId,
+    source: FormEntity,
+    target: FormEntity,
     type: string,
     metadata?: Record<string, any>
   ): string {
@@ -129,7 +126,7 @@ export class FormRelation<T = any> {
    * Emit an event as a relation
    */
   static emit(
-    source: NeoComponentId,
+    source: FormEntity,
     type: string,
     content: Record<string, any>,
     metadata?: Record<string, any>
@@ -155,8 +152,8 @@ export class FormRelation<T = any> {
    * Send a message as a relation
    */
   static send(
-    source: NeoComponentId,
-    target: NeoComponentId,
+    source: FormEntity,
+    target: FormEntity,
     type: string,
     content: Record<string, any>,
     metadata?: Record<string, any>
@@ -183,8 +180,8 @@ export class FormRelation<T = any> {
    * Broadcast a message to all targets in a context
    */
   static broadcast(
-    source: NeoComponentId,
-    targets: NeoComponentId[],
+    source: FormEntity,
+    targets: FormEntity[],
     type: string,
     content: Record<string, any>,
     metadata?: Record<string, any>

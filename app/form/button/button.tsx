@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { FormMode, FormContent, FormHandler } from '@/form/schema/form';
 import { ButtonShape } from '@/form/schema/button';
-import { ButtonShapeAdapter } from './adapter';
 import { Form } from '@/form/form/form';
+import { ButtonShapeAdapter } from './adapter';
 
 /**
  * Abstract base class for all button types

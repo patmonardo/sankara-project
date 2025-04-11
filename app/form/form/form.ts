@@ -10,9 +10,9 @@ import {
   FormState, 
   FormShape 
 } from "@/form/schema/form";
-import { FormShapeAdapter } from "@/form/modality/render";
 import { PropertyService } from "@/form/property/property";
 import { FormContext } from "@/form/context/context";
+import { FormSystem } from "@/form/form/system";
 
 export class Form<T extends FormShape = FormShape> {
   // Core identity
@@ -221,19 +221,19 @@ export class Form<T extends FormShape = FormShape> {
   
   // Rendering methods (unchanged from current implementation)
   renderJSX(shape: T, data: FormMatter, handler: FormHandler): React.ReactNode {
-    return FormShapeAdapter.toJSX(shape, data, handler);
+    return null;
   }
   
   renderJSON(shape: T, data: FormMatter, handler: FormHandler): string {
-    return FormShapeAdapter.toJSON(shape, data);
+    return "";
   }
   
   renderHTML(shape: T, data: FormMatter, handler: FormHandler): string {
-    return FormShapeAdapter.toHTML(shape, data);
+    return "";
   }
   
   renderXML(shape: T, data: FormMatter, handler: FormHandler): string {
-    return FormShapeAdapter.toXML(shape, data);
+    return "";
   }
   
   /**
