@@ -1,6 +1,6 @@
 import { createMorph } from "../morph";
 import { 
-  MorpheusContext, 
+  FormExecutionContext, 
   isViewContext 
 } from "../../schema/context";
 import { ViewOutput, ViewField } from "./display";
@@ -136,7 +136,7 @@ function truncateAtWordBoundary(text: string, maxLength: number, ellipsis: strin
  */
 export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
   "TruncateTextMorph",
-  (view, context: MorpheusContext) => {
+  (view, context: FormExecutionContext) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to TruncateTextMorph");

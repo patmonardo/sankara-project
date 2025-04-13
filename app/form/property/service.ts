@@ -32,7 +32,6 @@ export class DharmaGuṇaSevā {
     }
   ): NiṣpādanaPhala {
     return qualitative(sandarbhaId, "dharmaGuṇaSthāpana", () => {
-      // Implementation uses Relation to represent Property
       // First, create value entity if complex value
       let valueSambandhaPara = typeof mūlya === 'object' && mūlya !== null 
         ? `dharmaGuṇaMūlya:${Date.now()}`

@@ -1,6 +1,6 @@
 import { SimpleMorph } from "../morph";
 import { FormShape, FormField } from "../../schema/form";
-import { MorpheusContext, DataContext } from "../../schema/context";
+import { FormExecutionContext, DataContext } from "../../schema/context";
 
 /**
  * Extracted field qualities
@@ -32,7 +32,7 @@ export interface ExtractedQualities {
  */
 export const ExtractQualitiesMorph = new SimpleMorph<FormShape, ExtractedQualities>(
   "ExtractQualitiesMorph",
-  (input, context: MorpheusContext) => {
+  (input, context: FormExecutionContext) => {
     // Extract qualities from form fields
     const qualities = input.fields.map(field => ({
       id: field.id,
@@ -159,7 +159,7 @@ export function shouldIncludeField(field: FormField, context: DataContext): bool
 /**
  * Extract actual field value considering context
  */
-export function extractFieldValue(field: FormField, context: MorpheusContext): any {
+export function extractFieldValue(field: FormField, context: FormExecutionContext): any {
   // Get from context data, default to field value
   return context.data?.[field.id] ?? field.value;
 }
@@ -186,7 +186,7 @@ export const FilteredQualitiesMorph = new SimpleMorph<
   ExtractedQualities
 >(
   "FilteredQualitiesMorph",
-  (input, context: MorpheusContext) => {
+  (input, context: FormExecutionContext) => {
     // Filter and extract qualities
     const qualities = input.fields
       .filter(field => {
@@ -243,7 +243,7 @@ export const FilteredQualitiesMorph = new SimpleMorph<
 export function defineFieldExtractor(fieldIds: string[]) {
   return new SimpleMorph<FormShape, ExtractedQualities>(
     `ExtractFields_${fieldIds.join('_')}`,
-    (input, context: MorpheusContext) => {
+    (input, context: FormExecutionContext) => {
       // Filter to only the specified fields
       const selectedFields = input.fields.filter(field =>
         fieldIds.includes(field.id)

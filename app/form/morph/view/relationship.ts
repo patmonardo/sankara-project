@@ -1,4 +1,4 @@
-import { MorpheusContext, ViewContext } from "../../schema/context";
+import { FormExecutionContext, ViewContext } from "../../schema/context";
 import { SimpleMorph } from "../morph";
 import { ViewOutput, ViewField } from "./display";
 
@@ -73,7 +73,7 @@ export interface RelationalViewOutput extends ViewOutput {
  */
 export const RelationshipMorph = new SimpleMorph<ViewOutput, RelationalViewOutput>(
   "RelationshipsMorph",
-  (view, context: MorpheusContext) => {
+  (view, context: FormExecutionContext) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to RelationshipsMorph");

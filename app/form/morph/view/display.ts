@@ -1,6 +1,6 @@
 import { SimpleMorph } from "../morph";
 import { FormShape, FormField } from "../../schema/form";
-import { ViewContext, MorpheusContext } from "../../schema/context";
+import { ViewContext, FormExecutionContext } from "../../schema/context";
 import { defineFieldStyles } from "../../style/style";
 import {
   determineDisplayType,
@@ -114,7 +114,7 @@ export function processFieldForView(
  */
 export const ShapeViewMorph = new SimpleMorph<FormShape, ViewOutput>(
   "ShapeViewMorph",
-  (shape, context: MorpheusContext) => {
+  (shape, context: FormExecutionContext) => {
     // Validate input
     if (!shape || !Array.isArray(shape.fields)) {
       throw new Error("Invalid form shape provided to ShapeViewMorph");
@@ -151,7 +151,7 @@ export const ShapeViewMorph = new SimpleMorph<FormShape, ViewOutput>(
  */
 export const StyleViewMorph = new SimpleMorph<ViewOutput, ViewOutput>(
   "StyleViewMorph",
-  (view, context: MorpheusContext) => {
+  (view, context: FormExecutionContext) => {
     // Early validation
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to StyleViewMorph");

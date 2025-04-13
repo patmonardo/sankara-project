@@ -1,6 +1,6 @@
 import { SimpleMorph } from "./morph";
 import { FormShape, FormField } from "../schema/form";
-import { MorpheusContext } from "../schema/context";
+import { FormExecutionContext } from "../schema/context";
 import { morpheus } from "../modality/morpheus";
 
 /**
@@ -14,12 +14,12 @@ type ValidatorResult =
 
 /**
  * Helper function for field validation
- * Uses MorpheusContext to access field values and validation configuration
+ * Uses FormExecutionContext to access field values and validation configuration
  */
 function validateField(
   field: FormField,
   value: any,
-  context: MorpheusContext
+  context: FormExecutionContext
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -237,7 +237,7 @@ export const AdvancedValidationMorph = createMorph<FormShape, FormShape>(
 export function createFieldTransformer(
   fieldTransformations: Record<
     string, 
-    (field: FormField, context: MorpheusContext) => FormField
+    (field: FormField, context: FormExecutionContext) => FormField
   >,
   name: string = "FieldTransformer"
 ): SimpleMorph<FormShape, FormShape> {
@@ -288,7 +288,7 @@ export function createFieldTransformer(
  * Create a morph that filters fields based on criteria
  */
 export function createFieldFilter(
-  filterFn: (field: FormField, context: MorpheusContext) => boolean,
+  filterFn: (field: FormField, context: FormExecutionContext) => boolean,
   name: string = "FieldFilter"
 ): SimpleMorph<FormShape, FormShape> {
   return new SimpleMorph<FormShape, FormShape>(

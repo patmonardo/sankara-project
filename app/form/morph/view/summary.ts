@@ -1,6 +1,6 @@
 import { SimpleMorph } from "../morph";
 import { FormShape } from "../../schema/form";
-import { MorpheusContext, ViewContext } from "../../schema/context";
+import { FormExecutionContext, ViewContext } from "../../schema/context";
 import { ViewOutput, ViewField } from "./display";
 
 /**
@@ -20,7 +20,7 @@ export interface SummaryViewOutput extends ViewOutput {
  */
 export const SummaryViewMorph = new SimpleMorph<ViewOutput, SummaryViewOutput>(
   "SummaryViewMorph",
-  (view, context: MorpheusContext) => {
+  (view, context: FormExecutionContext) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to SummaryViewMorph");

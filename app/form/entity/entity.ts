@@ -188,7 +188,6 @@ export class FormEntity {
   
   /**
    * Remove an entity from the system
-   * Moved from NeoCore
    */
   static removeEntity(id: string): boolean {
     const entity = FormEntity.entities.get(id);

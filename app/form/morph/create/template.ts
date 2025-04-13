@@ -1,6 +1,6 @@
 import { SimpleMorph, ComposedMorph } from "../morph";
 import { FormShape, FormField } from "../../schema/form";
-import { MorpheusContext, CreateContext } from "../../schema/context";
+import { FormExecutionContext, CreateContext } from "../../schema/context";
 import { CreateOutput, ShapeCreateMorph } from "./display";
 
 /**
@@ -24,7 +24,7 @@ export interface TemplateCreateContext extends CreateContext {
 /**
  * Type guard to verify if context has template data
  */
-function isTemplateContext(context: MorpheusContext): context is TemplateCreateContext {
+function isTemplateContext(context: FormExecutionContext): context is TemplateCreateContext {
   return (
     context.type === 'create' && 
     'template' in context && 
@@ -68,7 +68,7 @@ function processFieldWithTemplate(field: FormField, template: FormTemplate): For
  */
 export const ApplyTemplateMorph = new SimpleMorph<FormShape, FormShape>(
   "ApplyTemplateMorph",
-  (shape, context: MorpheusContext) => {
+  (shape, context: FormExecutionContext) => {
     // Validate and extract template context
     if (!isTemplateContext(context)) {
       throw new Error("Template context is required for ApplyTemplateMorph");
@@ -117,7 +117,7 @@ export const TemplateShapeMorph = new ComposedMorph<FormShape, CreateOutput>(
     ShapeCreateMorph
   ],
   // Post-processing function to add template-specific metadata
-  (result: CreateOutput, context: MorpheusContext) => {
+  (result: CreateOutput, context: FormExecutionContext) => {
     // Validate template context
     if (!isTemplateContext(context)) {
       console.warn("Template context missing for TemplateShapeMorph post-processing");

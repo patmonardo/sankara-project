@@ -1,5 +1,5 @@
 import { FormShape, FormMode } from "../schema/form";
-import { MorpheusContext } from "../schema/context";
+import { FormExecutionContext } from "../schema/context";
 import { ViewProcessorPipeline } from "./view/processor";
 import { CreateModePipeline } from "./create/actions";
 import { EditModePipeline } from "./edit/actions";
@@ -11,7 +11,7 @@ import { morpheus } from "../modality/morpheus";
 export function applyFormMode(
   form: FormShape,
   mode: FormMode,
-  context: MorpheusContext
+  context: FormExecutionContext
 ): FormShape {
   // Validate inputs
   if (!form) {

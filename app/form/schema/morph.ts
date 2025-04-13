@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MorpheusContextSchema } from "./context";
+import { FormExecutionContextSchema } from "./context";
 
 /**
  * Implementation schema - defines how a morph is implemented at runtime
@@ -69,7 +69,7 @@ export const FormMorphResultSchema = z.object({
   outputType: z.string(),
   output: z.any(),
   morphId: z.string(),
-  context: MorpheusContextSchema,
+  context: FormExecutionContextSchema,
   meta: z.record(z.any()).optional(),
   error: z.object({
     message: z.string(),

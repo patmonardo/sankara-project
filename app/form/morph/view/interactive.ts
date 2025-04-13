@@ -1,6 +1,6 @@
 import { SimpleMorph } from "../morph";
 import { FormShape } from "../../schema/form";
-import { MorpheusContext, ViewContext } from "../../schema/context";
+import { FormExecutionContext, ViewContext } from "../../schema/context";
 import { ViewOutput, ViewField, determineFieldState } from "./display";
 import { defineFieldStyles, defineActionStyles } from "../../style/style";
 
@@ -137,7 +137,7 @@ export function generateDefaultActions(context: ViewContext): ActionButton[] {
  */
 export const InteractiveViewMorph = new SimpleMorph<FormShape, InteractiveViewOutput>(
   "InteractiveViewMorph",
-  (form, context: MorpheusContext) => {
+  (form, context: FormExecutionContext) => {
     // Validate input
     if (!form || !Array.isArray(form.fields)) {
       throw new Error("Invalid form shape provided to InteractiveViewMorph");
@@ -186,7 +186,7 @@ export const InteractiveViewMorph = new SimpleMorph<FormShape, InteractiveViewOu
  */
 export const AddInteractivityMorph = new SimpleMorph<ViewOutput, InteractiveViewOutput>(
   "AddInteractivityMorph",
-  (view, context: MorpheusContext) => {
+  (view, context: FormExecutionContext) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to AddInteractivityMorph");

@@ -1,6 +1,6 @@
 import { SimpleMorph, ComposedMorph } from "../morph";
 import { FormShape, FormField } from "../../schema/form";
-import { MorpheusContext, CreateContext } from "../../schema/context";
+import { FormExecutionContext, CreateContext } from "../../schema/context";
 import { CreateOutput, ShapeCreateMorph } from "./display";
 
 /**
@@ -28,7 +28,7 @@ export interface CustomCreateContext extends CreateContext {
  * Type guard to check if a context has custom configuration
  */
 function isCustomContext(
-  context: MorpheusContext
+  context: FormExecutionContext
 ): context is CustomCreateContext {
   return (
     context !== null &&
@@ -43,7 +43,7 @@ function isCustomContext(
 /**
  * Safe type casting for context - returns a default if cast isn't valid
  */
-function asCreateContext(context: MorpheusContext): CreateContext {
+function asCreateContext(context: FormExecutionContext): CreateContext {
   if (context && typeof context === "object" && context.type === "create") {
     return context as CreateContext;
   }
@@ -55,7 +55,7 @@ function asCreateContext(context: MorpheusContext): CreateContext {
  */
 export const CustomizeShapeMorph = new SimpleMorph<FormShape, FormShape>(
   "CustomizeShapeMorph", // Fixed morph name to match variable name
-  (shape, context: MorpheusContext) => {
+  (shape, context: FormExecutionContext) => {
     // Validate input
     if (!shape || !Array.isArray(shape.fields)) {
       throw new Error("Invalid form shape provided to CustomizeShapeMorph");
@@ -135,7 +135,7 @@ export const CustomizeShapeMorph = new SimpleMorph<FormShape, FormShape>(
  * Create a context with custom configuration
  */
 export function withCustomConfig(
-  baseContext: MorpheusContext,
+  baseContext: FormExecutionContext,
   config: CustomCreateConfig
 ): CustomCreateContext {
   if (!baseContext) {
@@ -320,7 +320,7 @@ export function createCustomFormMorph(config: CustomCreateConfig) {
 export function applyCustom(
   form: FormShape,
   customConfig: CustomCreateConfig,
-  context?: MorpheusContext
+  context?: FormExecutionContext
 ): CreateOutput {
   // Validate inputs
   if (!form) {

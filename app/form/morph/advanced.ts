@@ -1,6 +1,6 @@
 import { FormShape, FormField, FormSection } from "../schema/form";
 import { ValidationResult } from "../schema/form";
-import { MorpheusContext } from "../schema/context";
+import { FormExecutionContext } from "../schema/context";
 import { createAdvancedContext, isAdvancedContext } from "../schema/context";
 import { createMorph } from "./morph";
 
@@ -10,7 +10,7 @@ import { createMorph } from "./morph";
  */
 function organizeIntoSections(
   fields: FormField[],
-  context: MorpheusContext
+  context: FormExecutionContext
 ): FormSection[] {
   if (!fields || !Array.isArray(fields)) {
     return [];

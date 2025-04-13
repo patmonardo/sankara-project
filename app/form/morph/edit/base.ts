@@ -1,6 +1,6 @@
 import { createMorph } from "../morph";
 import { FormShape } from "../../schema/form";
-import { MorpheusContext, isEditContext } from "../../schema/context";
+import { FormExecutionContext, isEditContext } from "../../schema/context";
 
 /**
  * Edit mode output with additional metadata

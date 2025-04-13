@@ -1,5 +1,5 @@
 //@/form/morph/morph.ts
-import { MorpheusContext } from "../schema/context";
+import { FormExecutionContext } from "../schema/context";
 import { FormShape } from "../schema/form";
 
 /**
@@ -10,7 +10,7 @@ export interface FormMorph<TInput = FormShape, TOutput = FormShape> {
   /**
    * Apply the morphism to transform input shape to output shape
    */
-  apply(input: TInput, context: MorpheusContext): TOutput;
+  apply(input: TInput, context: FormExecutionContext): TOutput;
 
   /**
    * Name of the morphism (for debugging)
@@ -57,7 +57,7 @@ export abstract class BaseMorph<TInput = FormShape, TOutput = FormShape>
     }
   ) {}
 
-  abstract apply(input: TInput, context: MorpheusContext): TOutput;
+  abstract apply(input: TInput, context: FormExecutionContext): TOutput;
 
   /**
    * Compose this morphism with another
@@ -83,7 +83,7 @@ export class SimpleMorph<
     name: string,
     private readonly transformer: (
       input: TInput,
-      context: MorpheusContext
+      context: FormExecutionContext
     ) => TOutput,
     optimizationMetadata: MorphOptimizationMetadata = {
       pure: true,
@@ -94,7 +94,7 @@ export class SimpleMorph<
     super(name, optimizationMetadata);
   }
 
-  apply(input: TInput, context: MorpheusContext): TOutput {
+  apply(input: TInput, context: FormExecutionContext): TOutput {
     return this.transformer(input, context);
   }
 }
@@ -131,7 +131,7 @@ export class CompositeMorph<TInput, TIntermediate, TOutput>
     };
   }
 
-  apply(input: TInput, context: MorpheusContext): TOutput {
+  apply(input: TInput, context: FormExecutionContext): TOutput {
     const intermediate = this.first.apply(input, context);
     return this.second.apply(intermediate, context);
   }
@@ -172,7 +172,7 @@ export class ComposedMorph<TInput, TOutput>
     public readonly name: string,
     private readonly steps: FormMorph<any, any>[],
     private readonly postProcess?:
-      | ((result: TOutput, context: MorpheusContext) => TOutput)
+      | ((result: TOutput, context: FormExecutionContext) => TOutput)
       | null,
     metadata?: MorphOptimizationMetadata
   ) {
@@ -225,7 +225,7 @@ export class ComposedMorph<TInput, TOutput>
     };
   }
 
-  apply(input: TInput, context: MorpheusContext): TOutput {
+  apply(input: TInput, context: FormExecutionContext): TOutput {
     // Apply the pipeline first
     let result = this.pipeline.apply(input, context) as TOutput;
 
@@ -271,7 +271,7 @@ export class ComposedMorph<TInput, TOutput>
    * Get the post-processing function if any
    */
   getPostProcess():
-    | ((result: TOutput, context: MorpheusContext) => TOutput)
+    | ((result: TOutput, context: FormExecutionContext) => TOutput)
     | null
     | undefined {
     return this.postProcess;
@@ -303,7 +303,7 @@ export class MorphPipeline<TInput = FormShape, TOutput = FormShape> {
   /**
    * Apply the pipeline to transform the input
    */
-  apply(input: TInput, context: MorpheusContext): TOutput {
+  apply(input: TInput, context: FormExecutionContext): TOutput {
     return this.morphism.apply(input, context);
   }
 
@@ -368,7 +368,7 @@ export class LazyMorphPipeline<TIn, TOut> implements FormMorph<TIn, TOut> {
     };
   }
 
-  apply(input: TIn, context: MorpheusContext): TOut {
+  apply(input: TIn, context: FormExecutionContext): TOut {
     // Only execute when apply is called
     let current: any = input;
 
@@ -528,7 +528,7 @@ function extractSteps(
  */
 export function createMorph<TIn, TOut>(
   name: string,
-  transform: (input: TIn, context: MorpheusContext) => TOut,
+  transform: (input: TIn, context: FormExecutionContext) => TOut,
   metadata: MorphOptimizationMetadata = { pure: true, fusible: true, cost: 1 }
 ): SimpleMorph<TIn, TOut> {
   return new SimpleMorph(name, transform, metadata);
@@ -595,7 +595,7 @@ export class FluentPipeline<I, O> {
    * Add a filter step that transforms only when a condition is met
    */
   filter(
-    condition: (input: O, context: MorpheusContext) => boolean
+    condition: (input: O, context: FormExecutionContext) => boolean
   ): FluentPipeline<I, O> {
     const filterMorph = new SimpleMorph<O, O>(
       `Filter_${this.steps.length}`,
@@ -616,7 +616,7 @@ export class FluentPipeline<I, O> {
    * Add a transformation function directly
    */
   map<T>(
-    transform: (input: O, context: MorpheusContext) => T,
+    transform: (input: O, context: FormExecutionContext) => T,
     options: {
       name?: string;
       pure?: boolean;
@@ -644,7 +644,7 @@ export class FluentPipeline<I, O> {
    * Conditionally branch the pipeline
    */
   branch<T>(
-    condition: (input: O, context: MorpheusContext) => boolean,
+    condition: (input: O, context: FormExecutionContext) => boolean,
     trueMorph: SimpleMorph<O, T>,
     falseMorph: SimpleMorph<O, T>
   ): FluentPipeline<I, T> {
@@ -793,7 +793,7 @@ export class FluentPipeline<I, O> {
   /**
    * Apply the pipeline without registering it
    */
-  apply(input: I, context: MorpheusContext): O {
+  apply(input: I, context: FormExecutionContext): O {
     let result: any = input;
     for (const step of this.steps) {
       result = step.apply(result, context);

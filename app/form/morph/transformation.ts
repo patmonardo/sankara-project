@@ -32,8 +32,8 @@ export class TransformationEngine {
    * Transform a form to a specified mode
    */
   transformToMode(form: FormShape, mode: FormMode): FormShape {
-    // Convert FormContent to MorpheusContext
-    const morpheusContext = {
+    // Convert FormContent to FormExecutionContext
+    const FormExecutionContext = {
       formId: form.id,
       userId: this.context.getCurrentUser?.() || "anonymous",
       mode: mode,
@@ -41,7 +41,7 @@ export class TransformationEngine {
       // Add any other context properties needed
     };
     
-    return applyFormMode(form, mode, morpheusContext);
+    return applyFormMode(form, mode, FormExecutionContext);
   }
   
   /**
