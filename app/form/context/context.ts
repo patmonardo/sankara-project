@@ -1,235 +1,269 @@
 /**
- * FormContext implementation
+ * Sandarbha (FormContext) implementation
  *
- * A FormContext represents a bounded operational environment
- * within which entities and relations operate.
+ * A Sandarbha represents a bounded operational environment
+ * within which vastu (entities) and sambandha (relations) operate.
  */
-import { FormEntity } from "@/form/entity";
-import { FormRelation } from "@/form/relation";
+import { FormEntity } from "@/form/entity/entity";
+import { FormRelation } from "@/form/relation/relation";
 
 /**
- * FormContextEvent interface for context lifecycle events
+ * SandarbhaGhaṭanā interface for context lifecycle events
  */
-export interface FormContextEvent {
-  type: "created" | "activated" | "deactivated" | "updated" | "deleted";
-  contextId: string;
-  timestamp: number;
-  metadata?: Record<string, any>;
+export interface SandarbhaGhaṭanā {
+  prakāra: "utpanna" | "sakriya" | "niṣkriya" | "parivardhita" | "nāśa";
+  // "created", "activated", "deactivated", "updated", "deleted" -> Sanskrit equivalents
+  sandarbhaId: string;
+  kālamudrā: number; // timestamp
+  lakṣaṇa?: Record<string, any>; // metadata
 }
 
-export class FormContext<T = any> {
-  // Identity properties
+export class Sandarbha<T = any> {
+  // Svarūpa - Identity properties
   id: string;
-  type: string;
-  name?: string;
+  prakāra: string; // (type)
+  nāma?: string; // (name)
 
-  // Hierarchical structure
-  parentId?: string;
-  children: Set<string> = new Set();
+  // Sopāna - Hierarchical structure
+  janakId?: string; // (parentId)
+  santati: Set<string> = new Set(); // (children)
 
-  // Runtime tracking
-  entities: Set<string> = new Set();
-  relations: Set<string> = new Set();
+  // Viṣaya - Content tracking
+  vastu: Set<string> = new Set(); // (entities)
+  sambandha: Set<string> = new Set(); // (relations)
+  ghaṭanā: Set<string> = new Set(); // New Sanskrit: events -> ghaṭanā
 
-  // Status
-  active: boolean = false;
-  timestamp: number;
+  // Avasthā - Status
+  sakriya: boolean = false; // (active)
+  kālamudrā: number; // (timestamp)
 
-  // Metadata
-  metadata?: Record<string, any>;
+  // Lakṣaṇa - Metadata
+  lakṣaṇa?: Record<string, any>; // (metadata)
+  adhikāra?: Record<string, boolean>; // New Sanskrit: permissions -> adhikāra
 
-  // Content/configuration
-  config?: T;
+  // Lifecycle tracking
+  utpanna: number; // New Sanskrit: created -> utpanna
+  parivardhita: number; // New Sanskrit: updated -> parivardhita
+  kartā?: string; // New Sanskrit: createdBy -> kartā
+
+  // Viṣaya/Vinyāsa - Content/configuration
+  vinyāsa?: T; // (config)
+  sthiti?: Record<string, any>; // New Sanskrit: state -> sthiti
   
-  // Event emitter for local events
-  private eventEmitter: any = null; // Placeholder for event emitter
+  // Vyavahāra - Transaction support
+  vyavahāraId?: string; // Transaction ID
+  vyavahāraSthiti: string = "śūnya"; // Transaction state: none/active/committed/rolled back
+
+  // Ghaṭanā prasāraka - Event emitter for local events
+  private ghaṭanāPrasāraka: any = null; // (eventEmitter)
 
   // Static context registry
-  private static contexts: Map<string, FormContext> = new Map();
-  private static activeContextId: string | null = null;
+  private static sandarbha: Map<string, Sandarbha> = new Map();
+  private static sakriyaSandarbhaId: string | null = null;
 
   /**
-   * Create a new context
+   * Create a new Sandarbha (context)
    */
-  constructor(options: {
+  constructor(vikalpa: {
     id?: string;
-    type?: string;
-    name?: string;
-    parentId?: string;
-    metadata?: Record<string, any>;
-    config?: T;
-    autoActivate?: boolean;
+    prakāra?: string;
+    nāma?: string;
+    janakId?: string;
+    lakṣaṇa?: Record<string, any>;
+    vinyāsa?: T;
+    svataḥSakriya?: boolean; // autoActivate
+    adhikāra?: Record<string, boolean>; // New param: permissions
+    kartā?: string; // New param: creator
+    vyavahāraId?: string; // Transaction ID
+    vyavahāraSthiti?: string; // Transaction state
   }) {
     this.id =
-      options.id ||
-      `context:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    this.type = options.type || "context";
-    this.name = options.name;
-    this.parentId = options.parentId;
-    this.metadata = options.metadata || {};
-    this.config = options.config;
-    this.timestamp = Date.now();
+      vikalpa.id ||
+      `sandarbha:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
+    this.prakāra = vikalpa.prakāra || "sandarbha";
+    this.nāma = vikalpa.nāma;
+    this.janakId = vikalpa.janakId;
+    this.lakṣaṇa = vikalpa.lakṣaṇa || {};
+    this.vinyāsa = vikalpa.vinyāsa;
+    this.adhikāra = vikalpa.adhikāra; // New property
+    this.kartā = vikalpa.kartā; // New property
+    this.kālamudrā = Date.now();
+    this.utpanna = Date.now(); // Initialize creation time
+    this.parivardhita = Date.now(); // Initialize update time
+
+    // Initialize new properties
+    this.ghaṭanā = new Set();
+    this.sthiti = {};
+    
+    // Initialize transaction properties
+    this.vyavahāraId = vikalpa.vyavahāraId;
+    this.vyavahāraSthiti = vikalpa.vyavahāraSthiti || "śūnya";
 
     // Register in context registry
-    FormContext.contexts.set(this.id, this);
+    Sandarbha.sandarbha.set(this.id, this);
 
     // Add as child to parent if exists
-    if (this.parentId) {
-      const parent = FormContext.getContext(this.parentId);
-      if (parent) {
-        parent.children.add(this.id);
+    if (this.janakId) {
+      const janaka = Sandarbha.getSandarbha(this.janakId);
+      if (janaka) {
+        janaka.santati.add(this.id);
       }
     }
 
     // Emit context created event
-    this.emitContextEvent("created");
+    this.emitSandarbhaGhaṭanā("utpanna");
 
     // Activate if specified
-    if (options.autoActivate) {
-      this.activate();
+    if (vikalpa.svataḥSakriya) {
+      this.sakriyaKaraṇa(); // activate
     }
   }
 
   /**
-   * Get the active context or null if none is active
+   * Get the active Sandarbha or null if none is active
    */
-  static getActiveContext(): FormContext | null {
-    return FormContext.activeContextId
-      ? FormContext.contexts.get(FormContext.activeContextId) ||
-          null
+  static getSakriyaSandarbha(): Sandarbha | null {
+    return Sandarbha.sakriyaSandarbhaId
+      ? Sandarbha.sandarbha.get(Sandarbha.sakriyaSandarbhaId) || null
       : null;
   }
 
   /**
-   * Get a context by ID
+   * Get a Sandarbha by ID
    */
-  static getContext(id: string): FormContext | undefined {
-    return FormContext.contexts.get(id);
+  static getSandarbha(id: string): Sandarbha | undefined {
+    return Sandarbha.sandarbha.get(id);
   }
 
   /**
    * Switch the active context to the specified context
    */
-  static switchContext(
-    contextId: string,
-    options: {
-      preserveParentContext?: boolean;
-      silent?: boolean;
+  static parivartanaSandarbha(
+    sandarbhaId: string,
+    vikalpa: {
+      janakaSandarbhaRakṣaṇa?: boolean; // preserveParentContext
+      maunī?: boolean; // silent
     } = {}
   ): boolean {
-    const context = FormContext.getContext(contextId);
-    if (!context) {
+    const sandarbha = Sandarbha.getSandarbha(sandarbhaId);
+    if (!sandarbha) {
       return false;
     }
 
     // Check if this context is already active
-    if (FormContext.activeContextId === contextId) {
+    if (Sandarbha.sakriyaSandarbhaId === sandarbhaId) {
       return true;
     }
 
     // Deactivate current context if one is active
-    if (FormContext.activeContextId) {
-      const currentContext = FormContext.getContext(FormContext.activeContextId);
-      if (currentContext) {
-        currentContext.deactivate({
-          silent: options.silent,
+    if (Sandarbha.sakriyaSandarbhaId) {
+      const vartamānaSandarbha = Sandarbha.getSandarbha(
+        Sandarbha.sakriyaSandarbhaId
+      );
+      if (vartamānaSandarbha) {
+        vartamānaSandarbha.niṣkriyaKaraṇa({
+          maunī: vikalpa.maunī,
         });
       }
     }
 
     // Activate the new context
-    return context.activate({
-      preserveActiveContext: options.preserveParentContext,
-      silent: options.silent,
+    return sandarbha.sakriyaKaraṇa({
+      sakriyaSandarbhaRakṣaṇa: vikalpa.janakaSandarbhaRakṣaṇa, // preserveActiveContext
+      maunī: vikalpa.maunī,
     });
   }
 
   /**
    * Execute a function within a specific context
    */
-  static withContext<R>(contextId: string, fn: () => R): R {
-    const context = FormContext.getContext(contextId);
-    if (!context) {
-      throw new Error(`Context not found: ${contextId}`);
+  static sāthaSandarbha<R>(sandarbhaId: string, kārya: () => R): R {
+    const sandarbha = Sandarbha.getSandarbha(sandarbhaId);
+    if (!sandarbha) {
+      throw new Error(`Sandarbha not found: ${sandarbhaId}`);
     }
 
     // Store the previous active context
-    const previousContextId = FormContext.activeContextId;
+    const pūrvaSandarbhaId = Sandarbha.sakriyaSandarbhaId;
 
     try {
       // Activate this context temporarily
-      FormContext.activeContextId = contextId;
-      
+      Sandarbha.sakriyaSandarbhaId = sandarbhaId;
+
       // Execute function
-      return fn();
+      return kārya();
     } finally {
       // Restore previous context
-      FormContext.activeContextId = previousContextId;
+      Sandarbha.sakriyaSandarbhaId = pūrvaSandarbhaId;
     }
   }
 
   /**
-   * Create a new FormContext instance (static factory method)
+   * Create a new Sandarbha instance (static factory method)
    */
-  static createContext(options: {
+  static sṛjSandarbha(vikalpa: {
     id?: string;
-    type?: string;
-    name?: string;
-    parentId?: string;
-    metadata?: Record<string, any>;
-    config?: any;
-    autoActivate?: boolean;
-  }): FormContext {
-    return new FormContext(options);
+    prakāra?: string;
+    nāma?: string;
+    janakId?: string;
+    lakṣaṇa?: Record<string, any>;
+    vinyāsa?: any;
+    svataḥSakriya?: boolean;
+    vyavahāraId?: string;
+    vyavahāraSthiti?: string;
+  }): Sandarbha {
+    return new Sandarbha(vikalpa);
   }
 
   /**
-   * Activate this context
+   * Activate this context - sakriyaKaraṇa (making active)
    */
-  activate(
-    options: {
-      activateChildren?: boolean;
-      recursive?: boolean;
-      silent?: boolean;
-      preserveActiveContext?: boolean;
+  sakriyaKaraṇa(
+    vikalpa: {
+      santatiSakriyaKaraṇa?: boolean; // activateChildren
+      punaḥpraveśa?: boolean; // recursive
+      maunī?: boolean; // silent
+      sakriyaSandarbhaRakṣaṇa?: boolean; // preserveActiveContext
     } = {}
   ): boolean {
-    if (this.active) {
+    if (this.sakriya) {
       return true;
     }
 
     // Check for circular context activation
-    if (this.parentId && this.hasAncestor(this.id)) {
+    if (this.janakId && this.hasPūrvaja(this.id)) {
       throw new Error(`Circular context activation detected: ${this.id}`);
     }
 
     // Deactivate current active context if exists and we're not preserving it
-    if (!options.preserveActiveContext && FormContext.activeContextId) {
-      const currentContext = FormContext.getContext(FormContext.activeContextId);
-      if (currentContext) {
-        currentContext.deactivate({ silent: options.silent });
+    if (!vikalpa.sakriyaSandarbhaRakṣaṇa && Sandarbha.sakriyaSandarbhaId) {
+      const vartamānaSandarbha = Sandarbha.getSandarbha(
+        Sandarbha.sakriyaSandarbhaId
+      );
+      if (vartamānaSandarbha) {
+        vartamānaSandarbha.niṣkriyaKaraṇa({ maunī: vikalpa.maunī });
       }
     }
 
     // Set as active
-    this.active = true;
-    FormContext.activeContextId = this.id;
-    this.timestamp = Date.now();
+    this.sakriya = true;
+    Sandarbha.sakriyaSandarbhaId = this.id;
+    this.kālamudrā = Date.now();
 
     // Emit context activated event if not silent
-    if (!options.silent) {
-      this.emitContextEvent("activated");
+    if (!vikalpa.maunī) {
+      this.emitSandarbhaGhaṭanā("sakriya");
     }
 
     // Activate children if requested
-    if (options.activateChildren && this.children.size > 0) {
-      for (const childId of this.children) {
-        const child = FormContext.getContext(childId);
-        if (child) {
-          child.activate({
-            activateChildren: options.recursive,
-            silent: options.silent,
-            preserveActiveContext: true,
+    if (vikalpa.santatiSakriyaKaraṇa && this.santati.size > 0) {
+      for (const santatiId of this.santati) {
+        const santati = Sandarbha.getSandarbha(santatiId);
+        if (santati) {
+          santati.sakriyaKaraṇa({
+            santatiSakriyaKaraṇa: vikalpa.punaḥpraveśa,
+            maunī: vikalpa.maunī,
+            sakriyaSandarbhaRakṣaṇa: true,
           });
         }
       }
@@ -239,124 +273,148 @@ export class FormContext<T = any> {
   }
 
   /**
-   * Deactivate this context
+   * Deactivate this context - niṣkriyaKaraṇa (making inactive)
    */
-  deactivate(
-    options: {
-      deactivateChildren?: boolean;
-      recursive?: boolean;
-      silent?: boolean;
-      activateParent?: boolean;
+  niṣkriyaKaraṇa(
+    vikalpa: {
+      santatiNiṣkriyaKaraṇa?: boolean; // deactivateChildren
+      punaḥpraveśa?: boolean; // recursive
+      maunī?: boolean; // silent
+      janakaSakriyaKaraṇa?: boolean; // activateParent
     } = {}
   ): boolean {
-    if (!this.active) {
+    if (!this.sakriya) {
       return true;
     }
 
     // Save parent reference before deactivation
-    const parentId = this.parentId;
+    const janakId = this.janakId;
 
     // Deactivate children first if requested
-    if ((options.deactivateChildren || options.recursive) && this.children.size > 0) {
-      for (const childId of this.children) {
-        const child = FormContext.getContext(childId);
-        if (child) {
-          child.deactivate({
-            deactivateChildren: options.recursive,
-            silent: options.silent,
+    if (
+      (vikalpa.santatiNiṣkriyaKaraṇa || vikalpa.punaḥpraveśa) &&
+      this.santati.size > 0
+    ) {
+      for (const santatiId of this.santati) {
+        const santati = Sandarbha.getSandarbha(santatiId);
+        if (santati) {
+          santati.niṣkriyaKaraṇa({
+            santatiNiṣkriyaKaraṇa: vikalpa.punaḥpraveśa,
+            maunī: vikalpa.maunī,
           });
         }
       }
     }
 
-    this.active = false;
+    this.sakriya = false;
 
     // Clear active context reference if we're the active context
-    if (FormContext.activeContextId === this.id) {
-      FormContext.activeContextId = null;
+    if (Sandarbha.sakriyaSandarbhaId === this.id) {
+      Sandarbha.sakriyaSandarbhaId = null;
     }
 
     // Emit context deactivated event if not silent
-    if (!options.silent) {
-      this.emitContextEvent("deactivated");
+    if (!vikalpa.maunī) {
+      this.emitSandarbhaGhaṭanā("niṣkriya");
     }
 
     // Activate parent if requested
-    if (options.activateParent && parentId) {
-      const parent = FormContext.getContext(parentId);
-      if (parent) {
-        parent.activate({ silent: options.silent });
+    if (vikalpa.janakaSakriyaKaraṇa && janakId) {
+      const janaka = Sandarbha.getSandarbha(janakId);
+      if (janaka) {
+        janaka.sakriyaKaraṇa({ maunī: vikalpa.maunī });
       }
     }
 
     return true;
   }
-
+  
   /**
-   * Update context properties
+   * Update context properties - parivardhita (developed/updated)
    */
-  update(updates: {
-    name?: string;
-    metadata?: Record<string, any>;
-    config?: T;
+  parivardhana(parivardhita: {
+    nāma?: string;
+    lakṣaṇa?: Record<string, any>;
+    vinyāsa?: T;
+    sthiti?: Record<string, any>; // State updates
+    vyavahāraId?: string; // Transaction ID
+    vyavahāraSthiti?: string; // Transaction state
   }): boolean {
     // Update properties
-    if (updates.name !== undefined) {
-      this.name = updates.name;
+    if (parivardhita.nāma !== undefined) {
+      this.nāma = parivardhita.nāma;
     }
 
-    if (updates.metadata) {
-      this.metadata = {
-        ...this.metadata,
-        ...updates.metadata,
+    if (parivardhita.lakṣaṇa) {
+      this.lakṣaṇa = {
+        ...this.lakṣaṇa,
+        ...parivardhita.lakṣaṇa,
       };
     }
 
-    if (updates.config) {
-      this.config = {
-        ...this.config,
-        ...updates.config,
+    if (parivardhita.vinyāsa) {
+      this.vinyāsa = {
+        ...this.vinyāsa,
+        ...parivardhita.vinyāsa,
       };
     }
 
-    this.timestamp = Date.now();
+    // Handle state updates
+    if (parivardhita.sthiti) {
+      this.sthiti = {
+        ...this.sthiti,
+        ...parivardhita.sthiti,
+      };
+    }
+    
+    // Handle transaction updates
+    if (parivardhita.vyavahāraId !== undefined) {
+      this.vyavahāraId = parivardhita.vyavahāraId;
+    }
+    
+    if (parivardhita.vyavahāraSthiti !== undefined) {
+      this.vyavahāraSthiti = parivardhita.vyavahāraSthiti;
+    }
+
+    this.kālamudrā = Date.now();
+    this.parivardhita = Date.now(); // Update modification timestamp
 
     // Update in registry
-    FormContext.contexts.set(this.id, this);
+    Sandarbha.sandarbha.set(this.id, this);
 
     // Emit context updated event
-    this.emitContextEvent("updated");
+    this.emitSandarbhaGhaṭanā("parivardhita");
 
     return true;
   }
-
+  
   /**
-   * Delete this context
+   * Delete this context - nāśa (destruction)
    */
-  delete(): boolean {
+  nāśa(): boolean {
     // Cannot delete active context
-    if (this.active) {
+    if (this.sakriya) {
       throw new Error(`Cannot delete active context: ${this.id}`);
     }
 
     // Remove from parent's children list
-    if (this.parentId) {
-      const parent = FormContext.getContext(this.parentId);
-      if (parent) {
-        parent.children.delete(this.id);
+    if (this.janakId) {
+      const janaka = Sandarbha.getSandarbha(this.janakId);
+      if (janaka) {
+        janaka.santati.delete(this.id);
       }
     }
 
     // Transfer children to parent or make them root contexts
-    if (this.children.size > 0) {
-      for (const childId of this.children) {
-        const child = FormContext.getContext(childId);
-        if (child) {
-          child.parentId = this.parentId;
-          if (this.parentId) {
-            const parent = FormContext.getContext(this.parentId);
-            if (parent) {
-              parent.children.add(childId);
+    if (this.santati.size > 0) {
+      for (const santatiId of this.santati) {
+        const santati = Sandarbha.getSandarbha(santatiId);
+        if (santati) {
+          santati.janakId = this.janakId;
+          if (this.janakId) {
+            const janaka = Sandarbha.getSandarbha(this.janakId);
+            if (janaka) {
+              janaka.santati.add(santatiId);
             }
           }
         }
@@ -364,169 +422,240 @@ export class FormContext<T = any> {
     }
 
     // Emit context deleted event
-    this.emitContextEvent("deleted");
+    this.emitSandarbhaGhaṭanā("nāśa");
 
     // Remove from registry
-    return FormContext.contexts.delete(this.id);
+    return Sandarbha.sandarbha.delete(this.id);
+  }
+  
+  /**
+   * Start a transaction - vyavahāraPrārambha
+   */
+  vyavahāraPrārambha(vyavahāraId?: string): boolean {
+    if (this.vyavahāraSthiti !== "śūnya") {
+      return false; // Already in a transaction
+    }
+    
+    this.vyavahāraId = vyavahāraId || `vyavahāra:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
+    this.vyavahāraSthiti = "sakriya";
+    
+    return true;
   }
 
   /**
-   * Register an entity with this context
+   * Commit a transaction - vyavahāraSamāhāra
    */
-  registerEntity(entityId: string): boolean {
-    if (!entityId) {
+  vyavahāraSamāhāra(): boolean {
+    if (this.vyavahāraSthiti !== "sakriya") {
+      return false; // Not in an active transaction
+    }
+    
+    this.vyavahāraSthiti = "samāhita";
+    
+    return true;
+  }
+
+  /**
+   * Rollback a transaction - vyavahāraVyāvartana
+   */
+  vyavahāraVyāvartana(): boolean {
+    if (this.vyavahāraSthiti !== "sakriya") {
+      return false; // Not in an active transaction
+    }
+    
+    this.vyavahāraSthiti = "vyāvartita";
+    
+    return true;
+  }
+
+  /**
+   * Register an entity with this context - vastuPañjīkaraṇa (entity registration)
+   */
+  vastuPañjīkaraṇa(vastuId: string): boolean {
+    if (!vastuId) {
       return false;
     }
 
     // Add to entities set
-    this.entities.add(entityId);
+    this.vastu.add(vastuId);
 
     // TODO: Update entity with context if entity implementation available
-    
+
     return true;
   }
 
   /**
-   * Register a relation with this context
+   * Register a relation with this context - sambandhaPañjīkaraṇa (relation registration)
    */
-  registerRelation(relationId: string): boolean {
-    if (!relationId) {
+  sambandhaPañjīkaraṇa(sambandhaId: string): boolean {
+    if (!sambandhaId) {
       return false;
     }
 
     // Add to relations set
-    this.relations.add(relationId);
+    this.sambandha.add(sambandhaId);
 
     // TODO: Update relation with context if relation implementation available
-    
+
     return true;
   }
 
   /**
-   * Get all entities in this context
+   * Get all entities in this context - sarvaVastuPrāpti (obtain all entities)
    */
-  getEntities(): any[] {
+  sarvaVastuPrāpti(): any[] {
     // Note: Reimplement with actual entity type when available
-    return Array.from(this.entities)
+    return Array.from(this.vastu)
       .map((id) => ({ id })) // Placeholder for entity retrieval
       .filter((entity) => entity !== undefined);
   }
 
   /**
-   * Get all relations in this context
+   * Get all relations in this context - sarvaSambandhaPrāpti (obtain all relations)
    */
-  getRelations(): any[] {
+  sarvaSambandhaPrāpti(): any[] {
     // Note: Reimplement with actual relation type when available
-    return Array.from(this.relations)
+    return Array.from(this.sambandha)
       .map((id) => ({ id })) // Placeholder for relation retrieval
       .filter((relation) => relation !== undefined);
   }
 
   /**
-   * Create a new entity in this context
+   * Create a new entity in this context - vastuSṛṣṭi (entity creation)
    */
-  createEntity(data: Record<string, any>): string {
-    const entityId = `entity:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    
+  vastuSṛṣṭi(data: Record<string, any>): string {
+    const vastuId = `vastu:${Date.now()}:${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+
     // TODO: Create entity with proper implementation
-    
+
     // Register with context
-    this.registerEntity(entityId);
-    
-    return entityId;
+    this.vastuPañjīkaraṇa(vastuId);
+
+    return vastuId;
   }
 
   /**
-   * Create a new relation in this context
+   * Create a new relation in this context - sambandhaSṛṣṭi (relation creation)
    */
-  createRelation(
-    source: string,
-    target: string,
-    type: string,
+  sambandhaSṛṣṭi(
+    udbhava: string, // source
+    lakṣya: string, // target
+    prakāra: string, // type
     data: Record<string, any> = {}
   ): string {
-    const relationId = `relation:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    
+    const sambandhaId = `sambandha:${Date.now()}:${Math.random()
+      .toString(36)
+      .substring(2, 9)}`;
+
     // TODO: Create relation with proper implementation
-    
+
     // Register with context
-    this.registerRelation(relationId);
-    
-    return relationId;
+    this.sambandhaPañjīkaraṇa(sambandhaId);
+
+    return sambandhaId;
   }
 
   /**
-   * Run a function in this context's scope
+   * Run a function in this context's scope - cālana (running)
    */
-  run<T>(fn: () => T): T {
-    return FormContext.withContext(this.id, fn);
+  cālana<R>(kārya: () => R): R {
+    return Sandarbha.sāthaSandarbha(this.id, kārya);
   }
 
   /**
-   * Emit a context event
+   * Emit a context event - sandarbhaGhaṭanāPrasāraṇa (context event emission)
    */
-  protected emitContextEvent(
-    type: "created" | "activated" | "deactivated" | "updated" | "deleted"
+  protected emitSandarbhaGhaṭanā(
+    prakāra: "utpanna" | "sakriya" | "niṣkriya" | "parivardhita" | "nāśa"
   ): void {
-    const event: FormContextEvent = {
-      type,
-      contextId: this.id,
-      timestamp: Date.now(),
-      metadata: this.metadata,
+    const ghaṭanā: SandarbhaGhaṭanā = {
+      prakāra,
+      sandarbhaId: this.id,
+      kālamudrā: Date.now(),
+      lakṣaṇa: this.lakṣaṇa,
     };
-    
+
     // TODO: Emit event properly when event system is available
+    // For now, just add a listener method stub
   }
 
   /**
-   * Check if a context is an ancestor of this context
+   * Add event listener - śrotaYojana (add listener)
    */
-  private hasAncestor(contextId: string): boolean {
-    let current = this.parentId ? FormContext.getContext(this.parentId) : null;
-    
-    while (current) {
-      if (current.id === contextId) {
+  on(ghaṭanāPrakāra: string, śrota: Function): void {
+    // TODO: Implement event listener system
+  }
+
+  /**
+   * Remove event listener - śrotaApasāraṇa (remove listener)
+   */
+  off(ghaṭanāPrakāra: string, śrota: Function): void {
+    // TODO: Implement event listener removal
+  }
+
+  /**
+   * Check if a context is an ancestor of this context - hasPūrvaja (has ancestor)
+   */
+  private hasPūrvaja(sandarbhaId: string): boolean {
+    let vartamāna = this.janakId ? Sandarbha.getSandarbha(this.janakId) : null;
+
+    while (vartamāna) {
+      if (vartamāna.id === sandarbhaId) {
         return true;
       }
-      current = current.parentId ? FormContext.getContext(current.parentId) : null;
+      vartamāna = vartamāna.janakId
+        ? Sandarbha.getSandarbha(vartamāna.janakId)
+        : null;
     }
-    
+
     return false;
   }
 }
 
 /**
- * Create a FormContext instance
+ * Create a Sandarbha instance - sandarbhaSṛṣṭi (create context)
  */
-export function createFormContext(config: {
+export function sandarbhaSṛṣṭi(vinyāsa: {
   id?: string;
-  type?: string;
-  name?: string;
-  parentId?: string;
-  metadata?: Record<string, any>;
-  config?: any;
-  autoActivate?: boolean;
-}): FormContext {
-  return new FormContext(config);
+  prakāra?: string; // type
+  nāma?: string; // name
+  janakId?: string; // parentId
+  lakṣaṇa?: Record<string, any>; // metadata
+  vinyāsa?: any; // config
+  svataḥSakriya?: boolean; // autoActivate
+  vyavahāraId?: string; // Transaction ID
+  vyavahāraSthiti?: string; // Transaction state
+}): Sandarbha {
+  return new Sandarbha(vinyāsa);
 }
 
 /**
- * Get a context by ID
+ * Get a context by ID - sandarbhaPrāpti (obtain context)
  */
-export function getContext(id: string): FormContext | undefined {
-  return FormContext.getContext(id);
+export function sandarbhaPrāpti(id: string): Sandarbha | undefined {
+  return Sandarbha.getSandarbha(id);
 }
 
 /**
- * Get the currently active context
+ * Get the currently active context - sakriyaSandarbhaPrāpti (obtain active context)
  */
-export function getActiveContext(): FormContext | null {
-  return FormContext.getActiveContext();
+export function sakriyaSandarbhaPrāpti(): Sandarbha | null {
+  return Sandarbha.getSakriyaSandarbha();
 }
 
 /**
- * Run a function in the context of a specific space
+ * Run a function in the context of a specific space - sāthaSandarbha (with context)
  */
-export function withContext<T>(contextId: string, fn: () => T): T {
-  return FormContext.withContext(contextId, fn);
+export function sāthaSandarbha<T>(sandarbhaId: string, kārya: () => T): T {
+  return Sandarbha.sāthaSandarbha(sandarbhaId, kārya);
 }
+
+// Export original names for backward compatibility
+export { Sandarbha as FormContext };
+export type { SandarbhaGhaṭanā as FormContextEvent };
+export const createFormContext = sandarbhaSṛṣṭi;
+export const getContext = sandarbhaPrāpti;
+export const getActiveContext = sakriyaSandarbhaPrāpti;
+export const withContext = sāthaSandarbha;

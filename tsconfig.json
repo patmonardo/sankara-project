@@ -44,6 +44,5 @@
   ],
   "exclude": [
     "node_modules",
-    "app/logic/**/*",
   ]
 }

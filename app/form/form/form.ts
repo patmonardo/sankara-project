@@ -11,94 +11,111 @@ import {
   FormShape 
 } from "@/form/schema/form";
 import { PropertyService } from "@/form/property/property";
-import { FormContext } from "@/form/context/context";
+import { Sandarbha, sāthaSandarbha } from "@/form/context/context";
 import { FormSystem } from "@/form/form/system";
 
-export class Form<T extends FormShape = FormShape> {
-  // Core identity
+/**
+ * Prapatrā - The Form class representing a realized manifestation of knowledge
+ * 
+ * In Brahmavidya, the form (prapatrā) is the vessel through which unmanifest 
+ * potential becomes manifest reality.
+ */
+export class Prapatrā<T extends FormShape = FormShape> {
+  // Ātman - Core identity
   id: string;
   
-  // Knowledge representation
-  definition: FormDefinition;
+  // Jñāna - Knowledge representation
+  vyākhyā: FormDefinition;  // definition
   
-  // Runtime state
-  state: FormState = { status: "idle" };
+  // Avasthā - Runtime state
+  sthiti: FormState = { status: "idle" };  // state
   
-  // Associated data
-  data?: FormMatter;
+  // Dravya - Associated material/data
+  dravya?: FormMatter;  // data
   
   /**
-   * Create a new Form instance
+   * Create a new Prapatrā instance - the manifestation of form
    */
   constructor(
-    definition: FormDefinition,
-    data?: FormMatter,
-    options?: {
+    vyākhyā: FormDefinition,  // definition
+    dravya?: FormMatter,      // data
+    vikalpa?: {               // options
       id?: string;
-      autoActivate?: boolean;
+      svataḥSakriya?: boolean;  // autoActivate
     }
   ) {
-    this.id = options?.id || definition.id;
-    this.definition = definition;
-    this.data = data;
+    this.id = vikalpa?.id || vyākhyā.id;
+    this.vyākhyā = vyākhyā;
+    this.dravya = dravya;
     
     // Register with the Form system
-    FormSystem.getInstance().registerForm(definition);
+    FormSystem.getInstance().registerForm(vyākhyā);
     
     // Auto-activate if requested
-    if (options?.autoActivate) {
-      this.activate();
+    if (vikalpa?.svataḥSakriya) {
+      this.sakriyaKaraṇa();  // activate
     }
   }
   
   /**
-   * Activate this form's context
+   * Activate this form's context - sakriyaKaraṇa
    */
-  activate(): boolean {
+  sakriyaKaraṇa(): boolean {
     // Find or create a context for this form
-    const contextId = this.getContextId();
-    return FormContext.switchContext(contextId);
+    const sandarbhaId = this.prāptaSandarbhaId();
+    
+    // Use Sandarbha directly instead of FormContext
+    const sandarbha = Sandarbha.getSandarbha(sandarbhaId);
+    if (!sandarbha) return false;
+    
+    return sandarbha.sakriyaKaraṇa();
   }
   
   /**
-   * Execute a function within this form's context
+   * Execute a function within this form's context - cālana (run)
    */
-  run<R>(fn: () => R): R {
-    return FormContext.withContext(this.getContextId(), fn);
+  cālana<R>(kārya: () => R): R {
+    return sāthaSandarbha(this.prāptaSandarbhaId(), kārya);
   }
   
   /**
-   * Get the primary context for this form
+   * Get the primary context for this form - prāptaSandarbhaId
    */
-  private getContextId(): string {
+  private prāptaSandarbhaId(): string {
     // Find an existing context or create one
-    const contextKey = Object.keys(this.definition.contexts)[0];
-    if (contextKey) {
-      return this.definition.contexts[contextKey].id;
+    const kuñcī = Object.keys(this.vyākhyā.contexts)[0];
+    if (kuñcī) {
+      return this.vyākhyā.contexts[kuñcī].id;
     }
     
     // No context found, create one
-    const context = FormContext.createContext({
-      name: `Context for ${this.definition.name}`,
-      type: "composite",
-      active: false
+    const sandarbha = Sandarbha.sṛjSandarbha({
+      nāma: `Sandarbha for ${this.vyākhyā.name}`,
+      prakāra: "samuccaya",  // composite
+      svataḥSakriya: false
     });
     
     // Register with definition
-    this.definition.contexts[context.id] = context;
-    return context.id;
+    this.vyākhyā.contexts[sandarbha.id] = {
+      id: sandarbha.id,
+      name: sandarbha.nāma || '',
+      type: "composite",
+      active: false
+    };
+    
+    return sandarbha.id;
   }
   
   /**
-   * Execute a property on this form
+   * Execute a property on this form - guṇaniṣpādana (property execution)
    */
-  executeProperty<R = any>(
-    propertyId: string,
-    inputs: Record<string, any> = {}
+  guṇaniṣpādana<R = any>(
+    guṇaId: string,  // propertyId
+    āgama: Record<string, any> = {}  // inputs
   ): R {
-    return this.run(() => {
-      return PropertyService.execute(propertyId, {
-        ...inputs,
+    return this.cālana(() => {
+      return PropertyService.execute(guṇaId, {
+        ...āgama,
         form: this,
         formId: this.id
       }) as R;
@@ -106,158 +123,188 @@ export class Form<T extends FormShape = FormShape> {
   }
   
   /**
-   * Generate an entity within this form
+   * Generate an entity within this form - vastuSṛṣṭi (entity creation)
    */
-  createEntity(
-    entityType: string, 
-    data: Record<string, any>
+  vastuSṛṣṭi(
+    vastuPrakāra: string,  // entityType
+    dravya: Record<string, any>  // data
   ): string {
-    return this.run(() => {
+    return this.cālana(() => {
       // Check if we have an entity definition for this type
-      const entityDefKey = Object.keys(this.definition.entities)
-        .find(key => this.definition.entities[key].type === entityType);
+      const vyākhyāKuñcī = Object.keys(this.vyākhyā.entities)
+        .find(key => this.vyākhyā.entities[key].type === vastuPrakāra);
       
-      if (!entityDefKey) {
-        throw new Error(`No entity definition found for type: ${entityType}`);
+      if (!vyākhyāKuñcī) {
+        throw new Error(`No entity definition found for type: ${vastuPrakāra}`);
       }
       
       // Get the context
-      const contextId = this.getContextId();
-      const context = FormContext.getContext(contextId);
+      const sandarbhaId = this.prāptaSandarbhaId();
+      const sandarbha = Sandarbha.getSandarbha(sandarbhaId);
+      if (!sandarbha) {
+        throw new Error(`Context not found: ${sandarbhaId}`);
+      }
       
       // Create entity using form's context
-      return context.createEntity?.({
-        ...data,
-        type: entityType
-      }) || '';
+      return sandarbha.vastuSṛṣṭi({
+        ...dravya,
+        prakāra: vastuPrakāra  // type
+      });
     });
   }
   
   /**
-   * Create a relation between entities in this form
+   * Create a relation between entities in this form - sambandhaSṛṣṭi
    */
-  createRelation(
-    sourceId: string,
-    targetId: string,
-    relationType: string,
-    data: Record<string, any> = {}
+  sambandhaSṛṣṭi(
+    udbhavaId: string,     // sourceId
+    lakṣyaId: string,      // targetId
+    sambandhaPrakāra: string,  // relationType
+    dravya: Record<string, any> = {}  // data
   ): string {
-    return this.run(() => {
+    return this.cālana(() => {
       // Get the context
-      const contextId = this.getContextId();
-      const context = FormContext.getContext(contextId);
+      const sandarbhaId = this.prāptaSandarbhaId();
+      const sandarbha = Sandarbha.getSandarbha(sandarbhaId);
+      if (!sandarbha) {
+        throw new Error(`Context not found: ${sandarbhaId}`);
+      }
       
       // Create relation using form's context
-      return context.createRelation?.(
-        sourceId,
-        targetId,
-        relationType,
-        data
-      ) || '';
+      return sandarbha.sambandhaSṛṣṭi(
+        udbhavaId,
+        lakṣyaId,
+        sambandhaPrakāra,
+        dravya
+      );
     });
   }
   
   /**
-   * Get the shape of this form
+   * Get the shape of this form - ākāraprāpti (shape acquisition)
    */
-  async getShape(mode: FormMode): Promise<T> {
+  async ākāraprāpti(avasthā: FormMode): Promise<T> {
     // This would create the appropriate form shape based on mode and definition
-    switch (mode) {
+    switch (avasthā) {
       case "create":
-        return this.createForm();
+        return this.sṛṣṭiPrapatrā();
       case "edit":
-        return this.editForm();
+        return this.sampadanaPrapatrā();
       default:
-        throw new Error(`Unsupported mode: ${mode}`);
+        throw new Error(`Unsupported mode: ${avasthā}`);
     }
   }
   
   /**
-   * Create a form shape for "create" mode
+   * Create a form shape for "create" mode - sṛṣṭiPrapatrā
    */
-  protected async createForm(): Promise<T> {
+  protected async sṛṣṭiPrapatrā(): Promise<T> {
     // Default implementation - subclasses should override
     return {} as T;
   }
   
   /**
-   * Create a form shape for "edit" mode
+   * Create a form shape for "edit" mode - sampadanaPrapatrā
    */
-  protected async editForm(): Promise<T> {
+  protected async sampadanaPrapatrā(): Promise<T> {
     // Default implementation - subclasses should override
     return {} as T;
   }
   
   /**
-   * Render the form in a specific format
+   * Render the form in a specific format - pradarśana (rendering)
    */
-  async render(
-    mode: FormMode,
-    content: FormContent,
-    handler: FormHandler
+  async pradarśana(
+    avasthā: FormMode,       // mode
+    viṣaya: FormContent,     // content
+    nirvāhaka: FormHandler   // handler
   ): Promise<React.ReactNode | string> {
     try {
       // Get the form shape based on mode
-      const shape = await this.getShape(mode);
+      const ākāra = await this.ākāraprāpti(avasthā);
       
       // Render the form in the requested format
-      switch (content) {
+      switch (viṣaya) {
         case "jsx":
-          return this.renderJSX(shape, this.data, handler);
+          return this.pradarśanaJSX(ākāra, this.dravya, nirvāhaka);
         case "json":
-          return this.renderJSON(shape, this.data, handler);
+          return this.pradarśanaJSON(ākāra, this.dravya, nirvāhaka);
         case "html":
-          return this.renderHTML(shape, this.data, handler);
+          return this.pradarśanaHTML(ākāra, this.dravya, nirvāhaka);
         case "xml":
-          return this.renderXML(shape, this.data, handler);
+          return this.pradarśanaXML(ākāra, this.dravya, nirvāhaka);
         default:
-          throw new Error(`Unsupported format: ${content}`);
+          throw new Error(`Unsupported format: ${viṣaya}`);
       }
-    } catch (error) {
-      console.error("Error rendering form:", error);
+    } catch (doṣa) {
+      console.error("Error rendering form:", doṣa);
       return null;
     }
   }
   
-  // Rendering methods (unchanged from current implementation)
-  renderJSX(shape: T, data: FormMatter, handler: FormHandler): React.ReactNode {
+  // Rendering methods - renamed but implementation unchanged
+  pradarśanaJSX(ākāra: T, dravya: FormMatter, nirvāhaka: FormHandler): React.ReactNode {
+    // Original renderJSX implementation
     return null;
   }
   
-  renderJSON(shape: T, data: FormMatter, handler: FormHandler): string {
+  pradarśanaJSON(ākāra: T, dravya: FormMatter, nirvāhaka: FormHandler): string {
+    // Original renderJSON implementation
     return "";
   }
   
-  renderHTML(shape: T, data: FormMatter, handler: FormHandler): string {
+  pradarśanaHTML(ākāra: T, dravya: FormMatter, nirvāhaka: FormHandler): string {
+    // Original renderHTML implementation
     return "";
   }
   
-  renderXML(shape: T, data: FormMatter, handler: FormHandler): string {
+  pradarśanaXML(ākāra: T, dravya: FormMatter, nirvāhaka: FormHandler): string {
+    // Original renderXML implementation
     return "";
   }
   
   /**
-   * Update the form's state
+   * Update the form's state - sthitiParivardhana
    */
-  setState(state: Partial<FormState>): void {
-    this.state = {
-      ...this.state,
-      ...state,
+  sthitiParivardhana(sthiti: Partial<FormState>): void {
+    this.sthiti = {
+      ...this.sthiti,
+      ...sthiti,
+    };
+  }
+  
+  /**
+   * Insight into emptiness - śūnyatāDarśana
+   * 
+   * This method captures the essence of śūnyatā (emptiness) as applied to forms.
+   * It reveals that forms are neither permanent nor independent, but arise in dependence
+   * upon causes and conditions.
+   */
+  śūnyatāDarśana(): Record<string, any> {
+    return {
+      svabhāvaŚūnyatā: "The form lacks inherent existence (svabhāva)",
+      pratītyasamutpāda: "The form arises dependently on contexts, data, and definitions",
+      māyāRūpa: "The form is like an illusion - functional yet without essence",
+      saṃvṛtiSatya: "As conventional truth, the form has practical validity",
+      paramārthaŚūnyatā: "At ultimate level, the form is empty of inherent properties"
     };
   }
 }
 
 /**
- * Create a form from a definition
+ * Create a form from a definition - prapatrāSṛṣṭi (form creation)
  */
-export function createForm<T extends FormShape = FormShape>(
-  definition: FormDefinition,
-  data?: FormMatter,
-  options?: {
+export function prapatrāSṛṣṭi<T extends FormShape = FormShape>(
+  vyākhyā: FormDefinition,
+  dravya?: FormMatter,
+  vikalpa?: {
     id?: string;
-    autoActivate?: boolean;
+    svataḥSakriya?: boolean;
   }
-): Form<T> {
-  return new Form<T>(definition, data, options);
+): Prapatrā<T> {
+  return new Prapatrā<T>(vyākhyā, dravya, vikalpa);
 }
 
+// Export original names for backward compatibility
+export { Prapatrā as Form };
+export const createForm = prapatrāSṛṣṭi;

@@ -1,5 +1,5 @@
 import { createMorph } from "../morph";  // Use factory function
-import { MorpheusContext, ViewContext, isViewContext } from "../../schema/context";
+import { FormExecutionContext } from "../../schema/context";
 import { ViewOutput, ViewField } from "./display";
 
 /**
@@ -26,24 +26,30 @@ export interface GroupedViewOutput extends Omit<ViewOutput, 'fields'> {
   }
 }
 
+// Helper to check for view context
+function hasGroupingConfig(context: any): boolean {
+  return context && (context.grouping !== undefined || 
+                     (context.paryāvaraṇa && context.paryāvaraṇa.grouping !== undefined));
+}
+
 /**
  * Group fields by specified categories
  */
 export const GroupedViewMorph = createMorph<ViewOutput, GroupedViewOutput>(
   "GroupedViewMorph",
-  (view, context: MorpheusContext) => {
+  (view, context: FormExecutionContext) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to GroupedViewMorph");
     }
 
-    // Use type guard instead of casting
-    if (!isViewContext(context)) {
-      throw new Error("GroupedViewMorph requires a ViewContext");
+    // Check for grouping configuration
+    if (!hasGroupingConfig(context)) {
+      throw new Error("GroupedViewMorph requires grouping configuration in context");
     }
     
-    // Get grouping configuration
-    const groupConfig = context.grouping || {
+    // Get grouping configuration from context
+    const groupConfig = context.paryāvaraṇa?.grouping || context.grouping || {
       defaultGroup: "general"
     };
     
@@ -158,13 +164,7 @@ function toTitleCase(str: string): string {
     .trim(); // Remove leading/trailing spaces
 }
 
-// Register with Morpheus
-import { morpheus } from "../../modality/morpheus";
+// Register with the transformation registry
+import { morphRegistry } from "../registry";
 
-morpheus.register(GroupedViewMorph, {
-  description: "Groups fields into logical categories",
-  category: "view",
-  tags: ["view", "group", "organize", "display"],
-  inputType: "ViewOutput",
-  outputType: "GroupedViewOutput"
-});
+morphRegistry.registerMorph("GroupedViewMorph", GroupedViewMorph);
