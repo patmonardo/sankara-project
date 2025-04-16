@@ -1,9 +1,6 @@
-import { createMorph } from "../morph";
-import { 
-  FormExecutionContext, 
-  isViewContext 
-} from "../../schema/context";
-import { ViewOutput, ViewField } from "./display";
+import { createMorph, morpheus } from "../morph";
+import { isViewContext } from "../mode";
+import { ViewOutput, ViewField } from "./pipeline";
 
 /**
  * Truncation configuration
@@ -21,7 +18,7 @@ export interface TruncationConfig {
  * Truncated view field with additional metadata
  */
 export interface TruncatedViewField extends ViewField {
-  meta: ViewField['meta'] & {
+  meta: ViewField["meta"] & {
     truncation?: {
       isTruncated: boolean;
       originalLength: number;
@@ -38,7 +35,7 @@ export interface TruncatedViewField extends ViewField {
  */
 export interface TruncatedViewOutput extends ViewOutput {
   fields: TruncatedViewField[];
-  meta: ViewOutput['meta'] & {
+  meta: ViewOutput["meta"] & {
     truncation: {
       enabled: boolean;
       truncatedFields: string[];
@@ -53,32 +50,41 @@ function getContentLength(field: ViewField): number {
   if (field.value === null || field.value === undefined) {
     return 0;
   }
-  
-  if (typeof field.value === 'string') {
+
+  if (typeof field.value === "string") {
     return field.value.length;
   }
-  
+
   if (field.displayValue) {
     return field.displayValue.length;
   }
-  
+
   return String(field.value).length;
 }
 
 /**
  * Helper function to determine if a field should be truncated
  */
-function shouldTruncateField(field: ViewField, config: TruncationConfig): boolean {
+function shouldTruncateField(
+  field: ViewField,
+  config: TruncationConfig
+): boolean {
   // Skip fields without values
   if (field.value === null || field.value === undefined) {
     return false;
   }
-  
+
   // Only truncate text-like fields by default
   const truncatableTypes = [
-    'string', 'text', 'richtext', 'markdown', 'html', 'code', 'textarea'
+    "string",
+    "text",
+    "richtext",
+    "markdown",
+    "html",
+    "code",
+    "textarea",
   ];
-  
+
   return truncatableTypes.includes(field.type);
 }
 
@@ -86,24 +92,24 @@ function shouldTruncateField(field: ViewField, config: TruncationConfig): boolea
  * Get the maximum length for a field based on its type
  */
 function getMaxLengthForField(
-  field: ViewField, 
-  config: TruncationConfig, 
+  field: ViewField,
+  config: TruncationConfig,
   defaultLength: number
 ): number {
   if (config.byFieldType && field.type in config.byFieldType) {
     return config.byFieldType[field.type];
   }
-  
+
   // Different defaults based on field type
   switch (field.type) {
-    case 'richtext':
-    case 'markdown':
-    case 'html':
+    case "richtext":
+    case "markdown":
+    case "html":
       return config.maxLength || 500; // Longer for rich content
-      
-    case 'textarea':
+
+    case "textarea":
       return config.maxLength || 300; // Medium for multiline
-      
+
     default:
       return config.maxLength || defaultLength;
   }
@@ -112,22 +118,26 @@ function getMaxLengthForField(
 /**
  * Truncate text at a word boundary
  */
-function truncateAtWordBoundary(text: string, maxLength: number, ellipsis: string): string {
+function truncateAtWordBoundary(
+  text: string,
+  maxLength: number,
+  ellipsis: string
+): string {
   if (text.length <= maxLength) {
     return text;
   }
-  
+
   // Find the last space before maxLength
   let truncatePoint = maxLength;
-  while (truncatePoint > 0 && text[truncatePoint] !== ' ') {
+  while (truncatePoint > 0 && text[truncatePoint] !== " ") {
     truncatePoint--;
   }
-  
+
   // If no space found, just truncate at maxLength
   if (truncatePoint === 0) {
     truncatePoint = maxLength;
   }
-  
+
   return text.substring(0, truncatePoint) + ellipsis;
 }
 
@@ -136,7 +146,7 @@ function truncateAtWordBoundary(text: string, maxLength: number, ellipsis: strin
  */
 export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
   "TruncateTextMorph",
-  (view, context: FormExecutionContext) => {
+  (view, context) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to TruncateTextMorph");
@@ -146,15 +156,15 @@ export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
     if (!isViewContext(context)) {
       throw new Error("TruncateTextMorph requires a ViewContext");
     }
-    
+
     // Get truncation configuration
     const truncConfig = context.truncation || { enabled: false };
-    
+
     // If truncation is disabled, just add the metadata structure
     if (!truncConfig.enabled) {
       return {
         ...view,
-        fields: view.fields.map(field => ({
+        fields: view.fields.map((field) => ({
           ...field,
           meta: {
             ...field.meta,
@@ -162,28 +172,28 @@ export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
               isTruncated: false,
               originalLength: getContentLength(field),
               displayedLength: getContentLength(field),
-              hasMore: false
-            }
-          }
+              hasMore: false,
+            },
+          },
         })) as TruncatedViewField[],
         meta: {
           ...view.meta,
           truncation: {
             enabled: false,
-            truncatedFields: []
-          }
-        }
+            truncatedFields: [],
+          },
+        },
       };
     }
-    
+
     // Default values
     const defaultMaxLength = truncConfig.maxLength || 200;
-    const ellipsis = truncConfig.ellipsis || '…';
+    const ellipsis = truncConfig.ellipsis || "…";
     const preserveWords = truncConfig.preserveWords !== false;
-    
+
     // Process fields
     const truncatedFields: string[] = [];
-    const processedFields = view.fields.map(field => {
+    const processedFields = view.fields.map((field) => {
       // Skip non-text fields or fields that shouldn't be truncated
       if (!shouldTruncateField(field, truncConfig)) {
         return {
@@ -194,19 +204,23 @@ export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
               isTruncated: false,
               originalLength: getContentLength(field),
               displayedLength: getContentLength(field),
-              hasMore: false
-            }
-          }
+              hasMore: false,
+            },
+          },
         };
       }
-      
+
       // Get the max length for this field type
-      const maxLength = getMaxLengthForField(field, truncConfig, defaultMaxLength);
-      
+      const maxLength = getMaxLengthForField(
+        field,
+        truncConfig,
+        defaultMaxLength
+      );
+
       // Get content as string
-      const originalContent = String(field.value || '');
+      const originalContent = String(field.value || "");
       const originalLength = originalContent.length;
-      
+
       // Skip if content is already short enough
       if (originalLength <= maxLength) {
         return {
@@ -217,25 +231,29 @@ export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
               isTruncated: false,
               originalLength,
               displayedLength: originalLength,
-              hasMore: false
-            }
-          }
+              hasMore: false,
+            },
+          },
         };
       }
-      
+
       // Truncate content
       let truncatedContent;
       if (preserveWords) {
         // Truncate at word boundary
-        truncatedContent = truncateAtWordBoundary(originalContent, maxLength, ellipsis);
+        truncatedContent = truncateAtWordBoundary(
+          originalContent,
+          maxLength,
+          ellipsis
+        );
       } else {
         // Simple character truncation
         truncatedContent = originalContent.slice(0, maxLength) + ellipsis;
       }
-      
+
       // Add to truncated fields list
       truncatedFields.push(field.id);
-      
+
       // Return truncated field
       return {
         ...field,
@@ -247,13 +265,13 @@ export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
             originalLength,
             displayedLength: truncatedContent.length,
             hasMore: true,
-            fullContent: originalContent,  // Store original content for expansion
-            readMoreAction: `expandField:${field.id}`
-          }
-        }
+            fullContent: originalContent, // Store original content for expansion
+            readMoreAction: `expandField:${field.id}`,
+          },
+        },
       };
     }) as TruncatedViewField[];
-    
+
     // Return truncated view
     return {
       ...view,
@@ -262,26 +280,23 @@ export const TruncateTextMorph = createMorph<ViewOutput, TruncatedViewOutput>(
         ...view.meta,
         truncation: {
           enabled: true,
-          truncatedFields
-        }
-      }
+          truncatedFields,
+        },
+      },
     };
   },
   {
     pure: true,
     fusible: true,
     cost: 2,
-    memoizable: true
+    memoizable: true,
   }
 );
 
-// Register with Morpheus
-import { morpheus } from "../../modality/morpheus";
-
-morpheus.register(TruncateTextMorph, {
+morpheus.define(TruncateTextMorph, {
   description: "Truncates text fields to a specified length",
   category: "view",
   tags: ["view", "text", "truncate", "display"],
   inputType: "ViewOutput",
-  outputType: "TruncatedViewOutput"
+  outputType: "TruncatedViewOutput",
 });

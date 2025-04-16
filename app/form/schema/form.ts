@@ -15,7 +15,7 @@ export const FormContentSchema = z
 
 // Form content
 export const FormOptionSchema = z.object({
-  value: z.string(),
+  value: z.any(),
   label: z.string(),
 });
 
@@ -42,7 +42,7 @@ export const BaseFieldSchema = z.object({
   id: z.string(),
   type: z.string(),
   label: z.string().optional(),
-  required: z.boolean().optional().default(false),
+  required: z.boolean().optional().default(false).optional(),
   description: z.string().optional(),
   placeholder: z.string().optional(),
   defaultValue: z.any().optional(),
@@ -102,13 +102,15 @@ export const FormFieldSchema = z.object({
   readOnly: z.boolean().optional().default(false).optional(),
   visible: z.boolean().optional().default(true).optional(), // Keep visible property
   validation: z.any().optional(), // Define validation schema later
-  options: z.array(z.object({ label: z.string(), value: z.any() })).optional(),
+  options: z.array(FormOptionSchema).optional(),
   inputType: z.string().optional(), // Specific UI input type hint
   createOnly: z.boolean().optional(),
   editOnly: z.boolean().optional(),
   excludeFromCreate: z.boolean().optional(),
   excludeFromEdit: z.boolean().optional(),
   excludeFromView: z.boolean().optional(),
+  description: z.string().optional(),
+  format: z.string().optional(),
   meta: z.record(z.any()).optional(),
 });
 
@@ -222,10 +224,9 @@ export const FormShapeSchema = z.object({
 export type FormMatter = z.infer<typeof FormMatterSchema>;
 export type FormMode = z.infer<typeof FormModeSchema>;
 export type FormContent = z.infer<typeof FormContentSchema>;
-export type FormOptions = z.infer<typeof FormOptionSchema>;
+export type FormOption = z.infer<typeof FormOptionSchema>;
 export type FormHandler = z.infer<typeof FormHandlerSchema>;
 export type FormAction = z.infer<typeof FormActionSchema>;
-export type BaseField = z.infer<typeof BaseFieldSchema>;
 export type FormField = z.infer<typeof FormFieldSchema>;
 export type FormSection = z.infer<typeof FormSectionSchema>;
 export type FormLayout = z.infer<typeof FormLayoutSchema>;

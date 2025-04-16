@@ -1,9 +1,11 @@
-import { FormMode, FormField, FormState, FormShape } from "../schema/form";
+import { FormMode, FormField, FormState } from "../schema/form";
 import { FormExecutionContext } from "../schema/context";
-import { CreateModePipeline } from "./create/pipeline";
-import { EditModePipeline } from "./edit/pipeline";
 import { EditField, EditOutput } from "./edit/pipeline";
-import { ViewProcessorPipeline } from "./view/pipeline";
+import { TruncationConfig } from "./view/truncate";
+import { GroupingConfig } from "./view/group";
+import { DetailConfig } from "./view/detail";
+import { SummaryConfig } from "./view/summary";
+import { ViewFormatType } from "./view/format";
 
 /**
  * Base interface for contexts specific to morph operations.
@@ -17,10 +19,10 @@ export interface MorphContext extends FormExecutionContext {
  * Context specifically for 'sṛṣṭi' (create) morph operations.
  */
 export interface CreateContext extends MorphContext {
-  prakāra: "sṛṣṭi"; // Ensure mode is create
+  prakāra: "sṛṣṭi";
 
   // Data for creation
-  initialValues?: Record<string, any>; // Values to pre-populate fields
+  initialValues?: Record<string, any>;
 
   // Configuration for UI/Morph behavior (optional)
   includeFields?: string[];
@@ -92,7 +94,7 @@ export interface EditContext extends MorphContext {
   readOnlyFields?: string[]; // IDs of fields that should be forced read-only
   trackHistory?: boolean; // Enable/disable field change history tracking (defaults to true)
   // --- End Field processing inputs ---
-  
+
   validateAllFields?: boolean; // Should all fields be validated on submit?
   validationRules?: Record<string, FieldValidationRule>;
 
@@ -123,24 +125,54 @@ export interface EditContext extends MorphContext {
 /**
  * Context specifically for 'darśana' (view) morph operations.
  */
+
 export interface ViewContext extends MorphContext {
-  prakāra: "darśana"; // Ensure mode is view
-
-  // Identifier for the entity being viewed
-  targetId: string; // Or targetEntity?: FormEntity;
-
-  // Data for viewing (e.g., fetched values)
-  currentValues?: Record<string, any>;
-
-  // Configuration for UI/Morph behavior (optional)
-  includeFields?: string[];
-  excludeFields?: string[];
-  allowEditSwitch?: boolean; // Can the user switch to edit mode?
-  editLabel?: string;
+  mode: "view";
   title?: string;
   description?: string;
   userId?: string;
   source?: string;
+  format?: string;
+  truncation?: TruncationConfig;
+  variant?: "default" | "card" | "compact" | string; // Style variant (e.g., card view)
+  density?: "normal" | "compact" | "comfortable"; // Spacing density
+  padding?: string; // Overall padding for the view container
+  includeFields?: string[];
+  excludeFields?: string[];
+  allowEditSwitch?: boolean;
+  editLabel?: string;
+  grouping?: GroupingConfig;
+  detail?: DetailConfig;
+  summary?: SummaryConfig;
+  /** Specifies the desired output format (e.g., 'jsx', 'json', 'text'). */
+  outputFormat?: ViewFormatType;
+  /** CSS class name to apply (used by JSX formatter). */
+  className?: string;
+  /** Inline styles to apply (used by JSX formatter). */
+  style?: Record<string, any>;
+  /** Whether to stringify JSON output (used by JSON formatter). Defaults to true. */
+  jsonStringify?: boolean;
+  jsonPrettyPrint?: boolean;
+
+  /** Prisma schema generation options */
+  prisma?: {
+    /** Include timestamps (createdAt, updatedAt) in schema. Defaults to true. */
+    timestamps?: boolean;
+    /** Database provider name. Example: 'postgresql', 'mysql', 'sqlite' */
+    provider?: string;
+    /** Include schema enums for select/radio fields with options. Defaults to true. */
+    generateEnums?: boolean;
+    /** Add soft delete column. Defaults to false. */
+    softDelete?: boolean;
+    /** Add specific relations to include. */
+    relations?: Array<{
+      name: string;
+      type: "1-1" | "1-n" | "n-n";
+      references: string;
+      fields?: string[];
+      referencesFields?: string[];
+    }>;
+  };
 }
 
 // --- Type Guards ---
@@ -164,28 +196,14 @@ export function isCreateContext(
 export function isEditContext(
   context: FormExecutionContext | any
 ): context is EditContext {
-  return (
-    context !== null &&
-    typeof context === "object"
-   // context.prakāra === "pariṇāma" &&
-    // Add check for mandatory edit fields if needed, e.g., 'targetId'
-    //typeof context.targetId === "string"
-  );
+  return context !== null && typeof context === "object";
 }
 
 /**
- * Type guard to check if a context is specifically a ViewContext.
+ * Type guard for ViewContext.
  */
-export function isViewContext(
-  context: FormExecutionContext | any
-): context is ViewContext {
-  return (
-    context !== null &&
-    typeof context === "object" &&
-    context.prakāra === "darśana" &&
-    // Add check for mandatory view fields if needed, e.g., 'targetId'
-    typeof context.targetId === "string"
-  );
+export function isViewContext(context: any): context is ViewContext {
+  return context && context.mode === "view";
 }
 
 /**

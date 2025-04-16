@@ -1,7 +1,30 @@
 import React from 'react';
-import { md } from "@/ui/theme/token";
-import { StyleContext } from "../schema/context";
-import { SimpleMorph } from "../morph/morph";
+import { z } from 'zod';
+import { md } from "@/theme/token";
+import { SimpleMorph } from "../morph";
+import { FormExecutionContext, FormExecutionContextSchema } from "../../schema/context"; 
+
+/**
+ * StyleContextSchema - Defines context relevant for styling decisions.
+ * This is separate from the main FormExecutionContext.
+ */
+
+export const StyleContextSchema = FormExecutionContextSchema.extend({
+  theme: z.enum(['light', 'dark', 'system']).optional().default('system'),
+  density: z.enum(['compact', 'normal', 'comfortable']).optional().default('normal'),
+  variant: z.string().optional(), // Component-specific variant (e.g., 'card', 'outline')
+  interactionState: z.object({
+    hover: z.boolean().optional(),
+    focus: z.boolean().optional(),
+    active: z.boolean().optional(),
+    disabled: z.boolean().optional(),
+    error: z.boolean().optional(),
+    success: z.boolean().optional(),
+  }).optional().default({}).optional(),
+});
+
+// --- Add Style Context Type Export ---
+export type StyleContext = z.infer<typeof StyleContextSchema>;
 
 /**
  * StyleShape: The input to a style morphism
@@ -57,7 +80,7 @@ export interface StyleOutput {
  */
 export const StyleMorph = new SimpleMorph<StyleShape, StyleOutput>(
   "StyleMorph",
-  (shape, context: StyleContext) => {
+  (shape: StyleShape, context: StyleContext) => {
     // Merge shape and context properties
     // Context takes precedence over shape for flexibility
     const domain = context.domain || shape.domain || 'base';

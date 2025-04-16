@@ -1,8 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { FormRelation, FormRelationId } from "@/form/relation/relation";
-import { FormEntity, FormEntityId } from "@/form/entity/entity";
-import { NiṣpādanaPariṇāma, KriyāPrakāra } from "@/form/schema/context";
-import { Sandarbha } from "./context";
+import { FormEntity } from "../entity/entity";
+import { FormRelation, FormRelationId } from "../relation/relation";
 
 // --- Verb Definitions (Keep as is) ---
 export const ContextEngineVerbs = {

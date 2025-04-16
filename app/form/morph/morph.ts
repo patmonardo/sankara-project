@@ -555,15 +555,17 @@ export function createOptimizedPipeline<TIn, TOut>(
  * FluentPipeline - A builder pattern for creating morphism pipelines
  *
  * This provides a more fluent API for creating complex transformation pipelines.
+ * Updated to use FormMorph internally.
  */
 export class FluentPipeline<I, O> {
-  private steps: SimpleMorph<any, any>[] = [];
+  // Store steps as the general FormMorph interface
+  private steps: FormMorph<any, any>[] = [];
   private pipelineName: string;
 
   /**
    * Create a new pipeline with an optional starting morphism
    */
-  constructor(name: string, initialMorph?: SimpleMorph<I, any>) {
+  constructor(name: string, initialMorph?: FormMorph<I, any>) { // Accept FormMorph
     this.pipelineName = name;
     if (initialMorph) {
       this.steps.push(initialMorph);
@@ -573,7 +575,7 @@ export class FluentPipeline<I, O> {
   /**
    * Add a morphism to the pipeline
    */
-  pipe<T>(morph: SimpleMorph<O, T>): FluentPipeline<I, T> {
+  pipe<T>(morph: FormMorph<O, T>): FluentPipeline<I, T> { // Accept FormMorph
     this.steps.push(morph);
     return this as unknown as FluentPipeline<I, T>;
   }
@@ -582,9 +584,10 @@ export class FluentPipeline<I, O> {
    * Add a named morphism from the registry to the pipeline
    */
   pipeTo<T>(morphName: string): FluentPipeline<I, T> {
+    // Expect morpheus.get to return FormMorph
     const morph = morpheus.get<O, T>(morphName);
     if (!morph) {
-      throw new Error(`Morphism "${morphName}" not found`);
+      throw new Error(`Morphism "${morphName}" not found in morpheus registry`);
     }
 
     this.steps.push(morph);
@@ -597,12 +600,13 @@ export class FluentPipeline<I, O> {
   filter(
     condition: (input: O, context: FormExecutionContext) => boolean
   ): FluentPipeline<I, O> {
+    // Create a SimpleMorph (which implements FormMorph) for the filter logic
     const filterMorph = new SimpleMorph<O, O>(
       `Filter_${this.steps.length}`,
-      (input, context) => (condition(input, context) ? input : input),
+      (input, context) => (condition(input, context) ? input : input), // Simple pass-through if false
       {
-        pure: false,
-        fusible: false,
+        pure: false, // Condition might depend on context
+        fusible: false, // Filters generally break fusion
         cost: 0.1,
         memoizable: false,
       }
@@ -625,14 +629,15 @@ export class FluentPipeline<I, O> {
       memoizable?: boolean;
     } = {}
   ): FluentPipeline<I, T> {
+    // Create a SimpleMorph (which implements FormMorph) for the map logic
     const mapMorph = new SimpleMorph<O, T>(
       options.name || `Map_${this.steps.length}`,
       transform,
       {
         pure: options.pure !== false,
-        fusible: options.fusible !== false,
+        fusible: options.fusible !== false, // Allow fusion if specified
         cost: options.cost || 1,
-        memoizable: options.memoizable !== false,
+        memoizable: options.memoizable !== false, // Allow memoization if specified
       }
     );
 
@@ -645,13 +650,13 @@ export class FluentPipeline<I, O> {
    */
   branch<T>(
     condition: (input: O, context: FormExecutionContext) => boolean,
-    trueMorph: SimpleMorph<O, T>,
-    falseMorph: SimpleMorph<O, T>
+    trueMorph: FormMorph<O, T>, // Accept FormMorph
+    falseMorph: FormMorph<O, T> // Accept FormMorph
   ): FluentPipeline<I, T> {
-    // Get cost of both morphs with safe defaults
     const trueCost = trueMorph?.optimizationMetadata?.cost ?? 1;
     const falseCost = falseMorph?.optimizationMetadata?.cost ?? 1;
 
+    // Create a SimpleMorph (which implements FormMorph) for the branch logic
     const branchMorph = new SimpleMorph<O, T>(
       `Branch_${this.steps.length}`,
       (input, context) => {
@@ -662,10 +667,10 @@ export class FluentPipeline<I, O> {
         }
       },
       {
-        pure: false,
-        fusible: false,
-        cost: 1 + Math.max(trueCost, falseCost),
-        memoizable: false,
+        pure: false, // Condition and branches might depend on context/be impure
+        fusible: false, // Branching breaks fusion
+        cost: 1 + Math.max(trueCost, falseCost), // Cost of condition + max branch cost
+        memoizable: false, // Hard to memoize branches safely
       }
     );
 
@@ -677,51 +682,20 @@ export class FluentPipeline<I, O> {
    * Calculate optimization metadata based on all steps
    */
   private calculateOptimizationMetadata(): MorphOptimizationMetadata {
-    // Handle empty pipeline
     if (this.steps.length === 0) {
-      return {
-        pure: true,
-        fusible: true,
-        cost: 0,
-        memoizable: true,
-      };
+      return { pure: true, fusible: true, cost: 0, memoizable: true };
     }
-
-    // Handle single-step pipeline
-    if (this.steps.length === 1) {
-      return {
-        pure: this.steps[0].optimizationMetadata?.pure ?? true,
-        fusible: this.steps[0].optimizationMetadata?.fusible ?? true,
-        cost: this.steps[0].optimizationMetadata?.cost ?? 1,
-        memoizable: this.steps[0].optimizationMetadata?.memoizable ?? true,
-      };
-    }
-
-    // Multi-step pipeline
+    // Calculate based on FormMorph steps
     return {
-      // Pure only if all steps are pure
       pure: this.steps.every((m) => m.optimizationMetadata?.pure !== false),
-
-      // Fusible only if all steps are fusible
-      fusible: this.steps.every(
-        (m) => m.optimizationMetadata?.fusible !== false
-      ),
-
-      // Total cost is sum of all steps
-      cost: this.steps.reduce(
-        (sum, m) => sum + (m.optimizationMetadata?.cost ?? 1),
-        0
-      ),
-
-      // Memoizable only if all steps are memoizable
-      memoizable: this.steps.every(
-        (m) => m.optimizationMetadata?.memoizable !== false
-      ),
+      fusible: false, // Pipelines built this way are generally not fusible as a whole
+      cost: this.steps.reduce((sum, m) => sum + (m.optimizationMetadata?.cost ?? 1), 0),
+      memoizable: this.steps.every((m) => m.optimizationMetadata?.memoizable !== false),
     };
   }
 
   /**
-   * Register and build the pipeline
+   * Register and build the pipeline as a single SimpleMorph wrapping the steps.
    */
   build(
     metadata: {
@@ -731,38 +705,9 @@ export class FluentPipeline<I, O> {
       inputType?: string;
       outputType?: string;
     } = {}
-  ): SimpleMorph<I, O> {
-    // If there are no steps, use identity morphism
-    if (this.steps.length === 0) {
-      return new SimpleMorph<I, O>(
-        this.pipelineName,
-        (input) => input as unknown as O,
-        {
-          pure: true,
-          fusible: true,
-          cost: 0,
-          memoizable: true,
-        }
-      );
-    }
-
-    // If just one step, wrap it
-    if (this.steps.length === 1) {
-      const step = this.steps[0];
-      return new SimpleMorph<I, O>(
-        this.pipelineName,
-        (input, context) => step.apply(input, context) as O,
-        {
-          pure: step.optimizationMetadata?.pure ?? true,
-          fusible: step.optimizationMetadata?.fusible ?? true,
-          cost: step.optimizationMetadata?.cost ?? 1,
-          memoizable: step.optimizationMetadata?.memoizable ?? true,
-        }
-      );
-    }
-
-    // Create a composed pipeline
-    const pipeline = new SimpleMorph<I, O>(
+  ): SimpleMorph<I, O> { // Returns a SimpleMorph which implements FormMorph
+    // Create a single SimpleMorph that executes all steps sequentially
+    const pipelineMorph = new SimpleMorph<I, O>(
       this.pipelineName,
       (input, context) => {
         let result: any = input;
@@ -771,23 +716,23 @@ export class FluentPipeline<I, O> {
         }
         return result as O;
       },
-      this.calculateOptimizationMetadata()
+      this.calculateOptimizationMetadata() // Use calculated metadata
     );
 
-    // Register with morpheus system
-    morpheus.define(pipeline, {
+    // Register the resulting pipeline morph with morpheus system
+    morpheus.define(pipelineMorph, { // Pass the pipelineMorph instance
       description: metadata.description,
       category: metadata.category || "pipeline",
       tags: metadata.tags || [],
       inputType: metadata.inputType || "unknown",
       outputType: metadata.outputType || "unknown",
       composition: {
-        type: "pipeline",
-        morphs: this.steps.map((step) => step.name),
+        type: "fluent-pipeline",
+        morphs: this.steps.map((step) => step.name || "unnamed"), // Get names of steps
       },
     });
 
-    return pipeline;
+    return pipelineMorph;
   }
 
   /**
@@ -795,6 +740,7 @@ export class FluentPipeline<I, O> {
    */
   apply(input: I, context: FormExecutionContext): O {
     let result: any = input;
+    // Iterate over FormMorph steps
     for (const step of this.steps) {
       result = step.apply(result, context);
     }
@@ -808,12 +754,13 @@ export class FluentPipeline<I, O> {
     pipelineName: string,
     morphName: string
   ): FluentPipeline<I, O> {
-    const morph = morpheus.get<I, O>(morphName);
+    // Expect morpheus.get to return FormMorph
+    const morph = morpheus.get<I, any>(morphName); // Start with <I, any>
     if (!morph) {
-      throw new Error(`Morphism "${morphName}" not found`);
+      throw new Error(`Morphism "${morphName}" not found in morpheus registry`);
     }
-
-    return new FluentPipeline<I, O>(pipelineName, morph);
+    // Cast needed because initialMorph expects FormMorph<I, any>
+    return new FluentPipeline<I, O>(pipelineName, morph as FormMorph<I, any>);
   }
 }
 
@@ -824,81 +771,40 @@ export function createPipeline<I = FormShape>(name: string): FluentPipeline<I, I
   return new FluentPipeline<I, I>(name);
 }
 
-/**
- * Start a pipeline with an initial morph
- */
-export function startWith<I, O>(
-  name: string,
-  morph: SimpleMorph<I, O>
-): FluentPipeline<I, O> {
-  return FluentPipeline.fromName(name, morph.name);
-}
+// --- In-Memory Morpheus Registry ---
+const morphRegistry = new Map<string, FormMorph<any, any>>();
+const morphMetadataRegistry = new Map<string, any>();
 
-/**
- * Start a pipeline with a named morph from the registry
- */
-export function startWithName<I, O>(
-  pipelineName: string,
-  morphName: string
-): FluentPipeline<I, O> {
-  return FluentPipeline.fromName(pipelineName, morphName);
-}
-
-// 1. Define a simple mock morph
-const mockAddSuffixMorph = new SimpleMorph<string, string>(
-    'addSuffix', // The name we'll look for
-    (input: string, context: FormExecutionContext) => {
-        console.log(`Mock Morph 'addSuffix' executing with input: ${input}`);
-        // Context isn't used in this simple mock
-        return `${input}-morphed`;
-    },
-    { pure: true, fusible: true, cost: 1 }
-);
-
-// 2. Define the mock morpheus registry object
-const morpheus = {
-    /**
-     * Mock get method for the morpheus registry.
-     * Returns a predefined morph for a specific name.
-     */
-    get<I, O>(morphName: string): SimpleMorph<I, O> | undefined {
-        console.log(`Mock morpheus.get() called for: ${morphName}`);
-        if (morphName === 'addSuffix') {
-            // Return our mock morph, cast to the expected generic types
-            // This assumes the caller expects SimpleMorph<string, string> for 'addSuffix'
-            return mockAddSuffixMorph as unknown as SimpleMorph<I, O>;
+export const morpheus = {
+    define(morph: FormMorph<any, any>, metadata: any): void {
+        if (!morph || !morph.name) {
+            console.error("Morpheus Error: Cannot define a morph without a name.", morph);
+            return;
         }
-        // Return undefined for any other name
-        console.warn(`Mock morpheus.get(): Morph '${morphName}' not found.`);
-        return undefined;
+        morphRegistry.set(morph.name, morph);
+        morphMetadataRegistry.set(morph.name, {
+            name: morph.name,
+            ...metadata,
+            optimization: morph.optimizationMetadata,
+        });
     },
-
-    // Add a mock define method if FluentPipeline's build() needs it
-    define(morph: any, metadata: any): void {
-        console.log(`Mock morpheus.define() called for: ${morph.name}`, metadata);
-        // No-op for the mock
+    get<I, O>(morphName: string): FormMorph<I, O> | undefined {
+        const morph = morphRegistry.get(morphName);
+        if (!morph) {
+            console.warn(`Morpheus Warning: Morph '${morphName}' not found in registry.`);
+            return undefined;
+        }
+        return morph as FormMorph<I, O>;
+    },
+    getMetadata(morphName: string): any | undefined {
+        return morphMetadataRegistry.get(morphName);
+    },
+    listMorphs(): string[] {
+        return Array.from(morphRegistry.keys());
+    },
+    clear(): void {
+        morphRegistry.clear();
+        morphMetadataRegistry.clear();
+        console.log("Morpheus: Registry cleared.");
     }
 };
-
-// --- How to use it (Example in cmd.ts or similar) ---
-
-/*
-// Make sure 'morpheus' is accessible where FluentPipeline needs it.
-// If FluentPipeline is in a different file, you might need to export/import 'morpheus'.
-
-// Example usage that would call the mock:
-try {
-    const pipeline = FluentPipeline.fromName<string, string>('myPipeline', 'addSuffix');
-    // ... add more steps if needed ...
-    const result = pipeline.apply("test-input", {} as FormExecutionContext); // Pass dummy context
-    console.log("Pipeline Result:", result); // Should log "test-input-morphed"
-
-    const builtMorph = pipeline.build(); // This will call morpheus.define()
-    const builtResult = builtMorph.apply("built-test", {} as FormExecutionContext);
-    console.log("Built Morph Result:", builtResult); // Should log "built-test-morphed"
-
-} catch (error) {
-    console.error("Error using pipeline:", error);
-}
-
-*/

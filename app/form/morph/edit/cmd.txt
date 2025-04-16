@@ -1,80 +1,9 @@
-Mock morpheus.define() called for: EditModePipeline {
-  description: 'Transforms a form schema into the structure needed for edit mode UI',
-  category: 'form-mode',
-  tags: [ 'form', 'edit', 'ui', 'pipeline' ],
-  inputType: 'FormShape',
-  outputType: 'EditOutput',
-  composition: {
-    type: 'pipeline',
-    morphs: [ 'PrepareEditMorph', 'GenerateEditActionsMorph' ]
-  }
-}
-Mock morpheus.define() called for: EditCorePipeline {
-  description: 'Apply core edit mode transformations to fields',
-  category: 'form',
-  tags: [ 'form', 'edit', 'fields' ],
-  inputType: 'EditOutput',
-  outputType: 'EditOutput',
-  composition: {
-    type: 'pipeline',
-    morphs: [
-      'EditFieldValuesMorph',
-      'EditFieldConstraintsMorph',
-      'EditFieldHistoryMorph'
-    ]
-  }
-}
-Mock morpheus.define() called for: EditLayoutPipeline {
-  description: 'Apply edit-specific layout transformations',
-  category: 'form',
-  tags: [ 'form', 'edit', 'layout' ],
-  inputType: 'EditOutput',
-  outputType: 'EditOutput',
-  composition: {
-    type: 'pipeline',
-    morphs: [ 'EditSectionLayoutMorph', 'EditDynamicLayoutMorph' ]
-  }
-}
-Mock morpheus.define() called for: EditValidationPipeline {
-  description: 'Apply edit-specific validation and validation UI',
-  category: 'form',
-  tags: [ 'form', 'edit', 'validation' ],
-  inputType: 'EditOutput',
-  outputType: 'EditOutput',
-  composition: {
-    type: 'pipeline',
-    morphs: [ 'EditValidationMorph', 'EditValidationUIMorph' ]
-  }
-}
-Mock morpheus.define() called for: EditStatePipeline {
-  description: 'Apply edit state management transformations',
-  category: 'form',
-  tags: [ 'form', 'edit', 'state' ],
-  inputType: 'EditOutput',
-  outputType: 'EditOutput',
-  composition: {
-    type: 'pipeline',
-    morphs: [ 'EditStateManagerMorph', 'EditPersistenceTrackingMorph' ]
-  }
-}
-Mock morpheus.define() called for: EditSystemPipeline {
-  description: 'Complete Edit system transformation pipeline',
-  category: 'form',
-  tags: [ 'form', 'edit', 'system' ],
-  inputType: 'FormShape',
-  outputType: 'EditOutput',
-  composition: {
-    type: 'pipeline',
-    morphs: [
-      'PrepareEditMorph',
-      'EditCorePipeline',
-      'EditLayoutPipeline',
-      'EditValidationPipeline',
-      'GenerateEditActionsMorph',
-      'EditStatePipeline'
-    ]
-  }
-}
+Morpheus: Defining morph 'EditModePipeline'
+Morpheus: Defining morph 'EditCorePipeline'
+Morpheus: Defining morph 'EditLayoutPipeline'
+Morpheus: Defining morph 'EditValidationPipeline'
+Morpheus: Defining morph 'EditStatePipeline'
+Morpheus: Defining morph 'EditSystemPipeline'
 --- Input Shape ---
 {
   "id": "simpleForm1",
@@ -246,7 +175,7 @@ Mock morpheus.define() called for: EditSystemPipeline {
   "hasChanges": false,
   "meta": {
     "mode": "edit",
-    "timestamp": "2025-04-16T00:05:50.798Z",
+    "timestamp": "2025-04-16T05:52:50.105Z",
     "edit": {
       "trackChanges": true,
       "originalValues": {
@@ -258,7 +187,7 @@ Mock morpheus.define() called for: EditSystemPipeline {
     "title": "Edit Item item-001",
     "validation": {
       "performed": true,
-      "timestamp": 1744761950799,
+      "timestamp": 1744782770106,
       "fieldErrors": 0
     },
     "persistence": {

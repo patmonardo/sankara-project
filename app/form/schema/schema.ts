@@ -23,9 +23,17 @@ export const FormDefinitionSchema = z.object({
   tags: z.array(z.string()).optional(),
 
   // Ontological structure
-  entities: z.record(FormEntityDefinitionSchema).optional().default({}),
-  relations: z.record(FormRelationDefinitionSchema).optional().default({}),
-  contexts: z.record(FormContextSchema).optional().default({}),
+  entities: z
+    .record(FormEntityDefinitionSchema)
+    .optional()
+    .default({})
+    .optional(),
+  relations: z
+    .record(FormRelationDefinitionSchema)
+    .optional()
+    .default({})
+    .optional(),
+  contexts: z.record(FormContextSchema).optional().default({}).optional(),
 
   // Form-specific properties
   schema: z.record(z.any()).optional(),

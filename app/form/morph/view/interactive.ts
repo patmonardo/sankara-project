@@ -2,7 +2,7 @@ import { SimpleMorph } from "../morph";
 import { FormShape } from "../../schema/form";
 import { FormExecutionContext, ViewContext } from "../../schema/context";
 import { ViewOutput, ViewField, determineFieldState } from "./display";
-import { defineFieldStyles, defineActionStyles } from "../../style/style";
+import { defineFieldStyles, defineActionStyles } from "./style";
 
 /**
  * Action button definition

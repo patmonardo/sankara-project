@@ -1,6 +1,6 @@
 import { SimpleMorph } from "../morph";
-import { FormExecutionContext, ViewContext } from "../../schema/context";
-import { ViewOutput, ViewField } from "./display";
+import { ViewContext } from "../mode";
+import { ViewOutput, ViewField } from "./pipeline";
 
 /**
  * Detail level for field display
@@ -20,11 +20,21 @@ export interface DetailViewOutput extends ViewOutput {
 }
 
 /**
+ * Configuration for detail level in view mode.
+ */
+export interface DetailConfig {
+  /** The level of detail to display for fields. Defaults to 'standard'. */
+  level?: DetailLevel;
+  /** Array of field IDs that should always be shown in an expanded view, regardless of level. */
+  expandedFields?: string[];
+}
+
+/**
  * Create a detailed view with expanded field information
  */
 export const DetailViewMorph = new SimpleMorph<ViewOutput, DetailViewOutput>(
   "DetailViewMorph",
-  (view, context: FormExecutionContext) => {
+  (view, context) => {
     // Validate input
     if (!view || !Array.isArray(view.fields)) {
       throw new Error("Invalid view output provided to DetailViewMorph");

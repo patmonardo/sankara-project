@@ -1,7 +1,7 @@
+import { FormExecutionContext } from "../../schema/context";
 import { SimpleMorph } from "../morph";
-import { FormShape } from "../../schema/form";
-import { FormExecutionContext, ViewContext } from "../../schema/context";
-import { ViewOutput, ViewField } from "./display";
+import { ViewContext } from "../mode";
+import { ViewOutput, ViewField } from "./pipeline";
 
 /**
  * Summary view output
@@ -13,6 +13,29 @@ export interface SummaryViewOutput extends ViewOutput {
       includedFieldCount: number;
     };
   };
+}
+
+/**
+ * Configuration for summary view mode
+ */
+export interface SummaryConfig {
+  /** Selection mode: 'include' to show only specified fields, 'exclude' to show all except specified fields */
+  mode?: 'include' | 'exclude';
+  
+  /** Array of field IDs to include or exclude depending on the mode */
+  fields?: string[];
+  
+  /** Maximum number of fields to show (defaults to 5) */
+  maxFields?: number;
+  
+  /** Sort fields by a specific criteria */
+  sortBy?: 'importance' | 'label' | 'order';
+  
+  /** Whether to show field values in summary view */
+  showValues?: boolean;
+  
+  /** Default importance value for fields without explicit importance */
+  defaultImportance?: number;
 }
 
 /**
