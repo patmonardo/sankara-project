@@ -11,18 +11,42 @@ import {
 import { FormEntityDefinitionSchema } from "../schema/entity";
 import { FormRelationDefinitionSchema } from "../schema/relation";
 import { FormContextSchema } from "../schema/context";
-import { sandarbhaSṛṣṭi } from "../context/context";
+// Remove direct Sandarbha dependency if instantiation is handled by engine
+// import { sandarbhaSṛṣṭi } from "../context/context";
+import { FormRelation } from "@/form/relation/relation";
+import { FormEntity } from "@/form/entity/entity";
+
+// --- Define Form Service Verb Subtypes (Tokens) ---
+// These verbs are emitted by the service and likely handled by FormEngine
+const FormServiceVerbs = {
+    INSTANTIATE_REQUESTED: 'formEngine:requestInstantiation', // Matches FormEngine verb
+    TRANSFORM_REQUESTED: 'formEngine:requestTransformation',
+    COMPOSE_REQUESTED: 'formEngine:requestComposition',
+    APPLY_TRANSCENDENCE_REQUESTED: 'formEngine:requestTranscendence',
+    EXTRACT_ESSENCE_REQUESTED: 'formEngine:requestEssence',
+    // Definition verbs might be handled differently or not involve the engine directly
+    // DEFINE_FORM_REQUESTED: 'formDefinition:defineRequested',
+    // DEFINE_PATH_REQUESTED: 'formPath:defineRequested',
+    // DEFINE_CODEX_REQUESTED: 'formCodex:defineRequested',
+};
+// --- End Verb Definitions ---
+
+// Placeholder for getting a system entity to be the source of service verbs
+const getServiceSourceEntity = (): FormEntity => {
+    // Find or create a generic system entity for the service
+    // Assuming FormEntity.findOrCreate exists or is added
+    return FormEntity.findOrCreate({ id: 'system:formService', type: 'System::Service' });
+};
+
 
 /**
- * FormService - Core service for Form operations
- *
- * This service manages the creation, transformation, and composition of forms
- * within the system, connecting the philosophical infrastructure to practical
- * business applications.
+ * FormService - API layer for Form operations.
+ * Translates requests into verbs for FormEngine or manages definitions.
  */
 export class FormService {
   /**
-   * Create a form definition
+   * Create a form definition.
+   * (Kept largely as is - defines structure, doesn't necessarily trigger engine)
    */
   static defineForm(config: {
     id?: string;
@@ -38,7 +62,7 @@ export class FormService {
   }): FormDefinition {
     // Create form definition with unique ID if not provided
     const formDefinition = FormDefinitionSchema.parse({
-      id: config.id || `form:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`,
+      id: config.id || `formDef:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`, // Changed prefix
       name: config.name,
       description: config.description,
       type: config.type,
@@ -51,29 +75,20 @@ export class FormService {
       created: new Date(),
       updated: new Date(),
     });
-    
-    // Create default context if none provided
-    if (Object.keys(formDefinition.contexts).length === 0) {
-      const defaultContext = sandarbhaSṛṣṭi({
-        nāma: `Default context for ${formDefinition.name}`,
-        prakāra: formDefinition.type,
-        lakṣaṇa: { isDefaultContext: true }
-      });
-      
-      // Add to form definition
-      formDefinition.contexts[defaultContext.id] = {
-        id: defaultContext.id,
-        name: defaultContext.nāma || '',
-        type: defaultContext.prakāra,
-        active: false
-      };
-    }
-    
+
+    // Note: Removed automatic default context creation here.
+    // The FormEngine will handle context creation based on the definition
+    // when instantiation is requested.
+
+    // TODO: Consider if defining a form should emit a verb for persistence/registration
+    // e.g., FormRelation.emit(getServiceSourceEntity(), 'formDefinition:created', { definition: formDefinition });
+
     return formDefinition;
   }
 
   /**
-   * Create a form path
+   * Create a form path definition.
+   * (Kept largely as is - defines structure)
    */
   static definePath(config: {
     id?: string;
@@ -83,9 +98,8 @@ export class FormService {
     circular?: boolean;
     metadata?: Record<string, any>;
   }): FormPath {
-    // Map each step to include an ID
     const steps = config.steps.map((step, index) => ({
-      id: `step:${index}`,
+      id: `step:${index}`, // Simple ID generation
       name: step.name,
       description: step.description,
       targetId: step.targetId,
@@ -95,9 +109,8 @@ export class FormService {
       metadata: step.metadata,
     }));
 
-    // Create and return the path
-    return FormPathSchema.parse({
-      id: config.id || `path:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`,
+    const pathDefinition = FormPathSchema.parse({
+      id: config.id || `pathDef:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`, // Changed prefix
       name: config.name,
       description: config.description,
       steps: steps,
@@ -106,10 +119,16 @@ export class FormService {
       created: new Date(),
       updated: new Date(),
     });
+
+    // TODO: Consider emitting a verb for persistence/registration
+    // e.g., FormRelation.emit(getServiceSourceEntity(), 'formPath:created', { path: pathDefinition });
+
+    return pathDefinition;
   }
 
   /**
-   * Create a form codex - a collection of related forms
+   * Create a form codex definition.
+   * (Kept largely as is - defines structure)
    */
   static defineCodex(config: {
     id?: string;
@@ -117,16 +136,15 @@ export class FormService {
     description?: string;
     definitions: Record<string, FormDefinition>;
     paths?: Record<string, FormPath>;
-    categories?: Record<string, { 
-      name: string; 
-      description?: string; 
-      parentId?: string 
+    categories?: Record<string, {
+      name: string;
+      description?: string;
+      parentId?: string
     }>;
     author?: string;
   }): FormCodex {
-    // Create form codex
-    return FormCodexSchema.parse({
-      id: config.id || `codex:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`,
+    const codexDefinition = FormCodexSchema.parse({
+      id: config.id || `codexDef:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`, // Changed prefix
       name: config.name,
       description: config.description,
       definitions: config.definitions,
@@ -137,405 +155,159 @@ export class FormService {
       updated: new Date(),
       author: config.author,
     });
+
+    // TODO: Consider emitting a verb for persistence/registration
+    // e.g., FormRelation.emit(getServiceSourceEntity(), 'formCodex:created', { codex: codexDefinition });
+
+    return codexDefinition;
   }
 
+  // --- Methods Refactored to Emit Verbs for FormEngine ---
+
   /**
-   * Generate a form instance from a definition
+   * Request instantiation of a form instance from a definition.
+   * Emits a 'formEngine:requestInstantiation' verb.
    */
   static instantiateForm(
-    definition: FormDefinition,
-    instanceData?: Record<string, any>
-  ): FormDefinition {
-    // Check if abstract template
+    definition: FormDefinition, // Or definitionId: string if definitions are stored/retrieved
+    initialData?: Record<string, any>,
+    contextOptions?: any[], // Options for context creation during instantiation
+    metadata?: Record<string, any>
+  ): void { // Returns void, action is asynchronous via verb
     if (definition.abstract) {
-      throw new Error(`Cannot instantiate abstract form: ${definition.id}`);
+      console.error(`Cannot request instantiation of abstract form definition: ${definition.id}`);
+      // Optionally emit a failure event here if needed immediately
+      return;
     }
 
-    // Create instantiated form with unique ID
-    const instanceId = `instance:${definition.id}:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    
-    // Create instance context based on definition contexts
-    const instanceContexts: Record<string, z.infer<typeof FormContextSchema>> = {};
-    
-    // Clone contexts with new instance-specific IDs
-    Object.entries(definition.contexts).forEach(([key, context]) => {
-      const instanceContextId = `${instanceId}:context:${key}`;
-      
-      // Create real context in context system
-      const sandarbha = sandarbhaSṛṣṭi({
-        id: instanceContextId,
-        nāma: `Instance context for ${definition.name}`,
-        prakāra: context.type,
-        janakId: context.id, // Reference original as parent
-        lakṣaṇa: {
-          ...context.properties,
-          isInstanceContext: true,
-          originalContextId: context.id
-        }
-      });
-      
-      // Add to instance definition
-      instanceContexts[instanceContextId] = {
-        id: sandarbha.id,
-        name: sandarbha.nāma || '',
-        type: sandarbha.prakāra,
-        active: false
-      };
-    });
-    
-    // Return instance
-    return {
-      ...definition,
-      id: instanceId,
-      contexts: instanceContexts,
-      schema: {
-        ...definition.schema,
-        ...instanceData,
-      },
-      template: false,
-      created: new Date(),
-      updated: new Date(),
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = {
+      definition: definition, // Pass the full definition or just ID
+      // definitionId: definition.id, // Alternative: Pass ID if engine can retrieve definition
+      initialData: initialData,
+      contextOptions: contextOptions, // Let engine handle context setup
     };
+    const verbMetadata = {
+        ...(metadata || {}),
+        // Add any relevant context for the request itself
+    };
+
+    FormRelation.emit(
+        serviceEntity,
+        FormServiceVerbs.INSTANTIATE_REQUESTED,
+        verbContent,
+        verbMetadata
+    );
   }
 
   /**
-   * Apply a transformation to a form
+   * Request applying a transformation to a form instance.
+   * Emits a 'formEngine:requestTransformation' verb.
    */
   static transformForm(
-    form: FormDefinition,
-    transformer: (form: FormDefinition) => Partial<FormDefinition>
-  ): FormDefinition {
-    // Apply transformation function
-    const changes = transformer(form);
-    
-    // Create transformed form with updated timestamp
-    return {
-      ...form,
-      ...changes,
-      updated: new Date(),
+    formInstanceId: string, // Target the instance ID
+    transformerId: string, // ID or name of the transformation logic/morph
+    params?: Record<string, any>, // Parameters for the transformer
+    metadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = {
+      formInstanceId,
+      transformerId,
+      params,
     };
+    const verbMetadata = { ...(metadata || {}) };
+
+    FormRelation.emit(
+        serviceEntity,
+        FormServiceVerbs.TRANSFORM_REQUESTED,
+        verbContent,
+        verbMetadata
+    );
   }
 
   /**
-   * Compose multiple forms into a single form
+   * Request composing multiple forms into a single form instance.
+   * Emits a 'formEngine:requestComposition' verb.
    */
   static composeForms(
-    forms: FormDefinition[],
-    strategy?: "merge" | "extend" | "reference"
-  ): FormDefinition {
-    if (!forms.length) {
-      throw new Error("Cannot compose empty form array");
+    formInstanceIds: string[], // IDs of instances to compose
+    strategy?: "merge" | "extend" | "reference",
+    compositionName?: string, // Optional name for the new composed form
+    metadata?: Record<string, any>
+  ): void {
+    if (!formInstanceIds || formInstanceIds.length < 2) {
+      console.error("Composition requires at least two form instance IDs.");
+      return;
     }
-    
-    const compositionStrategy = strategy || "merge";
-    const baseForm = forms[0];
 
-    // Create a new composed form with unique ID
-    const composedId = `composed:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    
-    // Create composition context
-    const compositionContext = sandarbhaSṛṣṭi({
-      id: `${composedId}:context:composition`,
-      nāma: `Composition context for ${baseForm.name}`,
-      prakāra: "composite",
-      lakṣaṇa: {
-        compositionType: compositionStrategy,
-        sourceFormIds: forms.map(p => p.id)
-      }
-    });
-    
-    // Create base composed form
-    const composedForm: FormDefinition = {
-      ...baseForm,
-      id: composedId,
-      name: `Composed: ${baseForm.name}`,
-      description: `Composition of ${forms.length} forms`,
-      entities: { ...baseForm.entities },
-      relations: { ...baseForm.relations },
-      contexts: { 
-        ...baseForm.contexts,
-        [compositionContext.id]: {
-          id: compositionContext.id,
-          name: compositionContext.nāma || '',
-          type: compositionContext.prakāra,
-          active: true
-        }
-      },
-      created: new Date(),
-      updated: new Date(),
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = {
+      formInstanceIds,
+      strategy: strategy || "merge",
+      compositionName: compositionName || `Composed Form ${Date.now()}`
     };
+    const verbMetadata = { ...(metadata || {}) };
 
-    // Apply the composition strategy for each additional form
-    for (let i = 1; i < forms.length; i++) {
-      const form = forms[i];
-
-      if (compositionStrategy === "merge") {
-        // Merge entities, relations, and contexts
-        composedForm.entities = { ...composedForm.entities, ...form.entities };
-        composedForm.relations = { ...composedForm.relations, ...form.relations };
-        composedForm.contexts = { ...composedForm.contexts, ...form.contexts };
-      } 
-      else if (compositionStrategy === "extend") {
-        // Create extension relations to the original entities
-        for (const [entityId, entity] of Object.entries(form.entities)) {
-          const extendedEntityId = `${form.id}:${entityId}`;
-          
-          // Add entity with namespace
-          composedForm.entities[extendedEntityId] = entity;
-
-          // Create extension relation
-          const relationId = `extends:${form.id}:${entityId}`;
-          composedForm.relations[relationId] = {
-            id: relationId,
-            name: `Extension of ${entity.name}`,
-            type: "extends",
-            source: extendedEntityId,
-            target: entityId,
-            directional: true,
-            active: true,
-            cardinality: "one-to-one",
-            traversalCost: 1,
-            created: new Date(),
-            updated: new Date(),
-          };
-          
-          // Record this relationship in the composition context
-          compositionContext.sambandha.add(relationId);
-        }
-      } 
-      else if (compositionStrategy === "reference") {
-        // Create reference relations to the original forms
-        const relationId = `references:${form.id}`;
-        composedForm.relations[relationId] = {
-          id: relationId,
-          name: `Reference to ${form.name}`,
-          type: "references",
-          source: composedForm.id,
-          target: form.id,
-          properties: {
-            referenceType: "composition",
-          },
-          directional: true,
-          active: true,
-          cardinality: "one-to-one",
-          traversalCost: 1,
-          created: new Date(),
-          updated: new Date(),
-        };
-        
-        // Record this relationship in the composition context
-        compositionContext.sambandha.add(relationId);
-      }
-    }
-
-    return composedForm;
+    FormRelation.emit(
+        serviceEntity,
+        FormServiceVerbs.COMPOSE_REQUESTED,
+        verbContent,
+        verbMetadata
+    );
   }
-  
+
   /**
-   * Apply transcendental principles to a form
-   * 
-   * This method enhances a form with self-referential capabilities,
-   * enabling forms to represent higher-order structures
+   * Request applying transcendental principles to a form instance.
+   * Emits a 'formEngine:requestTranscendence' verb.
    */
-  static applyTranscendence(form: FormDefinition): FormDefinition {
-    // Create transcendental context
-    const transcendentalContextId = `transcendental:${form.id}`;
-    const transcendentalContext = sandarbhaSṛṣṭi({
-      id: transcendentalContextId,
-      nāma: "Transcendental View",
-      prakāra: "perception",
-      lakṣaṇa: {
-        metaphysical: true,
-        superimposition: true,
-        apparentModification: true,
-        particularity: true,
-        indeterminableReality: true
-      }
-    });
-    
-    // Add metaphysical dimensions to the form
-    const enhancedForm = {
-      ...form,
-      metaphysics: {
-        superimposition: "The form superimposes meaning onto undifferentiated experience",
-        apparentModification: "The form is an apparent modification of underlying cognition",
-        particularity: "The form has particularity while participating in universality",
-        selfAbiding: "The form is a point of self-reflection of consciousness",
-        indeterminableReality: "The form is neither real nor unreal but indeterminable"
-      },
-      contexts: {
-        ...form.contexts,
-        [transcendentalContextId]: {
-          id: transcendentalContextId,
-          name: transcendentalContext.nāma || '',
-          type: transcendentalContext.prakāra,
-          active: false
-        }
-      },
-      created: form.created,
-      updated: new Date()
-    };
-    
-    // Create a special self-reference relation that points back to the form itself
-    // This represents the self-reflective nature of consciousness
-    const selfReflectionId = `self-reflection:${form.id}`;
-    
-    enhancedForm.relations = {
-      ...enhancedForm.relations,
-      [selfReflectionId]: {
-        id: selfReflectionId,
-        name: "Self-reflection",
-        description: "The form's reflective self-reference representing its non-dual nature",
-        type: "self-reflection",
-        source: form.id,
-        target: form.id,
-        directional: false, // Non-directional as it represents non-duality
-        active: true,
-        cardinality: "one-to-one",
-        traversalCost: 0, // No cost to traverse to oneself
-        properties: {
-          transcendentalRelation: true,
-          superimposition: true,
-          nonDual: true
-        },
-        created: new Date(),
-        updated: new Date()
-      }
-    };
-    
-    // Record this self-relation in the transcendental context
-    transcendentalContext.sambandha.add(selfReflectionId);
-    
-    return enhancedForm;
+  static applyTranscendence(
+    formInstanceId: string,
+    metadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = { formInstanceId };
+    const verbMetadata = { ...(metadata || {}) };
+
+    FormRelation.emit(
+        serviceEntity,
+        FormServiceVerbs.APPLY_TRANSCENDENCE_REQUESTED,
+        verbContent,
+        verbMetadata
+    );
   }
-  
+
   /**
-   * Extract the essential structure from multiple forms
-   * 
-   * This performs a reduction to identify the common patterns
-   * and core elements across a set of forms
+   * Request extracting the essential structure from multiple form instances.
+   * Emits a 'formEngine:requestEssence' verb.
    */
-  static extractEssence(forms: FormDefinition[]): FormDefinition {
-    if (!forms.length) {
-      throw new Error("Cannot extract essence from empty form array");
+  static extractEssence(
+    formInstanceIds: string[],
+    essenceName?: string, // Optional name for the new essence form
+    metadata?: Record<string, any>
+  ): void {
+    if (!formInstanceIds || formInstanceIds.length === 0) {
+      console.error("Essence extraction requires at least one form instance ID.");
+      return;
     }
-    
-    // Create an essence context
-    const essenceId = `essence:${Date.now()}`;
-    const essenceContext = sandarbhaSṛṣṭi({
-      id: `${essenceId}:context`,
-      nāma: "Essence Context",
-      prakāra: "creation",
-      lakṣaṇa: {
-        isEssenceContext: true,
-        sourceFormCount: forms.length,
-        sourceFormIds: forms.map(p => p.id)
-      }
-    });
-    
-    // Start with an empty essence form
-    const essenceForm: FormDefinition = {
-      id: essenceId,
-      name: "Essential Form",
-      description: "The distilled essence of multiple forms",
-      type: "essence",
-      entities: {},
-      relations: {},
-      contexts: {
-        [essenceContext.id]: {
-          id: essenceContext.id,
-          name: essenceContext.nāma || '',
-          type: essenceContext.prakāra,
-          active: true
-        }
-      },
-      created: new Date(),
-      updated: new Date()
+
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = {
+        formInstanceIds,
+        essenceName: essenceName || `Essence ${Date.now()}`
     };
-    
-    // Track occurrence frequency of each entity type
-    const entityTypeCount: Record<string, number> = {};
-    const relationTypeCount: Record<string, number> = {};
-    
-    // Analyze all forms to identify essential structures
-    for (const form of forms) {
-      // Count entity types
-      for (const entity of Object.values(form.entities)) {
-        entityTypeCount[entity.type] = (entityTypeCount[entity.type] || 0) + 1;
-      }
-      
-      // Count relation types
-      for (const relation of Object.values(form.relations)) {
-        relationTypeCount[relation.type] = (relationTypeCount[relation.type] || 0) + 1;
-      }
-    }
-    
-    // Calculate threshold for essentiality (present in >50% of forms)
-    const threshold = Math.ceil(forms.length / 2);
-    
-    // Extract exemplar entity for each essential entity type
-    for (const [type, count] of Object.entries(entityTypeCount)) {
-      if (count >= threshold) {
-        // This entity type is essential - find an exemplar
-        for (const form of forms) {
-          const exemplar = Object.values(form.entities)
-            .find(entity => entity.type === type);
-          
-          if (exemplar) {
-            // Add as essential entity with generalized properties
-            const essentialEntityId = `essence:entity:${type}`;
-            essenceForm.entities[essentialEntityId] = {
-              ...exemplar,
-              id: essentialEntityId,
-              name: `Essential ${exemplar.name}`,
-              description: `The essential nature of ${type}`,
-              properties: exemplar.properties || {}, // Simplified properties
-              updated: new Date()
-            };
-            
-            // Record this entity in the essence context
-            essenceContext.vastu.add(essentialEntityId);
-            break;
-          }
-        }
-      }
-    }
-    
-    // Extract exemplar relation for each essential relation type
-    for (const [type, count] of Object.entries(relationTypeCount)) {
-      if (count >= threshold) {
-        // This relation type is essential - find an exemplar
-        for (const form of forms) {
-          const exemplar = Object.values(form.relations)
-            .find(relation => relation.type === type);
-          
-          if (exemplar) {
-            // Add as essential relation with generalized properties
-            const essentialRelationId = `essence:relation:${type}`;
-            essenceForm.relations[essentialRelationId] = {
-              ...exemplar,
-              id: essentialRelationId,
-              name: `Essential ${exemplar.name}`,
-              description: `The essential nature of ${type} relationship`,
-              properties: exemplar.properties || {}, // Simplified properties
-              source: "essence:source", // Placeholder
-              target: "essence:target", // Placeholder
-              updated: new Date()
-            };
-            
-            // Record this relation in the essence context
-            essenceContext.sambandha.add(essentialRelationId);
-            break;
-          }
-        }
-      }
-    }
-    
-    return essenceForm;
+    const verbMetadata = { ...(metadata || {}) };
+
+    FormRelation.emit(
+        serviceEntity,
+        FormServiceVerbs.EXTRACT_ESSENCE_REQUESTED,
+        verbContent,
+        verbMetadata
+    );
   }
 }
 
-// Export direct function references for convenience
+// Keep direct function exports if desired, but note they now emit verbs
 export default FormService;
 export const defineForm = FormService.defineForm;
 export const definePath = FormService.definePath;

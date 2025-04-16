@@ -1,311 +1,217 @@
-import { Context } from '../context/context';
-import { FormSystem } from './system';
-import { FormDefinition } from '../schema/schema';
-import { FormMatter } from '../schema/form';
+import { FormRelation, FormRelationId } from "@/form/relation/relation";
+import { FormEntity, FormEntityId } from "@/form/entity/entity"; // Import FormEntityId
+import { Form } from "./form";
+import { FormDefinition } from "../schema/schema";
+import { FormMatter } from "../schema/form";
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating entity IDs
 
-/**
- * FormEngine - Core processing capabilities for the Form system
- * 
- * Provides transformation, analysis, and workflow execution for forms
- * without overcomplicating the implementation with philosophical concepts.
- */
+// --- Define Form Engine Verb Subtypes ---
+const FormEngineVerbs = {
+    // Form Lifecycle Verbs
+    REQUEST_FORM_INSTANTIATION: 'formEngine:requestInstantiation',
+    REQUEST_FORM_DELETION: 'formEngine:requestDeletion',
+    FORM_INSTANTIATED: 'formEngine:instantiated',
+    FORM_DELETED: 'formEngine:deleted',
+    FORM_INSTANTIATION_FAILED: 'formEngine:instantiationFailed',
+
+    // Orchestration Verbs (Emitted by FormEngine)
+    REQUEST_CONTEXT_CREATION_FOR_FORM: 'contextEngine:requestCreation',
+    REQUEST_MORPH_EXECUTION: 'morphEngine:requestExecution',
+    // Potentially add verbs to notify other engines about entity changes if needed
+};
+// --- End Verb Definitions ---
+
+
 export class FormEngine {
-  private static instance: FormEngine;
-  private context: Context;
-  private formSystem: FormSystem;
-  
-  // Registry of transformers, analyzers, and workflows
-  private transformers: Map<string, TransformerFunction> = new Map();
-  private analyzers: Map<string, AnalyzerFunction> = new Map();
-  private workflows: Map<string, Workflow> = new Map();
-  
-  private constructor() {
-    this.formSystem = FormSystem.getInstance();
-    this.context = new Context(); // Simplified for this example
-    this.registerDefaultComponents();
-  }
-  
-  /**
-   * Get the singleton instance
-   */
-  static getInstance(): FormEngine {
-    if (!FormEngine.instance) {
-      FormEngine.instance = new FormEngine();
+    private engineEntity: FormEntity; // Represents the engine itself
+    private forms: Map<string, Form> = new Map(); // Manages active Form instances
+    private verbSubscription: { unsubscribe: () => void } | null = null;
+
+    constructor(engineId: string = 'form-engine:default') {
+        this.engineEntity = FormEntity.findOrCreate({ id: engineId, type: 'System::FormEngine' });
+        console.log(`FormEngine (${this.engineEntity.id}) initialized.`);
+        // Note: The static FormEntity.findOrCreate is still a placeholder.
+        // Ideally, the engine manages its own entity representation or retrieves it.
     }
-    return FormEngine.instance;
-  }
-  
-  /**
-   * Register default components
-   */
-  private registerDefaultComponents(): void {
-    // Register default transformers
-    this.registerTransformer('json', (form) => {
-      return JSON.stringify(form, null, 2);
-    });
-    
-    this.registerTransformer('html', (form) => {
-      // Basic HTML representation
-      return `<div class="form">
-        <h2>${form.definition.name}</h2>
-        <form>
-          ${(form.definition.fields || [])
-            .map(field => `<div class="field">
-              <label>${field.label || field.name}</label>
-              <input type="${field.type || 'text'}" name="${field.name}" 
-                ${field.required ? 'required' : ''} />
-            </div>`)
-            .join('\n')}
-          <button type="submit">Submit</button>
-        </form>
-      </div>`;
-    });
-    
-    // Register default analyzers
-    this.registerAnalyzer('structure', (form) => {
-      const fields = form.definition.fields || [];
-      return {
-        name: form.definition.name,
-        fieldCount: fields.length,
-        requiredFields: fields.filter(f => f.required).length,
-        fieldTypes: fields.reduce((acc, field) => {
-          acc[field.type || 'text'] = (acc[field.type || 'text'] || 0) + 1;
-          return acc;
-        }, {})
-      };
-    });
-    
-    this.registerAnalyzer('validation', (form) => {
-      const fields = form.definition.fields || [];
-      const issues = [];
-      
-      // Basic validation rules
-      if (!form.definition.name) {
-        issues.push('Form name is missing');
-      }
-      
-      if (fields.length === 0) {
-        issues.push('Form has no fields');
-      }
-      
-      fields.forEach(field => {
-        if (!field.name) {
-          issues.push(`Field is missing a name`);
+
+    /**
+     * Start listening for relevant verbs using FormRelation.subscribeToVerbs.
+     */
+    start(): void {
+        if (this.verbSubscription) {
+            console.warn(`FormEngine (${this.engineEntity.id}) is already listening.`);
+            return;
         }
-      });
-      
-      return {
-        valid: issues.length === 0,
-        issues: issues
-      };
-    });
-    
-    // Register default workflows
-    this.registerWorkflow('validate-transform', [
-      { type: 'analyze', name: 'validation' },
-      { type: 'transform', name: 'json', condition: 'valid' }
-    ]);
-  }
-  
-  /**
-   * Register a transformer
-   */
-  registerTransformer(name: string, transformer: TransformerFunction): void {
-    this.transformers.set(name, transformer);
-  }
-  
-  /**
-   * Register an analyzer
-   */
-  registerAnalyzer(name: string, analyzer: AnalyzerFunction): void {
-    this.analyzers.set(name, analyzer);
-  }
-  
-  /**
-   * Register a workflow
-   */
-  registerWorkflow(name: string, steps: WorkflowStep[]): void {
-    this.workflows.set(name, { name, steps });
-  }
-  
-  /**
-   * Transform a form to a specific format
-   */
-  async transform(formId: string, format: string): Promise<any> {
-    const form = this.formSystem.getForm(formId);
-    if (!form) {
-      throw new Error(`Form not found: ${formId}`);
+        console.log(`FormEngine (${this.engineEntity.id}) starting to listen for relation verbs...`);
+
+        this.verbSubscription = FormRelation.subscribeToVerbs((relationVerb) => {
+            if (relationVerb.type === 'event' || relationVerb.type === 'message') {
+                // Route based on subtype
+                switch (relationVerb.subtype) {
+                    // Form Verbs
+                    case FormEngineVerbs.REQUEST_FORM_INSTANTIATION:
+                        this.handleInstantiationRequest(relationVerb);
+                        break;
+                    case FormEngineVerbs.REQUEST_FORM_DELETION:
+                        this.handleDeletionRequest(relationVerb);
+                        break;
+
+                    default:
+                        // console.debug(`FormEngine ignoring verb: ${relationVerb.subtype}`);
+                        break;
+                }
+            }
+        });
     }
-    
-    const transformer = this.transformers.get(format);
-    if (!transformer) {
-      throw new Error(`Transformer not found: ${format}`);
+
+    /**
+     * Stop listening for verbs.
+     */
+    stop(): void {
+        // ... (existing stop method) ...
+        if (this.verbSubscription) {
+            console.log(`FormEngine (${this.engineEntity.id}) stopping listening.`);
+            this.verbSubscription.unsubscribe();
+            this.verbSubscription = null;
+        }
     }
-    
-    // Record operation in context
-    await this.context.recordOperation({
-      type: 'transform',
-      formId,
-      format,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Prepare form data for transformation
-    const formData = {
-      id: form.id,
-      definition: form.vyākhyā,
-      data: form.dravya || {},
-    };
-    
-    // Execute transformer
-    return transformer(formData);
-  }
-  
-  /**
-   * Analyze a form using a specific analyzer
-   */
-  async analyze(formId: string, analyzerName: string): Promise<any> {
-    const form = this.formSystem.getForm(formId);
-    if (!form) {
-      throw new Error(`Form not found: ${formId}`);
+
+    // --- Form Handling Methods (Existing) ---
+    private async handleInstantiationRequest(verb: FormRelation): Promise<void> {
+        // ... (existing handleInstantiationRequest method) ...
+        console.log(`FormEngine handling verb: ${verb.subtype} (ID: ${verb.id})`);
+        const { definition, initialData, requestedId, contextOptions } = verb.content || {};
+        const originatingVerbId = verb.id; // For correlation
+
+        if (!definition) {
+            console.error(`FormEngine: Missing form definition in ${verb.subtype} request.`);
+            this.emitVerb(FormEngineVerbs.FORM_INSTANTIATION_FAILED, {
+                originalVerbId: originatingVerbId,
+                reason: "Missing form definition",
+            }, verb.metadata?.correlationId, verb.metadata?.contextId);
+            return;
+        }
+
+        try {
+            const formId = requestedId || `form:${uuidv4()}`; // Use uuid
+
+            // --- Instantiate the Form ---
+            const newForm = new Form({
+                id: formId,
+                definitionId: definition.id, // Assuming definition has an id
+                definitionName: definition.name,
+                initialData: initialData as FormMatter,
+                // initialState: undefined // Or provide a default if needed
+            });            this.forms.set(formId, newForm);
+            console.log(`FormEngine: Form instance created: ${formId}`);
+
+            // --- Emit Success Verb ---
+            this.emitVerb(FormEngineVerbs.FORM_INSTANTIATED, {
+                originalVerbId: originatingVerbId,
+                formId: formId,
+                definitionName: definition.name,
+            }, verb.metadata?.correlationId, verb.metadata?.contextId);
+
+            // --- Orchestration: Request Context Creation ---
+            if (contextOptions && Array.isArray(contextOptions)) {
+                for (const ctxOpt of contextOptions) {
+                     console.log(`FormEngine: Requesting context creation for form ${formId}`);
+                     this.emitVerb(
+                        FormEngineVerbs.REQUEST_CONTEXT_CREATION_FOR_FORM, // Directed at ContextEngine
+                        {
+                            formId: formId,
+                            name: ctxOpt.name || `${definition.name} Context`,
+                            type: ctxOpt.type || 'standard',
+                            parentId: ctxOpt.parentId,
+                            metadata: { ...(ctxOpt.metadata || {}), associatedForm: formId },
+                            autoActivate: ctxOpt.autoActivate ?? true,
+                            // Add other context options as needed
+                        },
+                        verb.metadata?.correlationId, // Pass correlation ID
+                        verb.metadata?.contextId
+                     );
+                }
+            }
+
+        } catch (error) {
+            console.error(`FormEngine: Failed to instantiate form:`, error);
+            this.emitVerb(FormEngineVerbs.FORM_INSTANTIATION_FAILED, {
+                originalVerbId: originatingVerbId,
+                reason: error instanceof Error ? error.message : String(error),
+                definitionName: definition?.name,
+            }, verb.metadata?.correlationId, verb.metadata?.contextId);
+        }
     }
-    
-    const analyzer = this.analyzers.get(analyzerName);
-    if (!analyzer) {
-      throw new Error(`Analyzer not found: ${analyzerName}`);
+
+    private async handleDeletionRequest(verb: FormRelation): Promise<void> {
+        // ... (existing handleDeletionRequest method) ...
+        console.log(`FormEngine handling verb: ${verb.subtype} (ID: ${verb.id})`);
+        const { formId } = verb.content || {};
+        const originatingVerbId = verb.id;
+
+        if (!formId) {
+             console.error(`FormEngine: Missing formId in ${verb.subtype} request.`);
+             // Maybe emit failure?
+             return;
+        }
+
+        if (this.forms.has(formId)) {
+            // --- Perform cleanup ---
+            // TODO: Emit verbs to request deletion of associated contexts, entities, etc.
+            // Example:
+            // this.emitVerb('contextEngine:requestDeletionForForm', { formId }, originatingVerbId, verb.metadata?.contextId);
+
+            this.forms.delete(formId);
+            console.log(`FormEngine: Form instance deleted: ${formId}`);
+
+            // --- Emit Success Verb ---
+            this.emitVerb(FormEngineVerbs.FORM_DELETED, {
+                originalVerbId: originatingVerbId,
+                formId: formId,
+            }, originatingVerbId, verb.metadata?.contextId);
+
+        } else {
+            console.warn(`FormEngine: Form ${formId} not found for deletion.`);
+            // Maybe emit failure?
+        }
     }
-    
-    // Record operation in context
-    await this.context.recordOperation({
-      type: 'analyze',
-      formId,
-      analyzer: analyzerName,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Prepare form data for analysis
-    const formData = {
-      id: form.id,
-      definition: form.vyākhyā,
-      data: form.dravya || {},
-    };
-    
-    // Execute analyzer
-    return analyzer(formData);
-  }
-  
-  /**
-   * Execute a workflow on a form
-   */
-  async executeWorkflow(formId: string, workflowName: string): Promise<any> {
-    const form = this.formSystem.getForm(formId);
-    if (!form) {
-      throw new Error(`Form not found: ${formId}`);
+
+
+    // --- Helper Methods ---
+
+    /**
+     * Helper to emit verbs from this engine. Includes correlationId.
+     */
+    private emitVerb(
+        subtype: string,
+        content: Record<string, any>,
+        correlationId?: FormRelationId, // Use originating verb ID for correlation
+        contextId?: string,
+        target?: FormEntity
+    ): void {
+        const metadata: Record<string, any> = {};
+        if (contextId) {
+            metadata.contextId = contextId;
+        }
+        if (correlationId) {
+            metadata.correlationId = correlationId; // Add correlation ID
+        }
+
+        if (target) {
+            FormRelation.send(this.engineEntity, target, subtype, content, metadata);
+        } else {
+            FormRelation.emit(this.engineEntity, subtype, content, metadata);
+        }
     }
-    
-    const workflow = this.workflows.get(workflowName);
-    if (!workflow) {
-      throw new Error(`Workflow not found: ${workflowName}`);
+
+
+    /**
+     * Get a managed Form instance (primarily for internal use or debugging).
+     */
+    getFormInstance(formId: string): Form | undefined {
+        return this.forms.get(formId);
     }
-    
-    // Record operation in context
-    await this.context.recordOperation({
-      type: 'workflow',
-      formId,
-      workflow: workflowName,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Execute workflow steps
-    let result = {};
-    
-    for (const step of workflow.steps) {
-      // Check if step should be executed based on condition
-      if (step.condition && !this.evaluateCondition(step.condition, result)) {
-        continue;
-      }
-      
-      // Execute step based on type
-      if (step.type === 'transform') {
-        result = {
-          ...result,
-          transform: await this.transform(formId, step.name)
-        };
-      } 
-      else if (step.type === 'analyze') {
-        result = {
-          ...result,
-          analysis: await this.analyze(formId, step.name)
-        };
-      }
-    }
-    
-    return result;
-  }
-  
-  /**
-   * Simple condition evaluation
-   */
-  private evaluateCondition(condition: string, result: any): boolean {
-    // Support for basic conditions
-    if (condition === 'valid' && result.analysis) {
-      return result.analysis.valid === true;
-    }
-    
-    return true; // Default to true if condition is unknown
-  }
-  
-  /**
-   * Create a form using the engine
-   */
-  async createForm(definition: FormDefinition, data?: FormMatter): Promise<string> {
-    const formId = this.formSystem.createForm(definition, data);
-    
-    // Record operation in context
-    await this.context.recordOperation({
-      type: 'create',
-      formId,
-      timestamp: new Date().toISOString()
-    });
-    
-    return formId;
-  }
-  
-  /**
-   * Get a list of available transformers
-   */
-  getTransformers(): string[] {
-    return Array.from(this.transformers.keys());
-  }
-  
-  /**
-   * Get a list of available analyzers
-   */
-  getAnalyzers(): string[] {
-    return Array.from(this.analyzers.keys());
-  }
-  
-  /**
-   * Get a list of available workflows
-   */
-  getWorkflows(): string[] {
-    return Array.from(this.workflows.keys());
-  }
 }
 
-/**
- * Types for the FormEngine
- */
-type TransformerFunction = (form: any) => any;
-type AnalyzerFunction = (form: any) => any;
-
-interface Workflow {
-  name: string;
-  steps: WorkflowStep[];
-}
-
-interface WorkflowStep {
-  type: 'transform' | 'analyze';
-  name: string;
-  condition?: string;
-}
+// Instantiate the engine (singleton or managed)
+export const formEngine = new FormEngine();

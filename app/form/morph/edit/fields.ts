@@ -1,40 +1,54 @@
 import { createMorph } from "../morph";
-import { FormShape } from "../../schema/form";
-import { FormExecutionContext, isEditContext } from "../../schema/context";
-import { EditOutput } from "./base";
+import { isEditContext } from "../mode";
+import { EditField, EditOutput } from "./pipeline";
 
 /**
  * Initialize field values for edit mode
  * 
  * This morph ensures all fields have appropriate values from either:
- * 1. The context.values
- * 2. The field's existing value
+ * 1. The context.data (current entity values)
+ * 2. The field's existing value (if already processed)
  * 3. The field's defaultValue
  */
 export const EditFieldValuesMorph = createMorph<EditOutput, EditOutput>(
   "EditFieldValuesMorph",
   (shape, context) => {
-    // Get context values
-    const currentValues = context.values || {};
-    
+    // Get current entity data from context
+    const editContext = isEditContext(context) ? context : undefined;
+    const currentData = editContext?.data || {};
     // Process fields to ensure they have values
-    const fieldsWithValues = shape.fields.map(field => {
-      if (!field.id) return field;
+    const fieldsWithValues: EditField[] = shape.fields.map(field => {
+      if (!field.id) return field; // Should still be EditField if shape is EditOutput
       
-      // Determine the field value (context values take precedence)
-      const value = field.id in currentValues ? 
-        currentValues[field.id] : 
+      // Determine the field value (context.data takes precedence)
+      const value = field.id in currentData ? 
+        currentData[field.id] : 
         (field.value !== undefined ? field.value : field.defaultValue);
       
-      return {
+      // Ensure the returned object conforms to EditField
+      const updatedField: EditField = {
         ...field,
-        value
+        value: value,
+        // Ensure other EditField specific properties are maintained or defaulted
+        inputType: field.inputType || field.type, // Example default
+        visible: field.visible !== undefined ? field.visible : true, // Example default
+        disabled: field.disabled !== undefined ? field.disabled : false, // Example default
+        readOnly: field.readOnly !== undefined ? field.readOnly : false, // Example default
+        
+        meta: {
+          ...(field.meta || {}),
+          mode: "edit", // Ensure mode meta is set
+          pristine: field.meta?.pristine !== undefined ? field.meta.pristine : true, // Example default
+          touched: field.meta?.touched !== undefined ? field.meta.touched : false, // Example default
+        }
       };
+      return updatedField;
     });
     
     return {
       ...shape,
-      fields: fieldsWithValues
+
+      fields: fieldsWithValues // This is now explicitly EditField[]
     };
   },
   {
@@ -157,9 +171,9 @@ export const EditFieldHistoryMorph = createMorph<EditOutput, EditOutput>(
 /**
  * Complete edit core pipeline
  */
-import { createPipeline } from "../pipeline";
+import { createPipeline } from "../morph";
 
-export const EditCorePipeline = createPipeline<EditOutput, EditOutput>("EditCorePipeline")
+export const EditFieldsPipeline = createPipeline<EditOutput>("EditCorePipeline")
   .pipe(EditFieldValuesMorph)
   .pipe(EditFieldConstraintsMorph)
   .pipe(EditFieldHistoryMorph)

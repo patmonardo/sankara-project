@@ -7,7 +7,7 @@ import {
   ConceptNetworkSchema,
   type ConceptNode,
   type ConceptLink
-} from '@/form/schema/concept';
+} from '@/form/schema/text';
 
 interface ConceptNetworkProps {
   nodes: ConceptNode[];

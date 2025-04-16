@@ -1,5 +1,5 @@
 import { createMorph } from "../../morph";
-import { EditOutput } from "../edit/base";
+import { EditOutput } from "../edit/pipeline";
 import { FormExecutionContext } from "../../schema/context";
 import { z } from "zod";
 import { initTRPC } from "@trpc/server";

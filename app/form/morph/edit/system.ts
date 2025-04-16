@@ -1,8 +1,8 @@
-import { createPipeline } from "../pipeline";
 import { FormShape } from "../../schema/form";
-import { PrepareEditMorph, EditOutput } from "./base";
-import { EditUIElementsMorph } from "./actions";
-import { EditCorePipeline } from "./core";
+import { createPipeline } from "../morph";
+import { PrepareEditMorph, EditOutput } from "./pipeline";
+import { GenerateEditActionsMorph } from "./actions";
+import { EditFieldsPipeline } from "./fields";
 import { EditLayoutPipeline } from "./layout";
 import { EditValidationPipeline } from "./validation";
 import { EditStatePipeline } from "./state";
@@ -18,12 +18,12 @@ import { EditStatePipeline } from "./state";
  * 5. UI elements (EditUIElementsMorph)
  * 6. State management (EditStatePipeline)
  */
-export const EditSystemPipeline = createPipeline<FormShape, EditOutput>("EditSystemPipeline")
+export const EditSystemPipeline = createPipeline<FormShape>("EditSystemPipeline")
   // Base preparation
   .pipe(PrepareEditMorph)
   
   // Core field processing
-  .pipe(EditCorePipeline)
+  .pipe(EditFieldsPipeline)
   
   // Layout optimization
   .pipe(EditLayoutPipeline)
@@ -32,7 +32,7 @@ export const EditSystemPipeline = createPipeline<FormShape, EditOutput>("EditSys
   .pipe(EditValidationPipeline)
   
   // UI elements
-  .pipe(EditUIElementsMorph)
+  .pipe(GenerateEditActionsMorph)
   
   // State management
   .pipe(EditStatePipeline)
@@ -50,9 +50,9 @@ export const EditSystemPipeline = createPipeline<FormShape, EditOutput>("EditSys
  * 
  * Export all edit-related morphisms and pipelines for external use
  */
-export * from "./base";
+export * from "./pipeline";
 export * from "./actions";
-export * from "./core";
+export * from "./fields";
 export * from "./layout";
 export * from "./validation";
 export * from "./state";

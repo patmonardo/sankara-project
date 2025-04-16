@@ -24,37 +24,38 @@ export const MūlaSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional(),
-  prakāra: PrakāraSchema, // Replacing "type" with prakāra (mode/category)
+  prakāra: PrakāraSchema.optional(), // Replacing "type" with prakāra (mode/category)
 
   // Hierarchical structure (Sopāna - hierarchical structure)
   parentId: z.string().optional(),
 
   // State tracking (Avasthā - state/condition)
-  active: z.boolean().default(false),
+  active: z.boolean().default(false).optional(),
   timestamp: z.number().default(() => Date.now()),
 
   // Content (Viṣaya - content/object)
-  vastu: z.array(z.string()).optional().default([]), // Replacing "entities" with vastu (substances/entities)
-  sambandha: z.array(z.string()).optional().default([]), // Replacing "relations" with sambandha (relations/connections)
-  ghaṭanā: z.array(z.string()).optional().default([]), // Replacing "events" with ghaṭanā (occurrences/events)
+  vastu: z.array(z.string()).optional().default([]).optional(),
+  sambandha: z.array(z.string()).optional().default([]).optional(),
+  ghaṭanā: z.array(z.string()).optional().default([]).optional(),
 
   // Context-specific data (Jñāna - knowledge)
-  sthiti: z.record(z.any()).optional().default({}), // Replacing "state" with sthiti (condition/state)
-  lakṣaṇa: z.record(z.any()).optional().default({}), // Replacing "metadata" with lakṣaṇa (characteristics/attributes)
+  sthiti: z.record(z.any()).optional().default({}).optional(),
+  lakṣaṇa: z.record(z.any()).optional().default({}).optional(),
 
   // Access control (Adhikāra - authority/rights)
-  adhikāra: z.record(z.boolean()).optional(), // Replacing "permissions" with adhikāra
-
+  adhikāra: z.record(z.boolean()).optional(),
   // Lifecycle properties (Jīvana-cakra - life cycle)
   utpanna: z
     .date()
     .optional()
-    .default(() => new Date()), // Replacing "created" with utpanna (originated/arisen)
+    .default(() => new Date())
+    .optional(),
   parivardhita: z
     .date()
     .optional()
-    .default(() => new Date()), // Replacing "updated" with parivardhita (developed/evolved)
-  kartā: z.string().optional(), // Replacing "createdBy" with kartā (agent/doer)
+    .default(() => new Date())
+    .optional(),
+  kartā: z.string().optional(),
 });
 
 /**
@@ -62,18 +63,16 @@ export const MūlaSchema = z.object({
  * Replacing FormContextConstraintSchema with Sanskrit term for "rule/restraint"
  */
 export const NiyamaSchema = z.object({
-  maximumVastu: z.number().optional(), // Replacing "maxEntities" with maximumVastu
-  maximumSambandha: z.number().optional(), // Replacing "maxRelations" with maximumSambandha
-  maximumGhaṭanā: z.number().optional(), // Replacing "maxEvents" with maximumGhaṭanā
-  anumataVastuPrakāra: z.array(z.string()).optional(), // Replacing "allowedEntityTypes" with anumataVastuPrakāra
-  anumataSambandhaPrakāra: z.array(z.string()).optional(), // Replacing "allowedRelationTypes" with anumataSambandhaPrakāra
-  pathyaMātra: z.boolean().optional().default(false), // Replacing "readOnly" with pathyaMātra (read-only)
+  maximumVastu: z.number().optional(),
+  maximumSambandha: z.number().optional(),
+  maximumGhaṭanā: z.number().optional(),
+  anumataVastuPrakāra: z.array(z.string()).optional(),
+  anumataSambandhaPrakāra: z.array(z.string()).optional(),
+  pathyaMātra: z.boolean().optional().default(false).optional(),
   pramāṇaStara: z
     .enum(["śūnya", "alpa", "prāmāṇika", "kaṭhora"])
     .optional()
     .default("prāmāṇika"),
-  // Replacing "validationLevel" with pramāṇaStara (levels of epistemological validity)
-  // "none", "minimal", "standard", "strict" -> "śūnya", "alpa", "prāmāṇika", "kaṭhora"
 });
 
 /**
@@ -93,10 +92,10 @@ export const SvabhāvaSchema = z.object({
     "sambandhaYojitaPara",
     "sambandhaApasāritaPara",
     "ghaṭanāPara",
-  ]), // Replacing "event" with ghaṭanā (event) + para (upon/following)
-  nirvāhaka: z.function().or(z.string()), // Replacing "handler" with nirvāhaka (executor/performer)
-  upādhi: z.record(z.any()).optional(), // Replacing "parameters" with upādhi (conditions/qualifications)
-  sakriya: z.boolean().default(true), // Replacing "active" with sakriya (active/engaged)
+  ]),
+  nirvāhaka: z.function().or(z.string()),
+  upādhi: z.record(z.any()).optional(),
+  sakriya: z.boolean().default(true),
 });
 
 /**
@@ -104,14 +103,14 @@ export const SvabhāvaSchema = z.object({
  * Replacing FormContextQuerySchema with Sanskrit term for "inquiry/search"
  */
 export const AnveṣaṇaSchema = z.object({
-  prakāra: PrakāraSchema.optional(), // Replacing "type" with prakāra
-  sakriya: z.boolean().optional(), // Replacing "active" with sakriya
-  janakId: z.string().optional(), // Replacing "parentId" with janakId (parent/generator)
-  vastuDhārita: z.string().optional(), // Replacing "hasEntity" with vastuDhārita (entity-holding)
-  sambandhaDhārita: z.string().optional(), // Replacing "hasRelation" with sambandhaDhārita
-  lakṣaṇa: z.record(z.any()).optional(), // Replacing "metadata" with lakṣaṇa
-  punaḥpraveśa: z.boolean().optional().default(false), // Replacing "recursive" with punaḥpraveśa (re-entering)
-  niṣkriyaAnṭarbhāva: z.boolean().optional().default(false), // Replacing "includeInactive" with niṣkriyaAnṭarbhāva
+  prakāra: PrakāraSchema.optional(),
+  sakriya: z.boolean().optional(),
+  janakId: z.string().optional(),
+  vastuDhārita: z.string().optional(),
+  sambandhaDhārita: z.string().optional(),
+  lakṣaṇa: z.record(z.any()).optional(),
+  punaḥpraveśa: z.boolean().optional().default(false).optional(),
+  niṣkriyaAnṭarbhāva: z.boolean().optional().default(false).optional(),
 });
 
 /**
@@ -174,15 +173,10 @@ export const NiṣpādanaPhalaSchema = z.object({
  * NiṣpādanaSandarbha Schema - Execution context definition
  */
 export const NiṣpādanaSandarbhaSchema = MūlaSchema.extend({
-  // Ensure prakāra is aligned with pariṇāma in execution contexts
-  prakāra: z
-    .enum(["niṣpādana", "guṇātmaka", "saṅkhyātmaka", "māyātmaka"])
-    .default("niṣpādana"),
-
   // Execution-specific properties
-  pariṇāma: NiṣpādanaPariṇāmaSchema.default("guṇātmaka"), // active execution mode
+  pariṇāma: NiṣpādanaPariṇāmaSchema.default("guṇātmaka").optional(), // active execution mode
   // We keep niṣpādanaPariṇāma for backward compatibility
-  niṣpādanaPariṇāma: NiṣpādanaPariṇāmaSchema.default("guṇātmaka"),
+  niṣpādanaPariṇāma: NiṣpādanaPariṇāmaSchema.default("guṇātmaka").optional(),
 
   // Storage for execution history
   niṣpādanaItihāsa: z
@@ -197,7 +191,8 @@ export const NiṣpādanaSandarbhaSchema = MūlaSchema.extend({
       })
     )
     .optional()
-    .default([]),
+    .default([])
+    .optional(),
 
   // Execution stats
   sāṅkhyikī: z
@@ -211,10 +206,11 @@ export const NiṣpādanaSandarbhaSchema = MūlaSchema.extend({
       prayogaSaṅkhyā: {},
       saphalaAnupāta: 0,
       auṣamaKāla: 0,
-    }),
+    })
+    .optional(),
 
   // Environment settings
-  paryāvaraṇa: z.record(z.any()).optional().default({}), // environment variables
+  paryāvaraṇa: z.record(z.any()).optional().default({}).optional(), // environment variables
 
   // For māyātmaka operations
   māyāvīSthiti: z
@@ -228,8 +224,11 @@ export const NiṣpādanaSandarbhaSchema = MūlaSchema.extend({
       vyāvartanāḥ: {},
       saṃśayāḥ: {},
       ātmasaṃvādāḥ: {},
-    }),
+    })
+    .optional(),
 });
+
+export const FormExecutionContextSchema = NiṣpādanaSandarbhaSchema;
 
 /**
  * SandarbhaSchema - The complete context definition
@@ -245,9 +244,8 @@ export const SandarbhaSchema = MūlaSchema.extend({
   vyavahāraSthiti: z
     .enum(["śūnya", "sakriya", "samāhita", "vyāvartita"])
     .optional()
-    .default("śūnya"),
-  // Replacing "transactionState" with vyavahāraSthiti
-  // "none", "active", "committed", "rolledBack" -> "śūnya", "sakriya", "samāhita", "vyāvartita"
+    .default("śūnya")
+    .optional(),
 
   // Indexing and querying (Anukramaṇikā - indexing)
   anukramaṇikā: z
@@ -267,8 +265,6 @@ export const SandarbhaSchema = MūlaSchema.extend({
         .enum(["pramāṇika", "patraka", "tālikā", "vṛkṣa", "citragraphā"])
         .optional()
         .default("pramāṇika"),
-      // Replacing "layout" with nyāsa (arrangement)
-      // "default", "card", "table", "tree", "graph" -> "pramāṇika", "patraka", "tālikā", "vṛkṣa", "citragraphā"
 
       kramīkaraṇa: z
         .array(
@@ -294,13 +290,17 @@ export const SandarbhaSchema = MūlaSchema.extend({
           sakṣama: false,
           pṛṣṭhāMāpa: 20,
           vartamānaPṛṣṭhā: 1,
-        }),
+        })
+        .optional(),
     })
     .optional()
     .default({
       nyāsa: "pramāṇika",
-    }),
+    })
+    .optional(),
 });
+
+export const FormContextSchema = SandarbhaSchema;
 
 // Basic type exports
 export type Prakāra = z.infer<typeof PrakāraSchema>;
@@ -323,7 +323,7 @@ export type FormContextType = Prakāra;
 export type FormContextConstraints = Niyama;
 export type FormContextBehavior = Svabhāva;
 export type FormContextQuery = Anveṣaṇa;
-export type FormContextRoot = Mūla;
+export type FormContextBase = Mūla;
 export type FormExecutionEnvironmentType = NiṣpādanaPariṇāma;
 export type FormExecutionOperation = KriyāPrakāra;
 export type FormExecutionResult = NiṣpādanaPhala;

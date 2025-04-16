@@ -1,11 +1,20 @@
+import { FormRelation } from "@/form/relation/relation"; // Assuming emitter access
+import { EntityEngineVerbs } from "../entity/engine"; // Assuming verbs are defined here
+
 /**
  * Sandarbha (FormContext) implementation
  *
  * A Sandarbha represents a bounded operational environment
  * within which vastu (entities) and sambandha (relations) operate.
  */
-import { FormEntity } from "@/form/entity/entity";
-import { FormRelation } from "@/form/relation/relation";
+
+// Define an interface for the query options (if not already defined)
+interface SambandhaQueryOptions {
+  prakāra?: string; // Relation type
+  sūtra?: string; // Source ID
+  para?: string; // Target ID
+  // Add other potential query fields if needed
+}
 
 /**
  * SandarbhaGhaṭanā interface for context lifecycle events
@@ -49,7 +58,7 @@ export class Sandarbha<T = any> {
   // Viṣaya/Vinyāsa - Content/configuration
   vinyāsa?: T; // (config)
   sthiti?: Record<string, any>; // New Sanskrit: state -> sthiti
-  
+
   // Vyavahāra - Transaction support
   vyavahāraId?: string; // Transaction ID
   vyavahāraSthiti: string = "śūnya"; // Transaction state: none/active/committed/rolled back
@@ -94,7 +103,7 @@ export class Sandarbha<T = any> {
     // Initialize new properties
     this.ghaṭanā = new Set();
     this.sthiti = {};
-    
+
     // Initialize transaction properties
     this.vyavahāraId = vikalpa.vyavahāraId;
     this.vyavahāraSthiti = vikalpa.vyavahāraSthiti || "śūnya";
@@ -328,7 +337,7 @@ export class Sandarbha<T = any> {
 
     return true;
   }
-  
+
   /**
    * Update context properties - parivardhita (developed/updated)
    */
@@ -366,12 +375,12 @@ export class Sandarbha<T = any> {
         ...parivardhita.sthiti,
       };
     }
-    
+
     // Handle transaction updates
     if (parivardhita.vyavahāraId !== undefined) {
       this.vyavahāraId = parivardhita.vyavahāraId;
     }
-    
+
     if (parivardhita.vyavahāraSthiti !== undefined) {
       this.vyavahāraSthiti = parivardhita.vyavahāraSthiti;
     }
@@ -387,7 +396,7 @@ export class Sandarbha<T = any> {
 
     return true;
   }
-  
+
   /**
    * Delete this context - nāśa (destruction)
    */
@@ -427,7 +436,7 @@ export class Sandarbha<T = any> {
     // Remove from registry
     return Sandarbha.sandarbha.delete(this.id);
   }
-  
+
   /**
    * Start a transaction - vyavahāraPrārambha
    */
@@ -435,10 +444,12 @@ export class Sandarbha<T = any> {
     if (this.vyavahāraSthiti !== "śūnya") {
       return false; // Already in a transaction
     }
-    
-    this.vyavahāraId = vyavahāraId || `vyavahāra:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
+
+    this.vyavahāraId =
+      vyavahāraId ||
+      `vyavahāra:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
     this.vyavahāraSthiti = "sakriya";
-    
+
     return true;
   }
 
@@ -449,9 +460,9 @@ export class Sandarbha<T = any> {
     if (this.vyavahāraSthiti !== "sakriya") {
       return false; // Not in an active transaction
     }
-    
+
     this.vyavahāraSthiti = "samāhita";
-    
+
     return true;
   }
 
@@ -462,9 +473,9 @@ export class Sandarbha<T = any> {
     if (this.vyavahāraSthiti !== "sakriya") {
       return false; // Not in an active transaction
     }
-    
+
     this.vyavahāraSthiti = "vyāvartita";
-    
+
     return true;
   }
 
@@ -482,6 +493,64 @@ export class Sandarbha<T = any> {
     // TODO: Update entity with context if entity implementation available
 
     return true;
+  }
+
+  /**
+   * Retrieves relations within this context based on query options.
+   * sambandhāḥPrāpti (Obtaining Relations)
+   *
+   * @param options - Criteria to filter relations (prakāra, sūtra, para).
+   * @returns An array of matching FormRelation objects.
+   */
+  sambandhāḥPrāpti(options: SambandhaQueryOptions): FormRelation[] {
+    console.log(
+      `Querying relations in context ${this.id} with options:`,
+      options
+    );
+
+    const results: FormRelation[] = [];
+
+    // Iterate through the stored relation IDs in the Set
+    for (const relationId of this.sambandha) {
+      // Retrieve the full relation object using its ID
+      // --- Use the preferred method name ---
+      const relation = FormRelation.getRelation(relationId);
+      // --- End change ---
+
+      if (!relation) {
+        // Relation ID exists in the context, but the object couldn't be found
+        // This might indicate an inconsistency - log a warning.
+        console.warn(
+          `Relation object not found for registered ID ${relationId} during query in context ${this.id}.`
+        );
+        continue; // Skip this ID
+      }
+
+      // Now 'relation' is a FormRelation object, apply filtering
+      let match = true;
+      if (options.prakāra && relation.type !== options.prakāra) {
+        match = false;
+      }
+      // --- Adjust filtering based on FormRelation properties ---
+      // Assuming FormRelation has 'source' and 'target' properties which are FormEntity objects
+      if (options.sūtra && relation.source?.id !== options.sūtra) {
+        match = false;
+      }
+      if (options.para && relation.target?.id !== options.para) {
+        match = false;
+      }
+      // --- End adjustment ---
+
+      // If all criteria match, add the retrieved relation object to results
+      if (match) {
+        results.push(relation);
+      }
+    }
+
+    console.log(
+      `Found ${results.length} matching relations in context ${this.id}.`
+    );
+    return results;
   }
 
   /**
@@ -521,40 +590,66 @@ export class Sandarbha<T = any> {
   }
 
   /**
-   * Create a new entity in this context - vastuSṛṣṭi (entity creation)
+   * Request creation of a new entity associated with this context.
+   * Emits a verb to EntityEngine.
    */
-  vastuSṛṣṭi(data: Record<string, any>): string {
-    const vastuId = `vastu:${Date.now()}:${Math.random()
-      .toString(36)
-      .substring(2, 9)}`;
-
-    // TODO: Create entity with proper implementation
-
-    // Register with context
-    this.vastuPañjīkaraṇa(vastuId);
-
-    return vastuId;
+ 
+  /**
+   * Create a new entity in this context - vastuNirmāṇa (entity construction/making)
+   * TEMPORARY STUB - Does not actually create an entity or emit a verb.
+   */
+  vastuNirmāṇa(data: Record<string, any>): string {
+    const tempId = data.id || `stub_entity:${Date.now()}`;
+    console.warn(`Sandarbha.vastuNirmāṇa STUBBED: Would request entity creation for ID ${tempId} in context ${this.id}. Data:`, data);
+    // Does NOT call FormEntity or emit a verb.
+    return tempId; // Return a dummy ID
   }
 
   /**
-   * Create a new relation in this context - sambandhaSṛṣṭi (relation creation)
+   * Creates a new relation within this context.
+   * (Implementation details will depend on how relations are stored)
+   *
+   * @param sūtraId - The ID of the source entity/node.
+   * @param paraId - The ID of the target entity/node.
+   * @param prakāra - The type of the relation.
+   * @param lakṣaṇa - Optional properties/metadata for the relation.
+   * @returns The created relation object or its ID (adjust as needed).
    */
-  sambandhaSṛṣṭi(
-    udbhava: string, // source
-    lakṣya: string, // target
-    prakāra: string, // type
-    data: Record<string, any> = {}
-  ): string {
-    const sambandhaId = `sambandha:${Date.now()}:${Math.random()
-      .toString(36)
-      .substring(2, 9)}`;
 
-    // TODO: Create relation with proper implementation
+  sambandhaNirmāṇa(
+    sūtraId: string,
+    paraId: string,
+    prakāra: string,
+    lakṣaṇa?: Record<string, any>
+  ): any {
+    // <-- Adjust return type as needed
+    console.log(
+      `Creating relation in context ${this.id}: ${sūtraId} -[${prakāra}]-> ${paraId}`
+    );
 
-    // Register with context
-    this.sambandhaPañjīkaraṇa(sambandhaId);
+    // --- IMPLEMENTATION NEEDED ---
+    // This is where you'll add the logic to:
+    // 1. Create a new relation object/record.
+    // 2. Store it within the context's relation management system
+    //    (e.g., add to a Map, push to an array, interact with a graph store).
+    // 3. Return the newly created relation or relevant information.
 
-    return sambandhaId;
+    const newRelation = {
+      id: `${prakāra}:${sūtraId}:${paraId}:${Date.now()}`, // Example ID
+      sūtra: sūtraId,
+      para: paraId,
+      prakāra: prakāra,
+      lakṣaṇa: { ...lakṣaṇa, created: new Date() },
+      contextId: this.id,
+    };
+
+    // Example: Storing in a Map if relations are managed that way
+    // if (!this.relations) this.relations = new Map(); // Assuming 'relations' property exists
+    // this.relations.set(newRelation.id, newRelation);
+
+    // Placeholder return - adjust based on your actual storage and needs
+    return newRelation;
+    // --- END IMPLEMENTATION ---
   }
 
   /**

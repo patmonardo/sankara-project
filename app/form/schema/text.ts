@@ -1,4 +1,4 @@
-//@/form/schema/concept.ts
+//@/form/schema/text.ts
 import { z } from 'zod';
 
 /**
@@ -119,10 +119,18 @@ export function hasValidConnections(network: ConceptNetwork): boolean {
 // Create default empty network
 export function createEmptyNetwork(): ConceptNetwork {
   return {
-    nodes: [],
+    nodes: [{} as ConceptNode],
     links: [],
-    config: NetworkConfigSchema.parse({}),
-  };
+    config: {
+      width: 800,
+      height: 600,
+      nodeRadius: 5,
+      nodeFactor: 2,
+      linkDistance: 100,
+      chargeStrength: -300,
+      collisionRadius: 30
+    }
+  };        
 }
 
 // Convert database concept data to network nodes

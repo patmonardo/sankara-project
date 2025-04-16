@@ -1,101 +1,101 @@
 import { createMorph } from "../morph";
-import { FormShape } from "../../schema/form";
-import { FormExecutionContext, isEditContext } from "../../schema/context";
-import { EditOutput, PrepareEditMorph } from "./base";
+// Assuming context/schema paths are correct
+import { FormAction, FormShape } from "../../schema/form";
+import { EditContext, isEditContext } from "../mode"; // Adjust path if needed
+import { EditOutput } from "./pipeline"; // Assuming EditOutput is defined
 
 /**
- * Add UI elements specific to edit mode
- * 
- * This morph enhances an EditOutput shape with UI action elements
- * appropriate for editing contexts.
+ * Generates the standard form actions (Save, Cancel, Reset, Delete) for edit mode
+ * based on properties within EditContext and the form's changed state.
  */
-export const EditUIElementsMorph = createMorph<EditOutput, EditOutput>(
-  "EditUIElementsMorph",
-  (shape, context) => {
-    // Get edit context options
+// RENAME THE MORPH
+export const GenerateEditActionsMorph = createMorph<EditOutput, EditOutput>(
+  "GenerateEditActionsMorph", // Updated name
+  (outputShape, context) => { // Input is EditOutput
+    // Safely access EditContext properties
     const editContext = isEditContext(context) ? context : undefined;
-    
-    // Get button labels from context or use defaults
-    const submitLabel = editContext?.submitLabel || "Save";
+
+    // Determine button properties from context or use defaults
+    const saveLabel = editContext?.saveLabel || "Save";
     const cancelLabel = editContext?.cancelLabel || "Cancel";
     const deleteLabel = editContext?.deleteLabel || "Delete";
-    const showReset = editContext?.showReset !== false;
-    const showCancel = editContext?.showCancel !== false;
-    const showDelete = editContext?.showDelete || false;
-    
-    // Check if form has been changed
-    const hasChanges = Array.isArray(shape.meta?.edit?.changedFields) && 
-                      shape.meta.edit.changedFields.length > 0;
-    
-    // Return enhanced shape with actions
+    const buttonPosition = editContext?.buttonPosition || "bottom";
+    const showReset = editContext?.showReset !== false; // Default true
+    const showCancel = editContext?.showCancel !== false; // Default true
+    const showDelete = editContext?.showDelete === true; // Default false
+    const disableSaveIfUnchanged = editContext?.disableSaveIfUnchanged !== false; // Default true
+
+    // Check if form has changes (assuming meta.edit.changedFields is populated earlier)
+    // Ensure safe access to potentially nested/optional properties
+    const changedFields = outputShape.meta?.edit?.changedFields;
+    const hasChanges = Array.isArray(changedFields) && changedFields.length > 0;
+
+    // Determine disabled state for Save button
+    const saveDisabled = disableSaveIfUnchanged && !hasChanges;
+    // Determine disabled state for Reset button (only enabled if there are changes)
+    const resetDisabled = !hasChanges;
+
+    // Build the actions array
+    const actions: FormAction[] = [];
+
+    // Add Save action (maps to submit type)
+    actions.push({
+      id: "submit", // Or "save"
+      type: "submit",
+      label: saveLabel,
+      primary: true,
+      disabled: saveDisabled, // Set disabled state directly
+      position: buttonPosition,
+    });
+
+    // Add Cancel action if enabled
+    if (showCancel) {
+      actions.push({
+        id: "cancel",
+        type: "button",
+        label: cancelLabel,
+        primary: false,
+        disabled: false, // Cancel is usually always enabled
+        position: buttonPosition,
+      });
+    }
+
+    // Add Reset action if enabled
+    if (showReset) {
+      actions.push({
+        id: "reset",
+        type: "reset",
+        label: "Reset",
+        primary: false,
+        disabled: resetDisabled, // Set disabled state directly
+        position: buttonPosition,
+      });
+    }
+
+    // Add Delete action if enabled
+    if (showDelete) {
+      actions.push({
+        id: "delete",
+        type: "button", // Needs custom handler
+        label: deleteLabel,
+        primary: false, // Style as destructive?
+        disabled: false, // Delete is usually always enabled (confirmation happens elsewhere)
+        position: buttonPosition,
+        // Consider adding a 'danger: true' property to FormActionSchema if needed for styling
+      });
+    }
+
+    // Return the output shape with the generated actions array
     return {
-      ...shape,
-      actions: [
-        {
-          id: "submit",
-          type: "submit",
-          label: submitLabel,
-          primary: true,
-          disabled: !hasChanges && editContext?.disableSaveIfUnchanged !== false
-        },
-        ...(showCancel ? [{
-          id: "cancel",
-          type: "button",
-          label: cancelLabel,
-          primary: false
-        }] : []),
-        ...(showReset ? [{
-          id: "reset",
-          type: "reset",
-          label: "Reset",
-          primary: false,
-          disabled: !hasChanges
-        }] : []),
-        ...(showDelete ? [{
-          id: "delete",
-          type: "button",
-          label: deleteLabel,
-          primary: false,
-          danger: true
-        }] : [])
-      ],
-      meta: {
-        ...shape.meta,
-        ui: {
-          ...(shape.meta?.ui || {}),
-          hasChanges,
-          submitButton: {
-            label: submitLabel,
-            position: editContext?.buttonPosition || "bottom",
-            disabled: !hasChanges && editContext?.disableSaveIfUnchanged !== false
-          }
-        }
-      }
+      ...outputShape,
+      actions: actions, // Replace actions array
     };
   },
   {
-    pure: true,
+    // Morph properties - might not be pure if meta.edit changes affect output
+    pure: false, // Depends on meta.edit.changedFields which might come from impure source
     fusible: true,
-    cost: 1
+    cost: 1, // Still low cost
+    memoizable: false, // Cannot memoize reliably due to potential meta dependency
   }
 );
-
-// export the edit pipeline
-import { createPipeline } from "../pipeline";
-
-/**
- * Complete pipeline for edit mode
- * 
- * This pipeline transforms a FormShape into an EditOutput with
- * appropriate UI elements for editing.
- */
-export const EditModePipeline = createPipeline<FormShape, EditOutput>("EditModePipeline")
-  .pipe(PrepareEditMorph)
-  .pipe(EditUIElementsMorph)
-  .build({
-    description: "Transform a form schema into edit mode with UI elements",
-    category: "form",
-    tags: ["form", "edit", "ui"],
-    inputType: "FormShape",
-    outputType: "EditOutput"
-  });

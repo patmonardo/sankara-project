@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Context, Sandarbha } from '@/form/context/context';
+import { FormContext, Sandarbha } from '@/form/context/context';
 
 describe('Context System', () => {
   beforeEach(() => {
     // Clear context between tests
-    Context.clearAll();
+    FormContext.clearAll();
   });
   
   it('should create a context', () => {

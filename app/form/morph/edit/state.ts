@@ -1,7 +1,7 @@
 import { createMorph } from "../morph";
-import { FormShape, FormState } from "../../schema/form";
-import { FormExecutionContext, isEditContext } from "../../schema/context";
-import { EditOutput } from "./base";
+import { FormState } from "../../schema/form";
+import { isEditContext } from "../mode";
+import { EditOutput } from "./pipeline";
 
 /**
  * Update edit form state
@@ -99,9 +99,9 @@ export const EditPersistenceTrackingMorph = createMorph<EditOutput, EditOutput>(
 /**
  * Complete edit state pipeline
  */
-import { createPipeline } from "../pipeline";
+import { createPipeline } from "../morph";
 
-export const EditStatePipeline = createPipeline<EditOutput, EditOutput>("EditStatePipeline")
+export const EditStatePipeline = createPipeline<EditOutput>("EditStatePipeline")
   .pipe(EditStateManagerMorph)
   .pipe(EditPersistenceTrackingMorph)
   .build({

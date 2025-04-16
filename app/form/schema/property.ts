@@ -14,8 +14,6 @@ export const PropertyTypeSchema = z.enum([
   "dispositional" // Qualities that manifest under certain conditions
 ]);
 
-export type PropertyType = z.infer<typeof PropertyTypeSchema>;
-
 /**
  * Property - A contextual determination of what an entity is
  * 
@@ -67,7 +65,6 @@ export const PropertySchema = z.object({
   updated: z.date().default(() => new Date()),
 });
 
-export type Property = z.infer<typeof PropertySchema>;
 
 /**
  * PropertyScriptType - Defines types of scripts that determine properties
@@ -80,8 +77,6 @@ export const PropertyScriptTypeSchema = z.enum([
   "predicate",   // Tests a condition about properties
   "reducer"      // Aggregates multiple properties into one
 ]);
-
-export type PropertyScriptType = z.infer<typeof PropertyScriptTypeSchema>;
 
 /**
  * PropertyScript - A script that determines a property
@@ -128,44 +123,7 @@ export const PropertyScriptSchema = z.object({
   updated: z.date().default(() => new Date()),
 });
 
+export type PropertyType = z.infer<typeof PropertyTypeSchema>;
+export type Property = z.infer<typeof PropertySchema>;
 export type PropertyScript = z.infer<typeof PropertyScriptSchema>;
-
-/**
- * MorphismType - Defines types of context-crossing operations
- * 
- * These are distinct from properties - they transform across contexts.
- */
-export const MorphismTypeSchema = z.enum([
-  "getter",      // Gets a value across context boundaries  
-  "setter",      // Sets a value across context boundaries
-  "transformer", // Maps data between contexts
-  "generator"    // Creates content in a new context
-]);
-
-export type MorphismType = z.infer<typeof MorphismTypeSchema>;
-
-/**
- * Morphism - A transformation between contexts
- */
-export const MorphismSchema = z.object({
-  // Identity
-  id: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-  
-  // Classification
-  morphismType: MorphismTypeSchema,
-  
-  // Context mapping
-  sourceContextId: z.string(),
-  targetContextId: z.string(),
-  
-  // Transformation function
-  code: z.any(),
-  
-  // Metadata
-  created: z.date().default(() => new Date()),
-  updated: z.date().default(() => new Date()),
-});
-
-export type Morphism = z.infer<typeof MorphismSchema>;
+export type PropertyScriptType = z.infer<typeof PropertyScriptTypeSchema>;

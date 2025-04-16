@@ -27,11 +27,12 @@ export const FormHandlerSchema = z.object({
 });
 
 export const FormActionSchema = z.object({
-  id: z.string().default("submit"), // Link to FormHandler
-  type: z.enum(["submit", "reset", "button"]).readonly(),
+  id: z.string(),
+  type: z.enum(["submit", "reset", "button"]),
   label: z.string(),
-  variant: z.enum(["primary", "secondary", "ghost"]),
-  options: z.array(FormOptionSchema).optional(),
+  primary: z.boolean().optional().default(false),
+  disabled: z.boolean().optional().default(false),
+  position: z.enum(["top", "bottom", "both"]).optional().default("bottom"),
 });
 
 /**
@@ -90,33 +91,25 @@ export const AccessibilitySchema = z.object({
   tabIndex: z.number().optional()
 });
 
-/**
- * Complete field schema
- */
-export const FormFieldSchema = BaseFieldSchema.extend({
-  // Type-specific validations
-  min: z.number().optional(),
-  max: z.number().optional(),
-  minLength: z.number().optional(),
-  maxLength: z.number().optional(),
-  pattern: z.string().optional(),
-  
-  // Options for select/radio fields
-  options: z.array(
-    z.object({
-      value: z.string(),
-      label: z.string()
-    })
-  ).optional(),
-  
-  // Validation state
-  validation: ValidationSchema.optional(),
-  
-  // Accessibility properties
-  ...AccessibilitySchema.shape,
-  
-  // Metadata
-  meta: FieldMetaSchema.optional()
+export const FormFieldSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  label: z.string().optional(),
+  placeholder: z.string().optional(),
+  defaultValue: z.any().optional(),
+  required: z.boolean().optional().default(false).optional(),
+  disabled: z.boolean().optional().default(false).optional(),
+  readOnly: z.boolean().optional().default(false).optional(),
+  visible: z.boolean().optional().default(true).optional(), // Keep visible property
+  validation: z.any().optional(), // Define validation schema later
+  options: z.array(z.object({ label: z.string(), value: z.any() })).optional(),
+  inputType: z.string().optional(), // Specific UI input type hint
+  createOnly: z.boolean().optional(),
+  editOnly: z.boolean().optional(),
+  excludeFromCreate: z.boolean().optional(),
+  excludeFromEdit: z.boolean().optional(),
+  excludeFromView: z.boolean().optional(),
+  meta: z.record(z.any()).optional(),
 });
 
 /**
@@ -128,11 +121,13 @@ export const FormSectionSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   fields: z.array(z.string()), // Field IDs
-  columns: z.number().optional().default(1),
-  priority: z.number().optional().default(1),
-  collapsible: z.boolean().optional().default(false),
-  collapsed: z.boolean().optional().default(false),
-  className: z.string().optional()
+  columns: z.number().optional().default(1).optional(),
+  priority: z.number().optional().default(1).optional(),
+  collapsible: z.boolean().optional().default(false).optional(),
+  collapsed: z.boolean().optional().default(false).optional(),
+  className: z.string().optional(),
+  meta: z.record(z.any()).optional(),
+  
 });
 
 /**

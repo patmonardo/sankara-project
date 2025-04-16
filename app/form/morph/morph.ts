@@ -816,10 +816,11 @@ export class FluentPipeline<I, O> {
     return new FluentPipeline<I, O>(pipelineName, morph);
   }
 }
+
 /**
  * Create a new pipeline
  */
-export function createPipeline<I = any>(name: string): FluentPipeline<I, I> {
+export function createPipeline<I = FormShape>(name: string): FluentPipeline<I, I> {
   return new FluentPipeline<I, I>(name);
 }
 
@@ -842,3 +843,62 @@ export function startWithName<I, O>(
 ): FluentPipeline<I, O> {
   return FluentPipeline.fromName(pipelineName, morphName);
 }
+
+// 1. Define a simple mock morph
+const mockAddSuffixMorph = new SimpleMorph<string, string>(
+    'addSuffix', // The name we'll look for
+    (input: string, context: FormExecutionContext) => {
+        console.log(`Mock Morph 'addSuffix' executing with input: ${input}`);
+        // Context isn't used in this simple mock
+        return `${input}-morphed`;
+    },
+    { pure: true, fusible: true, cost: 1 }
+);
+
+// 2. Define the mock morpheus registry object
+const morpheus = {
+    /**
+     * Mock get method for the morpheus registry.
+     * Returns a predefined morph for a specific name.
+     */
+    get<I, O>(morphName: string): SimpleMorph<I, O> | undefined {
+        console.log(`Mock morpheus.get() called for: ${morphName}`);
+        if (morphName === 'addSuffix') {
+            // Return our mock morph, cast to the expected generic types
+            // This assumes the caller expects SimpleMorph<string, string> for 'addSuffix'
+            return mockAddSuffixMorph as unknown as SimpleMorph<I, O>;
+        }
+        // Return undefined for any other name
+        console.warn(`Mock morpheus.get(): Morph '${morphName}' not found.`);
+        return undefined;
+    },
+
+    // Add a mock define method if FluentPipeline's build() needs it
+    define(morph: any, metadata: any): void {
+        console.log(`Mock morpheus.define() called for: ${morph.name}`, metadata);
+        // No-op for the mock
+    }
+};
+
+// --- How to use it (Example in cmd.ts or similar) ---
+
+/*
+// Make sure 'morpheus' is accessible where FluentPipeline needs it.
+// If FluentPipeline is in a different file, you might need to export/import 'morpheus'.
+
+// Example usage that would call the mock:
+try {
+    const pipeline = FluentPipeline.fromName<string, string>('myPipeline', 'addSuffix');
+    // ... add more steps if needed ...
+    const result = pipeline.apply("test-input", {} as FormExecutionContext); // Pass dummy context
+    console.log("Pipeline Result:", result); // Should log "test-input-morphed"
+
+    const builtMorph = pipeline.build(); // This will call morpheus.define()
+    const builtResult = builtMorph.apply("built-test", {} as FormExecutionContext);
+    console.log("Built Morph Result:", builtResult); // Should log "built-test-morphed"
+
+} catch (error) {
+    console.error("Error using pipeline:", error);
+}
+
+*/

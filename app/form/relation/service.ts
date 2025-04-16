@@ -1,178 +1,213 @@
-import { SandarbhaSevā, qualitative } from "../context/service";
-import { NiṣpādanaPhala } from "../schema/context";
+import { FormRelation, FormRelationId } from "./relation"; // Keep FormRelation import
+import { FormEntity } from "@/form/entity/entity";
+import { RelationEngineVerbs } from "./engine"; // Import verbs from engine
+
+// ... (getServiceSourceEntity remains the same) ...
+const getServiceSourceEntity = (): FormEntity => {
+    return FormEntity.findOrCreate({ id: 'system:relationService', type: 'System::Service' });
+};
+
 
 /**
- * RelationEngine - Mathematical model for entity connections
- * 
- * Implements the mathematical operations that connect entities and properties
- * in a structured graph. While Context (Sandarbha) and Property (DharmaGuṇa)
- * use Sanskrit terminology for their philosophical depth, the Relation system
- * uses mathematical terminology to emphasize its role in the formal structure.
- * 
- * This engine connects with PropertyScript for executing transformations
- * across the relation network.
+ * RelationService - API layer for relation operations.
+ * Translates requests into verbs emitted via FormRelation, targeting RelationEngine.
  */
-export class RelationEngine {
+export class RelationService {
+
   /**
-   * Create a relation between entities
+   * Request the creation of a persistent relation between entities.
+   * Emits a 'relationEngine:requestCreation' verb.
    */
   static createRelation(
-    contextId: string,
-    source: string, 
-    target: string,
-    type: string,
-    attributes?: Record<string, any>
-  ): NiṣpādanaPhala {
-    return qualitative(contextId, "createRelation", () => {
-      return SandarbhaSevā.guṇātmakaNiṣpādana(
-        contextId,
-        "sambandhaNirmāṇa",
-        () => {
-          const sandarbha = SandarbhaSevā.getSandarbha(contextId);
-          if (!sandarbha) {
-            throw new Error(`Context not found: ${contextId}`);
-          }
-          
-          return sandarbha.sambandhaNirmāṇa(
-            source,
-            target,
-            type,
-            {
-              ...attributes,
-              timestamp: Date.now()
-            }
-          );
-        }
-      );
-    });
-  }
-  
-  /**
-   * Find relations by query parameters
-   */
-  static findRelations(
-    contextId: string,
-    query: {
-      source?: string;
-      target?: string;
-      type?: string;
-      attributes?: Record<string, any>;
-    }
-  ): NiṣpādanaPhala {
-    return qualitative(contextId, "findRelations", () => {
-      return SandarbhaSevā.guṇātmakaNiṣpādana(
-        contextId,
-        "sambandhāḥPrāpti",
-        () => {
-          const sandarbha = SandarbhaSevā.getSandarbha(contextId);
-          if (!sandarbha) {
-            throw new Error(`Context not found: ${contextId}`);
-          }
-          
-          return sandarbha.sambandhāḥPrāpti({
-            pūrva: query.source,
-            para: query.target,
-            prakāra: query.type,
-            lakṣaṇāḥ: query.attributes
-          });
-        }
-      );
-    });
-  }
-  
-  /**
-   * Get a specific relation by ID
-   */
-  static getRelation(
-    contextId: string,
-    relationId: string
-  ): NiṣpādanaPhala {
-    // Implementation...
-  }
-  
-  /**
-   * Update an existing relation
-   */
-  static updateRelation(
-    contextId: string,
-    relationId: string,
-    changes: {
-      target?: string;
-      type?: string;
-      attributes?: Record<string, any>;
-    }
-  ): NiṣpādanaPhala {
-    // Implementation...
-  }
-  
-  /**
-   * Delete a relation
-   */
-  static deleteRelation(
-    contextId: string,
-    relationId: string
-  ): NiṣpādanaPhala {
-    // Implementation...
-  }
-  
-  /**
-   * Create a property relation - connects an entity to its property
-   */
-  static createPropertyRelation(
-    contextId: string,
-    entityId: string,
-    propertyId: string,
-    attributes?: Record<string, any>
-  ): NiṣpādanaPhala {
-    return RelationEngine.createRelation(
-      contextId,
-      entityId, 
-      propertyId,
-      "dharmaGuṇa", // Still using Sanskrit for the type
-      attributes
-    );
-  }
-  
-  /**
-   * Find entities related to a given entity
-   */
-  static getRelatedEntities(
-    contextId: string,
-    entityId: string,
-    relationTypes?: string[]
-  ): NiṣpādanaPhala {
-    // Implementation...
-  }
-  
-  /**
-   * Check if two entities are related
-   */
-  static areEntitiesRelated(
-    contextId: string,
     sourceId: string,
     targetId: string,
-    type?: string
-  ): NiṣpādanaPhala {
-    // Implementation...
+    type: string, // The subtype for the persistent relation
+    content?: Record<string, any>,
+    contextId?: string,
+    metadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = {
+      sourceId,
+      targetId,
+      type,
+      content,
+      contextId,
+    };
+    const verbMetadata = { ...(metadata || {}), contextId };
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_CREATE, // Use new verb
+        verbContent,
+        verbMetadata
+    );
   }
-  
+
   /**
-   * Transform properties across relations
+   * Request finding relations based on criteria.
+   * Emits a 'relationEngine:requestFind' verb.
    */
-  static applyTransformation(
-    contextId: string,
-    sourceId: string,
-    relationTypes: string[],
-    transformationId: string,
-    options?: {
-      depth?: number;
-      direction?: "outgoing" | "incoming" | "both";
-    }
-  ): NiṣpādanaPhala {
-    // Implementation to work with PropertyScript
-    // This is where the mathematical operations would happen
+  static findRelations(
+    query: {
+      sourceId?: string;
+      targetId?: string;
+      type?: string;
+      contentQuery?: Record<string, any>;
+      contextId?: string; // Allow filtering by contextId in query
+    },
+    requestMetadata?: Record<string, any> // Renamed metadata param
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    // contextId is now part of the query object
+    const verbContent = { query };
+    const verbMetadata = { ...(requestMetadata || {}), contextId: query.contextId };
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_FIND, // Use new verb
+        verbContent,
+        verbMetadata
+    );
   }
+
+  /**
+   * Request getting a specific relation by its ID.
+   * Emits a 'relationEngine:requestGet' verb.
+   */
+  static getRelation(
+    relationId: string, // Relation ID is usually unique, context might not be needed
+    requestMetadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = { relationId };
+    const verbMetadata = { ...(requestMetadata || {}) }; // Context might be irrelevant for get by ID
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_GET, // Use new verb
+        verbContent,
+        verbMetadata
+    );
+  }
+
+  /**
+   * Request updating an existing relation.
+   * Emits a 'relationEngine:requestUpdate' verb.
+   */
+  static updateRelation(
+    relationId: string,
+    updates: { // Renamed 'changes' to 'updates' for consistency
+      targetId?: string;
+      type?: string;
+      content?: Record<string, any>;
+      contextId?: string | null; // Allow changing/clearing context
+    },
+    requestMetadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = { relationId, updates };
+    // Context might be part of updates or metadata depending on intent
+    const verbMetadata = { ...(requestMetadata || {}), contextId: updates.contextId };
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_UPDATE, // Use new verb
+        verbContent,
+        verbMetadata
+    );
+  }
+
+  /**
+   * Request deleting a relation.
+   * Emits a 'relationEngine:requestDeletion' verb.
+   */
+  static deleteRelation(
+    relationId: string,
+    requestMetadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = { relationId };
+    const verbMetadata = { ...(requestMetadata || {}) };
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_DELETION, // Use new verb
+        verbContent,
+        verbMetadata
+    );
+  }
+
+  /**
+   * Request creating a property relation (convenience method).
+   * Uses 'relationEngine:requestCreation'.
+   */
+  static createPropertyRelation(
+    entityId: string,
+    propertyId: string,
+    contextId?: string,
+    content?: Record<string, any>,
+    metadata?: Record<string, any>
+  ): void {
+     // Use general creation verb with specific type
+     this.createRelation(
+        entityId,
+        propertyId,
+        'system:hasProperty', // Standard type
+        content,
+        contextId,
+        metadata
+     );
+  }
+
+  // --- Graph/Transformation Operations ---
+
+  /**
+   * Request finding entities related to a given entity.
+   * Emits a 'relationEngine:requestGetRelated' verb.
+   */
+  static getRelatedEntities(
+    entityId: string,
+    relationTypes?: string[],
+    options?: { depth?: number; direction?: "outgoing" | "incoming" | "both"; contextId?: string; }, // Added contextId to options
+    requestMetadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = { entityId, relationTypes, options };
+    const verbMetadata = { ...(requestMetadata || {}), contextId: options?.contextId };
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_GET_RELATED, // Use new verb
+        verbContent,
+        verbMetadata
+    );
+  }
+
+  /**
+   * Request checking if two entities are related.
+   * Emits a 'relationEngine:requestCheckRelated' verb.
+   */
+  static areEntitiesRelated(
+    sourceId: string,
+    targetId: string,
+    type?: string,
+    contextId?: string, // Context might be relevant here
+    requestMetadata?: Record<string, any>
+  ): void {
+    const serviceEntity = getServiceSourceEntity();
+    const verbContent = { sourceId, targetId, type, contextId };
+    const verbMetadata = { ...(requestMetadata || {}), contextId };
+
+    FormRelation.emit(
+        serviceEntity,
+        RelationEngineVerbs.REQUEST_CHECK_RELATED, // Use new verb
+        verbContent,
+        verbMetadata
+    );
+  }
+
 }
 
-// Export the engine
-export default RelationEngine;
+// Export the static method as a standalone function
+export const createRelation = RelationService.createRelation;

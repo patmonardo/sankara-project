@@ -1,0 +1,275 @@
+Mock morpheus.define() called for: EditModePipeline {
+  description: 'Transforms a form schema into the structure needed for edit mode UI',
+  category: 'form-mode',
+  tags: [ 'form', 'edit', 'ui', 'pipeline' ],
+  inputType: 'FormShape',
+  outputType: 'EditOutput',
+  composition: {
+    type: 'pipeline',
+    morphs: [ 'PrepareEditMorph', 'GenerateEditActionsMorph' ]
+  }
+}
+Mock morpheus.define() called for: EditCorePipeline {
+  description: 'Apply core edit mode transformations to fields',
+  category: 'form',
+  tags: [ 'form', 'edit', 'fields' ],
+  inputType: 'EditOutput',
+  outputType: 'EditOutput',
+  composition: {
+    type: 'pipeline',
+    morphs: [
+      'EditFieldValuesMorph',
+      'EditFieldConstraintsMorph',
+      'EditFieldHistoryMorph'
+    ]
+  }
+}
+Mock morpheus.define() called for: EditLayoutPipeline {
+  description: 'Apply edit-specific layout transformations',
+  category: 'form',
+  tags: [ 'form', 'edit', 'layout' ],
+  inputType: 'EditOutput',
+  outputType: 'EditOutput',
+  composition: {
+    type: 'pipeline',
+    morphs: [ 'EditSectionLayoutMorph', 'EditDynamicLayoutMorph' ]
+  }
+}
+Mock morpheus.define() called for: EditValidationPipeline {
+  description: 'Apply edit-specific validation and validation UI',
+  category: 'form',
+  tags: [ 'form', 'edit', 'validation' ],
+  inputType: 'EditOutput',
+  outputType: 'EditOutput',
+  composition: {
+    type: 'pipeline',
+    morphs: [ 'EditValidationMorph', 'EditValidationUIMorph' ]
+  }
+}
+Mock morpheus.define() called for: EditStatePipeline {
+  description: 'Apply edit state management transformations',
+  category: 'form',
+  tags: [ 'form', 'edit', 'state' ],
+  inputType: 'EditOutput',
+  outputType: 'EditOutput',
+  composition: {
+    type: 'pipeline',
+    morphs: [ 'EditStateManagerMorph', 'EditPersistenceTrackingMorph' ]
+  }
+}
+Mock morpheus.define() called for: EditSystemPipeline {
+  description: 'Complete Edit system transformation pipeline',
+  category: 'form',
+  tags: [ 'form', 'edit', 'system' ],
+  inputType: 'FormShape',
+  outputType: 'EditOutput',
+  composition: {
+    type: 'pipeline',
+    morphs: [
+      'PrepareEditMorph',
+      'EditCorePipeline',
+      'EditLayoutPipeline',
+      'EditValidationPipeline',
+      'GenerateEditActionsMorph',
+      'EditStatePipeline'
+    ]
+  }
+}
+--- Input Shape ---
+{
+  "id": "simpleForm1",
+  "fields": [
+    {
+      "id": "firstName",
+      "type": "text",
+      "label": "First Name",
+      "inputType": "text",
+      "visible": true,
+      "disabled": false,
+      "readOnly": false,
+      "meta": {
+        "mode": "edit",
+        "pristine": true,
+        "touched": false
+      }
+    },
+    {
+      "id": "age",
+      "type": "number",
+      "label": "Age",
+      "inputType": "number",
+      "visible": true,
+      "disabled": false,
+      "readOnly": false,
+      "meta": {
+        "mode": "edit",
+        "pristine": true,
+        "touched": false
+      }
+    }
+  ],
+  "layout": {
+    "sections": [
+      {
+        "id": "main",
+        "title": "Main Info",
+        "fields": [
+          "firstName",
+          "age"
+        ]
+      }
+    ]
+  }
+}
+
+--- Output Shape ---
+{
+  "id": "simpleForm1",
+  "fields": [
+    {
+      "id": "firstName",
+      "type": "text",
+      "label": "First Name",
+      "inputType": "text",
+      "visible": true,
+      "disabled": false,
+      "readOnly": false,
+      "meta": {
+        "mode": "edit",
+        "pristine": true,
+        "touched": false,
+        "history": {
+          "original": "Alice",
+          "changed": false
+        },
+        "ui": {
+          "validationStatus": "valid",
+          "showErrors": false,
+          "showWarnings": false
+        }
+      },
+      "value": "Alice",
+      "originalValue": "Alice",
+      "isChanged": false,
+      "required": false,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "touched": false,
+        "dirty": false
+      }
+    },
+    {
+      "id": "age",
+      "type": "number",
+      "label": "Age",
+      "inputType": "number",
+      "visible": true,
+      "disabled": false,
+      "readOnly": false,
+      "meta": {
+        "mode": "edit",
+        "pristine": true,
+        "touched": false,
+        "history": {
+          "original": 30,
+          "changed": false
+        },
+        "ui": {
+          "validationStatus": "valid",
+          "showErrors": false,
+          "showWarnings": false
+        }
+      },
+      "value": 30,
+      "originalValue": 30,
+      "isChanged": false,
+      "required": false,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "touched": false,
+        "dirty": false
+      }
+    }
+  ],
+  "layout": {
+    "sections": [
+      {
+        "id": "main",
+        "title": "Main Info",
+        "fields": [
+          "firstName",
+          "age"
+        ],
+        "meta": {
+          "edit": {
+            "hasChangedFields": false,
+            "mode": "edit"
+          }
+        }
+      }
+    ]
+  },
+  "actions": [
+    {
+      "id": "submit",
+      "type": "submit",
+      "label": "Save",
+      "primary": true,
+      "disabled": true,
+      "position": "bottom"
+    },
+    {
+      "id": "cancel",
+      "type": "button",
+      "label": "Cancel",
+      "primary": false,
+      "disabled": false,
+      "position": "bottom"
+    },
+    {
+      "id": "reset",
+      "type": "reset",
+      "label": "Reset",
+      "primary": false,
+      "disabled": true,
+      "position": "bottom"
+    }
+  ],
+  "mode": "edit",
+  "targetId": "item-001",
+  "valid": false,
+  "complete": false,
+  "hasChanges": false,
+  "meta": {
+    "mode": "edit",
+    "timestamp": "2025-04-16T00:05:50.798Z",
+    "edit": {
+      "trackChanges": true,
+      "originalValues": {
+        "firstName": "Alice",
+        "age": 30
+      },
+      "changedFields": []
+    },
+    "title": "Edit Item item-001",
+    "validation": {
+      "performed": true,
+      "timestamp": 1744761950799,
+      "fieldErrors": 0
+    },
+    "persistence": {
+      "hasUnsavedChanges": false,
+      "autoSaveEnabled": false,
+      "saveAttempts": 0,
+      "saveHistory": []
+    }
+  },
+  "isValid": true,
+  "state": {
+    "status": "idle"
+  }
+}
