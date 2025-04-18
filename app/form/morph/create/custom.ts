@@ -1,8 +1,20 @@
-import { SimpleMorph, createPipeline } from "../morph"; // Import createPipeline
+import { SimpleMorph, createPipeline } from "../morph";
 import { FormShape, FormField } from "../../schema/form";
 import { FormExecutionContext } from "../../schema/context";
 import { CreateContext } from "../mode";
 import { CreateModePipeline, CreateOutput } from "./pipeline";
+
+/**
+ * Extended form field with custom component and props support
+ */
+interface CustomFormField extends FormField {
+  /** Custom component to use for rendering this field */
+  component?: string;
+  /** Props to pass to the custom component */
+  props?: Record<string, any>;
+  /** Any additional custom properties */
+  [key: string]: any;
+}
 
 /**
  * Custom creation configuration for overriding form shape properties.
@@ -21,9 +33,22 @@ export interface CustomCreateConfig {
 }
 
 /**
- * Enhanced CreateContext with custom configuration.
+ * Extended context with custom component and transformation support
  */
-export interface CustomCreateContext extends CreateContext {
+interface CustomCreateContext extends CreateContext {
+  /** Map of component types to component names */
+  customComponents?: Record<string, string>;
+
+  /**
+   * Transformers for converting standard fields to custom component fields
+   * Each transformer takes a CustomFormField and returns an enhanced version
+   */
+  customFieldTransformers?: Record<
+    string,
+    (field: CustomFormField) => CustomFormField
+  >;
+
+  /** Custom configuration for form shape customization */
   customConfig: CustomCreateConfig;
 }
 
@@ -34,17 +59,17 @@ function isCustomContext(
   context: FormExecutionContext | any // Allow 'any' for flexibility in guards
 ): context is CustomCreateContext {
   // 1. Basic context checks
-  if (!context || typeof context !== 'object') {
+  if (!context || typeof context !== "object") {
     return false;
   }
-  // 2. Check for create mode prakāra
-  if (context.prakāra !== 'sṛṣṭi') {
+  // 2. Check for create mode mode
+  if (context.mode !== "create") {
     return false;
   }
   // 3. Check for customConfig property and its type
   if (
-    !('customConfig' in context) ||
-    typeof context.customConfig !== 'object' ||
+    !("customConfig" in context) ||
+    typeof context.customConfig !== "object" ||
     context.customConfig === null
   ) {
     return false;
@@ -55,24 +80,25 @@ function isCustomContext(
   return true; // All checks passed
 }
 
-
 /**
  * Applies field-level customizations from CustomCreateContext to a FormShape.
  */
-export const CustomizeShapeMorph = new SimpleMorph<FormShape, FormShape>(
-  "CustomizeShapeMorph",
+export const CustomizeFieldRenderMorph = new SimpleMorph<FormShape, FormShape>(
+  "CustomizeFieldRenderMorph",
   (shape, context: FormExecutionContext) => {
     // Validate input shape
     if (!shape || !Array.isArray(shape.fields)) {
-      throw new Error("Invalid form shape provided to CustomizeShapeMorph");
+      throw new Error("Invalid form shape provided to CustomizeFieldRenderMorph");
     }
 
     // Validate and extract custom context
     if (!isCustomContext(context)) {
       // If context isn't custom, just return the original shape
-      console.warn("CustomizeShapeMorph called without valid CustomCreateContext. Skipping customization.");
+      console.warn(
+        "CustomizeFieldRenderMorph called without valid CustomCreateContext. Skipping customization."
+      );
       return shape;
-      // Or: throw new Error("Custom configuration context is required for CustomizeShapeMorph");
+      // Or: throw new Error("Custom configuration context is required for CustomizeFieldRenderMorph");
     }
 
     const config = context.customConfig;
@@ -85,7 +111,8 @@ export const CustomizeShapeMorph = new SimpleMorph<FormShape, FormShape>(
       if (!field || !field.id) return field;
 
       // Safe access to field config
-      const fieldConfig = field.id in fieldConfigs ? fieldConfigs[field.id] : null;
+      const fieldConfig =
+        field.id in fieldConfigs ? fieldConfigs[field.id] : null;
       if (!fieldConfig) return field; // No specific config for this field
 
       // Track original values for reference
@@ -128,10 +155,11 @@ export const CustomizeShapeMorph = new SimpleMorph<FormShape, FormShape>(
         ...(shape.meta || {}), // Keep existing shape meta
         ...(config.metadata || {}), // Merge config metadata
         customized: true,
-        customConfigApplied: { // Add details about the applied config
-            titleProvided: !!config.title,
-            metadataKeys: Object.keys(config.metadata || {}),
-            fieldConfigKeys: Object.keys(fieldConfigs),
+        customConfigApplied: {
+          // Add details about the applied config
+          titleProvided: !!config.title,
+          metadataKeys: Object.keys(config.metadata || {}),
+          fieldConfigKeys: Object.keys(fieldConfigs),
         },
         customizedAt: new Date().toISOString(), // Timestamp of customization
       },
@@ -147,39 +175,144 @@ export const CustomizeShapeMorph = new SimpleMorph<FormShape, FormShape>(
 );
 
 /**
+ * Morph that transforms standard fields into custom component fields
+ * based on the customFieldTransformers in the context.
+ */
+export const CustomFieldRenderMorph = new SimpleMorph<
+  FormShape,
+  FormShape
+>(
+  "CustomFieldRenderMorph",
+  (shape, context) => {
+    // Skip if context doesn't have custom transformers
+    if (!isCustomContext(context) || !context.customFieldTransformers) {
+      return shape;
+    }
+
+    const transformers = context.customFieldTransformers;
+
+    // Apply transformers to fields based on type or meta.customType
+    const transformedFields = shape.fields.map((field) => {
+      // Skip if field isn't valid
+      if (!field || !field.id) return field;
+
+      // Try to find the appropriate transformer
+      let transformer = null;
+
+      // First check meta.customType if available
+      if (field.meta?.customType && transformers[field.meta.customType]) {
+        transformer = transformers[field.meta.customType];
+      }
+      // Fall back to field.type for standard custom types (like 'richtext')
+      else if (transformers[field.type]) {
+        transformer = transformers[field.type];
+      }
+
+      // Apply transformer if found
+      if (transformer && typeof transformer === "function") {
+        try {
+          // Cast field to CustomFormField to satisfy transformer's input type
+          return transformer(field as CustomFormField);
+        } catch (error) {
+          console.error(
+            `Error applying transformer to field ${field.id}:`,
+            error
+          );
+          return field; // Return original on error
+        }
+      }
+
+      return field; // Return unchanged if no transformer applies
+    });
+
+    // Return transformed shape
+    return {
+      ...shape,
+      fields: transformedFields,
+      meta: {
+        ...(shape.meta || {}),
+        customComponentsApplied: true,
+        appliedTransformers: Object.keys(transformers).filter((key) =>
+          shape.fields.some((f) => f.meta?.customType === key || f.type === key)
+        ),
+      },
+    };
+  },
+  {
+    pure: true, // This morph should be pure as it doesn't use external state
+    fusible: true,
+    cost: 2,
+    memoizable: true,
+  }
+);
+
+/**
+ * Standard field transformers for common custom field types
+ */
+export const standardFieldTransformers = {
+  signature: (field: CustomFormField): CustomFormField => ({
+    ...field,
+    component: "SignaturePad",
+    props: {
+      ...(field.meta?.customProps || {}),
+      onChange: `{{handlers.onChange}}`,
+      initialValue: field.value || null,
+    },
+  }),
+
+  richtext: (field: CustomFormField): CustomFormField => ({
+    ...field,
+    component: "RichTextEditor",
+    props: {
+      toolbar: field.meta?.toolbar || ["bold", "italic"],
+      initialHtml: field.meta?.initialHtml || "",
+      onChange: `{{handlers.onChange}}`,
+    },
+  }),
+};
+
+/**
  * Creates a CustomCreateContext from a base context and config.
- * Ensures the context has the correct prakāra for create mode.
+ * Ensures the context has the correct mode for create mode.
  */
 export function withCustomConfig(
-  baseContext: Omit<FormExecutionContext, 'prakāra'>, // Allow any context base, but we force prakāra
+  baseContext: Omit<FormExecutionContext, "mode">,
   config: CustomCreateConfig
 ): CustomCreateContext {
-  if (!baseContext) {
-    throw new Error("Base context is required for withCustomConfig");
-  }
-  if (!config) {
-    throw new Error("Custom configuration is required for withCustomConfig");
+  // Validate and normalize config
+  if (!config || typeof config !== "object") {
+    throw new Error("Invalid custom configuration provided");
   }
 
-  // Ensure config parts exist
-  const safeConfig = {
-    ...config,
+  // Create a normalized safe config with defaults
+  const safeConfig: CustomCreateConfig = {
+    // Apply defaults for optional properties
+    title: config.title || undefined,
+    submitLabel: config.submitLabel || undefined,
+    cancelLabel: config.cancelLabel || undefined,
+    clearOnSubmit: config.clearOnSubmit ?? false,
+    buttonPosition: config.buttonPosition || "bottom",
+    showCancel: config.showCancel ?? true,
+    // Ensure field configs is a valid object
     fieldConfigs: config.fieldConfigs || {},
+    // Ensure metadata is a valid object
     metadata: config.metadata || {},
   };
 
-  // Construct the CustomCreateContext, forcing prakāra
+  // Construct the CustomCreateContext
   const customContext: CustomCreateContext = {
-    ...baseContext, // Spread properties from base context
-    prakāra: 'sṛṣṭi', // Force create mode prakāra
+    ...baseContext,
+    mode: "create",
     customConfig: safeConfig,
-    // Optionally override context properties from config if desired
-    // title: safeConfig.title ?? baseContext.title, // Example
+    // Add standard transformers by default, but allow overriding
+    customFieldTransformers: {
+      ...standardFieldTransformers,
+      ...((baseContext as any).customFieldTransformers || {}),
+    },
   };
 
   return customContext;
 }
-
 
 // --- Custom Creation Pipeline ---
 
@@ -187,53 +320,46 @@ export function withCustomConfig(
  * Pipeline for creating a form with custom configurations applied.
  * Applies customizations then runs the standard create pipeline.
  */
-export const CustomCreatePipeline = createPipeline<FormShape>("CustomCreatePipeline")
+export const CustomCreatePipeline = createPipeline<FormShape>(
+  "CustomCreatePipeline"
+)
   // 1. Apply custom field/meta overrides to FormShape
-  .pipe(CustomizeShapeMorph) // Input: FormShape, Output: FormShape
+  .pipe(CustomizeFieldRenderMorph) // Input: FormShape, Output: FormShape
+
+  // NEW STEP: Transform fields to use custom components
+  .pipe(CustomFieldRenderMorph) // Input: FormShape, Output: FormShape with transformed fields
+
   // 2. Run the standard CreateModePipeline on the customized FormShape
   .pipe(CreateModePipeline) // Input: FormShape, Output: CreateOutput
+
   // 3. Optional: Add post-processing specific to custom creation if needed
   .map((result: CreateOutput, context: FormExecutionContext) => {
-      if (!isCustomContext(context)) {
-        // Should not happen if CustomizeShapeMorph ran correctly, but good check
-        return result;
-      }
-      const config = context.customConfig;
-
-      // Apply overrides from config to the final CreateOutput meta/properties
-      return {
-        ...result,
-        // Override button labels/behavior from config if present
-        submitButton: {
-            ...(result.submitButton || { label: 'Submit', position: 'bottom' }), // Default button if none exists
-            label: config.submitLabel ?? result.submitButton?.label ?? 'Submit',
-            position: config.buttonPosition ?? result.submitButton?.position ?? 'bottom',
-        },
-        // Conditionally include cancel button based on config
-        cancelButton: config.showCancel !== false ? {
-            ...(result.cancelButton || { label: 'Cancel', position: 'bottom' }), // Default button if none exists
-            label: config.cancelLabel ?? result.cancelButton?.label ?? 'Cancel',
-            position: config.buttonPosition ?? result.cancelButton?.position ?? 'bottom',
-        } : undefined, // Remove cancel button if showCancel is explicitly false
-        clearOnSubmit: config.clearOnSubmit ?? result.clearOnSubmit,
-        meta: {
-          ...result.meta,
-          // Add final confirmation that customization was applied
-          customPipelineApplied: true,
-          // Optionally override title again if needed (might be redundant)
-          title: config.title ?? result.meta.title,
-        }
-      };
-    }
-  )
+    // Return the result with any custom additions you want
+    return {
+      ...result,
+      meta: {
+        ...(result.meta || {}),
+        customCreationComplete: true,
+        // Add any additional metadata specific to the custom process
+        customButtons: isCustomContext(context)
+          ? {
+              position: context.customConfig.buttonPosition || "bottom",
+              showCancel: context.customConfig.showCancel ?? true,
+              submitLabel: context.customConfig.submitLabel,
+              cancelLabel: context.customConfig.cancelLabel,
+            }
+          : undefined,
+      },
+    };
+  })
   .build({
-    description: "Applies custom configurations to a form shape and prepares it for UI rendering in create mode.",
+    description:
+      "Applies custom configurations to a form shape and prepares it for UI rendering in create mode.",
     category: "form-mode-custom",
     tags: ["form", "create", "custom", "pipeline"],
     inputType: "FormShape", // Overall input
-    outputType: "CreateOutput" // Overall output
+    outputType: "CreateOutput", // Overall output
   });
-
 
 // --- Helper Function ---
 
@@ -243,7 +369,7 @@ export const CustomCreatePipeline = createPipeline<FormShape>("CustomCreatePipel
 export function applyCustom(
   shape: FormShape,
   customConfig: CustomCreateConfig,
-  // Allow providing partial context (excluding prakāra, which we set)
+  // Allow providing partial context (excluding mode, which we set)
   baseContext: CreateContext
 ): CreateOutput {
   // Validate inputs

@@ -1,204 +1,66 @@
-Morpheus: Defining morph 'EditModePipeline'
-Morpheus: Defining morph 'EditCorePipeline'
-Morpheus: Defining morph 'EditLayoutPipeline'
-Morpheus: Defining morph 'EditValidationPipeline'
-Morpheus: Defining morph 'EditStatePipeline'
-Morpheus: Defining morph 'EditSystemPipeline'
---- Input Shape ---
-{
-  "id": "simpleForm1",
-  "fields": [
-    {
-      "id": "firstName",
-      "type": "text",
-      "label": "First Name",
-      "inputType": "text",
-      "visible": true,
-      "disabled": false,
-      "readOnly": false,
-      "meta": {
-        "mode": "edit",
-        "pristine": true,
-        "touched": false
-      }
-    },
-    {
-      "id": "age",
-      "type": "number",
-      "label": "Age",
-      "inputType": "number",
-      "visible": true,
-      "disabled": false,
-      "readOnly": false,
-      "meta": {
-        "mode": "edit",
-        "pristine": true,
-        "touched": false
-      }
-    }
-  ],
-  "layout": {
-    "sections": [
-      {
-        "id": "main",
-        "title": "Main Info",
-        "fields": [
-          "firstName",
-          "age"
-        ]
-      }
-    ]
-  }
-}
+=== EDIT ACTIONS MORPHS TESTS ===
 
---- Output Shape ---
-{
-  "id": "simpleForm1",
-  "fields": [
-    {
-      "id": "firstName",
-      "type": "text",
-      "label": "First Name",
-      "inputType": "text",
-      "visible": true,
-      "disabled": false,
-      "readOnly": false,
-      "meta": {
-        "mode": "edit",
-        "pristine": true,
-        "touched": false,
-        "history": {
-          "original": "Alice",
-          "changed": false
-        },
-        "ui": {
-          "validationStatus": "valid",
-          "showErrors": false,
-          "showWarnings": false
-        }
-      },
-      "value": "Alice",
-      "originalValue": "Alice",
-      "isChanged": false,
-      "required": false,
-      "validation": {
-        "valid": true,
-        "errors": [],
-        "warnings": [],
-        "touched": false,
-        "dirty": false
-      }
-    },
-    {
-      "id": "age",
-      "type": "number",
-      "label": "Age",
-      "inputType": "number",
-      "visible": true,
-      "disabled": false,
-      "readOnly": false,
-      "meta": {
-        "mode": "edit",
-        "pristine": true,
-        "touched": false,
-        "history": {
-          "original": 30,
-          "changed": false
-        },
-        "ui": {
-          "validationStatus": "valid",
-          "showErrors": false,
-          "showWarnings": false
-        }
-      },
-      "value": 30,
-      "originalValue": 30,
-      "isChanged": false,
-      "required": false,
-      "validation": {
-        "valid": true,
-        "errors": [],
-        "warnings": [],
-        "touched": false,
-        "dirty": false
-      }
-    }
-  ],
-  "layout": {
-    "sections": [
-      {
-        "id": "main",
-        "title": "Main Info",
-        "fields": [
-          "firstName",
-          "age"
-        ],
-        "meta": {
-          "edit": {
-            "hasChangedFields": false,
-            "mode": "edit"
-          }
-        }
-      }
-    ]
-  },
-  "actions": [
-    {
-      "id": "submit",
-      "type": "submit",
-      "label": "Save",
-      "primary": true,
-      "disabled": true,
-      "position": "bottom"
-    },
-    {
-      "id": "cancel",
-      "type": "button",
-      "label": "Cancel",
-      "primary": false,
-      "disabled": false,
-      "position": "bottom"
-    },
-    {
-      "id": "reset",
-      "type": "reset",
-      "label": "Reset",
-      "primary": false,
-      "disabled": true,
-      "position": "bottom"
-    }
-  ],
-  "mode": "edit",
-  "targetId": "item-001",
-  "valid": false,
-  "complete": false,
-  "hasChanges": false,
-  "meta": {
-    "mode": "edit",
-    "timestamp": "2025-04-16T05:52:50.105Z",
-    "edit": {
-      "trackChanges": true,
-      "originalValues": {
-        "firstName": "Alice",
-        "age": 30
-      },
-      "changedFields": []
-    },
-    "title": "Edit Item item-001",
-    "validation": {
-      "performed": true,
-      "timestamp": 1744782770106,
-      "fieldErrors": 0
-    },
-    "persistence": {
-      "hasUnsavedChanges": false,
-      "autoSaveEnabled": false,
-      "saveAttempts": 0,
-      "saveHistory": []
-    }
-  },
-  "isValid": true,
-  "state": {
-    "status": "idle"
-  }
-}
+--- TEST 1: Default Actions Generation ---
+
+--- Default Actions Generated ---
+Total actions: 3
+
+Action: submit
+Label: Save
+Type: submit
+Primary: true
+Disabled: true
+Position: bottom
+
+Action: cancel
+Label: Cancel
+Type: button
+Primary: false
+Disabled: false
+Position: bottom
+
+Action: reset
+Label: Reset
+Type: reset
+Primary: false
+Disabled: true
+Position: bottom
+
+--- Action Availability ---
+Has Submit: true
+Has Cancel: true
+Has Reset: true
+Has Delete: true
+
+
+--- TEST 2: Form with Changes ---
+
+--- Actions with Form Changes ---
+Submit action disabled: true
+Reset action disabled: true
+
+
+--- TEST 3: Custom Actions Configuration ---
+
+--- Custom Action Configuration ---
+Submit label: "Update Profile"
+Cancel label: "Go Back"
+Delete label: "Remove Account"
+Button position: top
+Delete action included: true
+
+
+--- TEST 4: Disabled Action Options ---
+
+--- Disabled Options Results ---
+Reset action removed: true
+Cancel action removed: true
+Submit always enabled: true
+Total actions: 1
+
+
+--- TEST 5: No Changes Behavior ---
+
+--- Actions with No Form Changes ---
+Submit action disabled: true
+Reset action disabled: true

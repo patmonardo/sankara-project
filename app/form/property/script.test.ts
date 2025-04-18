@@ -452,7 +452,7 @@ describe('PropertyScript', () => {
 
         expect(SandarbhaSevā.guṇātmakaNiṣpādana).toHaveBeenCalledWith(contextId, 'mūrtīkaraṇa', expect.any(Function)); // Check KriyaPrakara used
         expect(mockGetSandarbha).toHaveBeenCalledWith(contextId);
-        expect(mockSambandhāḥPrāpti).toHaveBeenCalledWith({ prakāra: 'scriptDefinition', para: `scriptDef:${scriptId}` });
+        expect(mockSambandhāḥPrāpti).toHaveBeenCalledWith({ mode: 'scriptDefinition', para: `scriptDef:${scriptId}` });
         expect(script).toBeInstanceOf(PropertyScript);
         expect(script?.id).toBe(scriptId);
         expect(script?.name).toBe('Fetched Script');
@@ -542,7 +542,7 @@ describe('PropertyScript', () => {
 
         expect(SandarbhaSevā.guṇātmakaNiṣpādana).toHaveBeenCalledWith(contextId, 'mūrtīkaraṇa', expect.any(Function)); // Check KriyaPrakara
         expect(mockGetSandarbha).toHaveBeenCalledWith(contextId);
-        expect(mockSambandhāḥPrāpti).toHaveBeenCalledWith({ prakāra: 'scriptDefinition' }); // Called to get all script defs
+        expect(mockSambandhāḥPrāpti).toHaveBeenCalledWith({ mode: 'scriptDefinition' }); // Called to get all script defs
         expect(scripts).toHaveLength(2);
         expect(scripts[0]).toBeInstanceOf(PropertyScript);
         expect(scripts[0].id).toBe('script:s1');

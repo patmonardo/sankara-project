@@ -1,7 +1,6 @@
 import { FormShape, FormField } from "../../schema/form";
 import { ViewContext, isViewContext } from "../mode";
 import { createPipeline, createMorph } from "../morph";
-import { defineFieldStyles } from "./style";
 import {
   determineDisplayType,
   shouldIncludeField,
@@ -16,7 +15,7 @@ export interface ViewField {
   id: string;
   type: string;
   label: string;
-  value: any;
+  value?: any;
   displayValue?: string;
   description?: string;
   placeholder?: string;
@@ -39,13 +38,13 @@ export interface ViewOutput {
   id: string;
   fields: ViewField[];
   mode: "view";
+  format?: string;
   meta?: {
     title?: string;
     description?: string;
     styles?: Record<string, any>;
     [key: string]: any;
   };
-  format?: string;
 }
 
 /**
@@ -79,7 +78,7 @@ export function processFieldForView(
   // 1. Extract basic info & raw value
   const fieldId = field.id;
   const originalType = field.type; // The type defined in the schema
-  const rawValue = extractFieldValue(field, context); // Gets value from context.sthiti or defaultValue
+  const rawValue = extractFieldValue(field, context); // Gets value from context.data or defaultValue
   const label = getFieldLabel(field);
 
   // 2. Determine display characteristics
@@ -212,7 +211,7 @@ export const ViewSystemPipeline = createPipeline<FormShape>(
     category: "form-mode",
     tags: ["form", "view", "ui", "pipeline", "system"],
     inputType: "FormShape",
-    outputType: "GroupedViewOutput", // Final output type
+    outputType: "ViewOutput", // Final output type
   });
 
 /**

@@ -55,26 +55,26 @@ export class NiṣpādanaSandarbha extends Sandarbha {
 
   constructor(vikalpa: {
     id?: string;
-    prakāra?: string;
+    mode?: string;
     nāma?: string;
     janakId?: string;
-    lakṣaṇa?: Record<string, any>;
+    mark?: Record<string, any>;
     vinyāsa?: any;
     svataḥSakriya?: boolean;
     prārambhikaPariṇāma?: NiṣpādanaPariṇāma;
   }) {
     super({
       ...vikalpa,
-      // Set prakāra based on initial environment if not explicitly provided
-      prakāra: vikalpa.prakāra || vikalpa.prārambhikaPariṇāma || "guṇātmaka",
+      // Set mode based on initial environment if not explicitly provided
+      mode: vikalpa.mode || vikalpa.prārambhikaPariṇāma || "guṇātmaka",
     });
 
     // Set initial execution environment
     this.pariṇāma = vikalpa.prārambhikaPariṇāma || "guṇātmaka";
 
-    // Add execution-specific properties to lakṣaṇa
-    this.lakṣaṇa = {
-      ...this.lakṣaṇa,
+    // Add execution-specific properties to mark
+    this.mark = {
+      ...this.mark,
       isExecutionContext: true,
       executionCapabilities: ["guṇātmaka", "saṅkhyātmaka", "māyātmaka"],
     };
@@ -85,10 +85,10 @@ export class NiṣpādanaSandarbha extends Sandarbha {
    */
   static sṛjNiṣpādanaSandarbha(vikalpa: {
     id?: string;
-    prakāra?: string;
+    mode?: string;
     nāma?: string;
     janakId?: string;
-    lakṣaṇa?: Record<string, any>;
+    mark?: Record<string, any>;
     vinyāsa?: any;
     svataḥSakriya?: boolean;
     prārambhikaPariṇāma?: NiṣpādanaPariṇāma;
@@ -103,19 +103,19 @@ export class NiṣpādanaSandarbha extends Sandarbha {
 
   set niṣpādanaPariṇāma(value: NiṣpādanaPariṇāma) {
     this.pariṇāma = value;
-    // Also update prakāra to maintain alignment
-    this.prakāra = value;
+    // Also update mode to maintain alignment
+    this.mode = value;
   }
   /**
    * Set the execution environment - sthāpitaPariṇāma
-   * This should also update the prakāra to maintain ontological alignment
+   * This should also update the mode to maintain ontological alignment
    */
   sthāpitaPariṇāma(pariṇāma: NiṣpādanaPariṇāma): void {
     this.pariṇāma = pariṇāma;
     // For backwards compatibility
     (this as any).niṣpādanaPariṇāma = pariṇāma;
-    // Update prakāra to maintain dharmic alignment
-    this.prakāra = pariṇāma;
+    // Update mode to maintain dharmic alignment
+    this.mode = pariṇāma;
   }
 
   /**
@@ -179,7 +179,7 @@ export class NiṣpādanaSandarbha extends Sandarbha {
       kriyā,
       sandarbhaId: this.id,
       kālamudrā: samāptiKāla,
-      lakṣaṇa: {
+      mark: {
         duration: vyayitaKāla,
       },
       doṣa,
@@ -304,13 +304,13 @@ export class NiṣpādanaSandarbha extends Sandarbha {
   /**
    * Classify an entity - vargīkaraṇaKriyā
    */
-  vargīkaraṇaKriyā<T>(vastu: T, lakṣaṇa: Record<string, any>): NiṣpādanaPhala {
+  vargīkaraṇaKriyā<T>(vastu: T, mark: Record<string, any>): NiṣpādanaPhala {
     return this.niṣpādana("vargīkaraṇa", () => {
       // Apply classification based on attributes
       const varga: Record<string, number> = {};
 
       // Simple classification algorithm - calculate match scores for each category
-      for (const [key, value] of Object.entries(lakṣaṇa)) {
+      for (const [key, value] of Object.entries(mark)) {
         if (typeof value === "object" && value !== null) {
           for (const category of Object.keys(value)) {
             varga[category] = (varga[category] || 0) + 1;
@@ -334,7 +334,7 @@ export class NiṣpādanaSandarbha extends Sandarbha {
         varga: bestCategory,
         aṅka: varga, // scores
         niścayātmakatā:
-          highestScore > 0 ? highestScore / Object.keys(lakṣaṇa).length : 0, // certainty
+          highestScore > 0 ? highestScore / Object.keys(mark).length : 0, // certainty
       };
     });
   }
@@ -696,8 +696,8 @@ export class NiṣpādanaSandarbha extends Sandarbha {
         });
 
       let vartamānaMūlya = lakṣyaKārya(vartamāna);
-      const itihāsa: { sthiti: number[]; mūlya: number }[] = [
-        { sthiti: [...vartamāna], mūlya: vartamānaMūlya },
+      const itihāsa: { data: number[]; mūlya: number }[] = [
+        { data: [...vartamāna], mūlya: vartamānaMūlya },
       ];
 
       // Run optimization for specified iterations
@@ -739,7 +739,7 @@ export class NiṣpādanaSandarbha extends Sandarbha {
 
         // Record history
         itihāsa.push({
-          sthiti: [...vartamāna],
+          data: [...vartamāna],
           mūlya: newMūlya,
         });
 
@@ -764,7 +764,7 @@ export class NiṣpādanaSandarbha extends Sandarbha {
 
       return {
         uttama: {
-          sthiti: itihāsa[bestIndex].sthiti,
+          data: itihāsa[bestIndex].data,
           mūlya: itihāsa[bestIndex].mūlya,
         },
         itihāsa,
@@ -1047,10 +1047,10 @@ export class NiṣpādanaSandarbha extends Sandarbha {
  */
 export function niṣpādanaSandarbhaSṛṣṭi(vinyāsa: {
   id?: string;
-  prakāra?: string;
+  mode?: string;
   nāma?: string;
   janakId?: string;
-  lakṣaṇa?: Record<string, any>;
+  mark?: Record<string, any>;
   vinyāsa?: any;
   svataḥSakriya?: boolean;
   prārambhikaPariṇāma?: NiṣpādanaPariṇāma;

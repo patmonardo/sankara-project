@@ -139,8 +139,8 @@ const baseContext: FormExecutionContext = {
   id: "extractionTestContext",
   name: "Extraction Test Context",
   timestamp: Date.now(),
-  prakāra: "darśana", // Add the missing required property
-  sthiti: sampleData
+  mode:  "view", // Add the missing required property
+  data: sampleData
 };
 
 const viewContext: ViewContext = {
@@ -262,13 +262,13 @@ try {
   console.log("\nProfile Data:");
   console.log(JSON.stringify(profileData, null, 2));
   
-  // Compare to original sthiti
+  // Compare to original data
   console.log("\nDifferences from original data:");
   let differences = 0;
   
   Object.entries(profileData).forEach(([key, value]) => {
-    if (baseContext.sthiti && baseContext.sthiti[key] !== value) {
-      console.log(`- ${key}: ${JSON.stringify(value)} (original: ${JSON.stringify(baseContext.sthiti[key])})`);
+    if (baseContext.data && baseContext.data[key] !== value) {
+      console.log(`- ${key}: ${JSON.stringify(value)} (original: ${JSON.stringify(baseContext.data[key])})`);
       differences++;
     }
   });
@@ -347,7 +347,7 @@ try {
   
   const perfContext: FormExecutionContext = {
     ...baseContext,
-    sthiti: largeData
+    data: largeData
   };
   
   console.log(`Testing with form containing ${largeForm.fields.length} fields`);

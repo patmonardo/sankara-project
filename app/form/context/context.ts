@@ -10,7 +10,7 @@ import { EntityEngineVerbs } from "../entity/engine"; // Assuming verbs are defi
 
 // Define an interface for the query options (if not already defined)
 interface SambandhaQueryOptions {
-  prakāra?: string; // Relation type
+  mode?: string; // Relation type
   sūtra?: string; // Source ID
   para?: string; // Target ID
   // Add other potential query fields if needed
@@ -20,17 +20,17 @@ interface SambandhaQueryOptions {
  * SandarbhaGhaṭanā interface for context lifecycle events
  */
 export interface SandarbhaGhaṭanā {
-  prakāra: "utpanna" | "sakriya" | "niṣkriya" | "parivardhita" | "nāśa";
+  mode: "utpanna" | "sakriya" | "niṣkriya" | "parivardhita" | "nāśa";
   // "created", "activated", "deactivated", "updated", "deleted" -> Sanskrit equivalents
   sandarbhaId: string;
   kālamudrā: number; // timestamp
-  lakṣaṇa?: Record<string, any>; // metadata
+  mark?: Record<string, any>; // metadata
 }
 
 export class Sandarbha<T = any> {
   // Svarūpa - Identity properties
   id: string;
-  prakāra: string; // (type)
+  mode: string; // (type)
   nāma?: string; // (name)
 
   // Sopāna - Hierarchical structure
@@ -47,7 +47,7 @@ export class Sandarbha<T = any> {
   kālamudrā: number; // (timestamp)
 
   // Lakṣaṇa - Metadata
-  lakṣaṇa?: Record<string, any>; // (metadata)
+  mark?: Record<string, any>; // (metadata)
   adhikāra?: Record<string, boolean>; // New Sanskrit: permissions -> adhikāra
 
   // Lifecycle tracking
@@ -57,7 +57,7 @@ export class Sandarbha<T = any> {
 
   // Viṣaya/Vinyāsa - Content/configuration
   vinyāsa?: T; // (config)
-  sthiti?: Record<string, any>; // New Sanskrit: state -> sthiti
+  data?: Record<string, any>; // New Sanskrit: state -> data
 
   // Vyavahāra - Transaction support
   vyavahāraId?: string; // Transaction ID
@@ -75,10 +75,10 @@ export class Sandarbha<T = any> {
    */
   constructor(vikalpa: {
     id?: string;
-    prakāra?: string;
+    mode?: string;
     nāma?: string;
     janakId?: string;
-    lakṣaṇa?: Record<string, any>;
+    mark?: Record<string, any>;
     vinyāsa?: T;
     svataḥSakriya?: boolean; // autoActivate
     adhikāra?: Record<string, boolean>; // New param: permissions
@@ -89,10 +89,10 @@ export class Sandarbha<T = any> {
     this.id =
       vikalpa.id ||
       `sandarbha:${Date.now()}:${Math.random().toString(36).substring(2, 9)}`;
-    this.prakāra = vikalpa.prakāra || "sandarbha";
+    this.mode = vikalpa.mode || "sandarbha";
     this.nāma = vikalpa.nāma;
     this.janakId = vikalpa.janakId;
-    this.lakṣaṇa = vikalpa.lakṣaṇa || {};
+    this.mark = vikalpa.mark || {};
     this.vinyāsa = vikalpa.vinyāsa;
     this.adhikāra = vikalpa.adhikāra; // New property
     this.kartā = vikalpa.kartā; // New property
@@ -102,7 +102,7 @@ export class Sandarbha<T = any> {
 
     // Initialize new properties
     this.ghaṭanā = new Set();
-    this.sthiti = {};
+    this.data = {};
 
     // Initialize transaction properties
     this.vyavahāraId = vikalpa.vyavahāraId;
@@ -212,10 +212,10 @@ export class Sandarbha<T = any> {
    */
   static sṛjSandarbha(vikalpa: {
     id?: string;
-    prakāra?: string;
+    mode?: string;
     nāma?: string;
     janakId?: string;
-    lakṣaṇa?: Record<string, any>;
+    mark?: Record<string, any>;
     vinyāsa?: any;
     svataḥSakriya?: boolean;
     vyavahāraId?: string;
@@ -343,9 +343,9 @@ export class Sandarbha<T = any> {
    */
   parivardhana(parivardhita: {
     nāma?: string;
-    lakṣaṇa?: Record<string, any>;
+    mark?: Record<string, any>;
     vinyāsa?: T;
-    sthiti?: Record<string, any>; // State updates
+    data?: Record<string, any>; // State updates
     vyavahāraId?: string; // Transaction ID
     vyavahāraSthiti?: string; // Transaction state
   }): boolean {
@@ -354,10 +354,10 @@ export class Sandarbha<T = any> {
       this.nāma = parivardhita.nāma;
     }
 
-    if (parivardhita.lakṣaṇa) {
-      this.lakṣaṇa = {
-        ...this.lakṣaṇa,
-        ...parivardhita.lakṣaṇa,
+    if (parivardhita.mark) {
+      this.mark = {
+        ...this.mark,
+        ...parivardhita.mark,
       };
     }
 
@@ -369,10 +369,10 @@ export class Sandarbha<T = any> {
     }
 
     // Handle state updates
-    if (parivardhita.sthiti) {
-      this.sthiti = {
-        ...this.sthiti,
-        ...parivardhita.sthiti,
+    if (parivardhita.data) {
+      this.data = {
+        ...this.data,
+        ...parivardhita.data,
       };
     }
 
@@ -499,7 +499,7 @@ export class Sandarbha<T = any> {
    * Retrieves relations within this context based on query options.
    * sambandhāḥPrāpti (Obtaining Relations)
    *
-   * @param options - Criteria to filter relations (prakāra, sūtra, para).
+   * @param options - Criteria to filter relations (mode, sūtra, para).
    * @returns An array of matching FormRelation objects.
    */
   sambandhāḥPrāpti(options: SambandhaQueryOptions): FormRelation[] {
@@ -528,7 +528,7 @@ export class Sandarbha<T = any> {
 
       // Now 'relation' is a FormRelation object, apply filtering
       let match = true;
-      if (options.prakāra && relation.type !== options.prakāra) {
+      if (options.mode && relation.type !== options.mode) {
         match = false;
       }
       // --- Adjust filtering based on FormRelation properties ---
@@ -611,20 +611,20 @@ export class Sandarbha<T = any> {
    *
    * @param sūtraId - The ID of the source entity/node.
    * @param paraId - The ID of the target entity/node.
-   * @param prakāra - The type of the relation.
-   * @param lakṣaṇa - Optional properties/metadata for the relation.
+   * @param mode - The type of the relation.
+   * @param mark - Optional properties/metadata for the relation.
    * @returns The created relation object or its ID (adjust as needed).
    */
 
   sambandhaNirmāṇa(
     sūtraId: string,
     paraId: string,
-    prakāra: string,
-    lakṣaṇa?: Record<string, any>
+    mode: string,
+    mark?: Record<string, any>
   ): any {
     // <-- Adjust return type as needed
     console.log(
-      `Creating relation in context ${this.id}: ${sūtraId} -[${prakāra}]-> ${paraId}`
+      `Creating relation in context ${this.id}: ${sūtraId} -[${mode}]-> ${paraId}`
     );
 
     // --- IMPLEMENTATION NEEDED ---
@@ -635,11 +635,11 @@ export class Sandarbha<T = any> {
     // 3. Return the newly created relation or relevant information.
 
     const newRelation = {
-      id: `${prakāra}:${sūtraId}:${paraId}:${Date.now()}`, // Example ID
+      id: `${mode}:${sūtraId}:${paraId}:${Date.now()}`, // Example ID
       sūtra: sūtraId,
       para: paraId,
-      prakāra: prakāra,
-      lakṣaṇa: { ...lakṣaṇa, created: new Date() },
+      mode: mode,
+      mark: { ...mark, created: new Date() },
       contextId: this.id,
     };
 
@@ -663,13 +663,13 @@ export class Sandarbha<T = any> {
    * Emit a context event - sandarbhaGhaṭanāPrasāraṇa (context event emission)
    */
   protected emitSandarbhaGhaṭanā(
-    prakāra: "utpanna" | "sakriya" | "niṣkriya" | "parivardhita" | "nāśa"
+    mode: "utpanna" | "sakriya" | "niṣkriya" | "parivardhita" | "nāśa"
   ): void {
     const ghaṭanā: SandarbhaGhaṭanā = {
-      prakāra,
+      mode,
       sandarbhaId: this.id,
       kālamudrā: Date.now(),
-      lakṣaṇa: this.lakṣaṇa,
+      mark: this.mark,
     };
 
     // TODO: Emit event properly when event system is available
@@ -714,10 +714,10 @@ export class Sandarbha<T = any> {
  */
 export function sandarbhaSṛṣṭi(vinyāsa: {
   id?: string;
-  prakāra?: string; // type
+  mode?: string; // type
   nāma?: string; // name
   janakId?: string; // parentId
-  lakṣaṇa?: Record<string, any>; // metadata
+  mark?: Record<string, any>; // metadata
   vinyāsa?: any; // config
   svataḥSakriya?: boolean; // autoActivate
   vyavahāraId?: string; // Transaction ID

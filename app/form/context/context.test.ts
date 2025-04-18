@@ -10,7 +10,7 @@ describe('Context System', () => {
   it('should create a context', () => {
     const sandarbha = Sandarbha.sṛjSandarbha({
       nāma: 'Test Context',
-      prakāra: 'samuccaya',
+      mode:  "composite",
       svataḥSakriya: true
     });
     
@@ -22,7 +22,7 @@ describe('Context System', () => {
   it('should retrieve a context by ID', () => {
     const sandarbha = Sandarbha.sṛjSandarbha({
       nāma: 'Test Context',
-      prakāra: 'samuccaya'
+      mode:  "composite"
     });
     
     const retrieved = Sandarbha.getSandarbha(sandarbha.id);
@@ -33,7 +33,7 @@ describe('Context System', () => {
   it('should activate a context', () => {
     const sandarbha = Sandarbha.sṛjSandarbha({
       nāma: 'Test Context',
-      prakāra: 'samuccaya'
+      mode:  "composite"
     });
     
     const activated = sandarbha.sakriyaKaraṇa();
@@ -43,13 +43,13 @@ describe('Context System', () => {
   it('should create entities within a context', () => {
     const sandarbha = Sandarbha.sṛjSandarbha({
       nāma: 'Test Context',
-      prakāra: 'samuccaya',
+      mode:  "composite",
       svataḥSakriya: true
     });
     
     const entityId = sandarbha.vastuSṛṣṭi({
       nāma: 'Test Entity',
-      prakāra: 'user'
+      mode: 'user'
     });
     
     expect(entityId).toBeDefined();
@@ -62,18 +62,18 @@ describe('Context System', () => {
   it('should create relations between entities', () => {
     const sandarbha = Sandarbha.sṛjSandarbha({
       nāma: 'Test Context',
-      prakāra: 'samuccaya',
+      mode:  "composite",
       svataḥSakriya: true
     });
     
     const entityId1 = sandarbha.vastuSṛṣṭi({
       nāma: 'Source Entity',
-      prakāra: 'user'
+      mode: 'user'
     });
     
     const entityId2 = sandarbha.vastuSṛṣṭi({
       nāma: 'Target Entity',
-      prakāra: 'profile'
+      mode: 'profile'
     });
     
     const relationId = sandarbha.sambandhaSṛṣṭi(
@@ -94,7 +94,7 @@ describe('Context System', () => {
   it('should execute operations within a context', () => {
     const sandarbha = Sandarbha.sṛjSandarbha({
       nāma: 'Test Context',
-      prakāra: 'samuccaya',
+      mode:  "composite",
       svataḥSakriya: true
     });
     

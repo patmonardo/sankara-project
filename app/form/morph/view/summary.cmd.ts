@@ -1,8 +1,8 @@
 import { FormShape } from "../../schema/form";
 import { ViewContext } from "../mode";
 import { generateView, ViewOutput } from "./pipeline";
-import { SummaryViewMorph, SummaryViewOutput } from "./summary";
-import { ViewFormatMorph } from "./format";
+import { SummaryViewMorph } from "./summary";
+import { FormatViewMorph } from "./format";
 
 // --- 1. Sample Input FormShape ---
 const sampleShape: FormShape = {
@@ -92,9 +92,8 @@ const baseContext: ViewContext = {
   id: "summaryTestContext",
   name: "Summary Test Context",
   timestamp: Date.now(),
-  prakāra: "darśana",
-  sthiti: sampleData,
-  mode: "view",
+  mode:  "view",
+  data: sampleData,
 };
 
 // --- Test 1: Default Summary (Top 5 Fields) ---
@@ -323,7 +322,7 @@ try {
       outputFormat: format,
     };
 
-    const formatted = ViewFormatMorph.apply(summary, formatContext);
+    const formatted = FormatViewMorph.apply(summary, formatContext);
 
     console.log(`\n${format.toUpperCase()} Format Output:\n`);
     if (typeof formatted.content === "string") {

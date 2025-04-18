@@ -64,8 +64,8 @@ const baseContext: ViewContext = {
   id: "formatContext",
   name: "Format Test Context",
   timestamp: Date.now(),
-  prakāra: "darśana",
-  sthiti: {
+  mode:  "view",
+  data: {
     fullName: "Alice Wonderland",
     email: "alice@example.com",
     status: "ACTV",

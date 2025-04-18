@@ -1,0 +1,175 @@
+======================================
+=== TEST 1: Default Actions ===
+======================================
+
+Output Actions:
+[
+  {
+    "id": "submit",
+    "type": "submit",
+    "label": "Create",
+    "primary": true,
+    "disabled": false,
+    "position": "bottom"
+  },
+  {
+    "id": "cancel",
+    "type": "button",
+    "label": "Cancel",
+    "primary": false,
+    "disabled": false,
+    "position": "bottom"
+  },
+  {
+    "id": "reset",
+    "type": "reset",
+    "label": "Reset",
+    "primary": false,
+    "disabled": false,
+    "position": "bottom"
+  }
+]
+
+--- Validation Checks ---
+Correct number of actions (Submit, Cancel, Reset): true
+Submit label is default 'Create': true
+Cancel button shown: true
+Reset button shown: true
+Button position is default 'bottom': true
+
+
+======================================
+=== TEST 2: Custom Labels ===
+======================================
+
+Output Actions:
+[
+  {
+    "id": "submit",
+    "type": "submit",
+    "label": "Save Item",
+    "primary": true,
+    "disabled": false,
+    "position": "bottom"
+  },
+  {
+    "id": "cancel",
+    "type": "button",
+    "label": "Discard Changes",
+    "primary": false,
+    "disabled": false,
+    "position": "bottom"
+  },
+  {
+    "id": "reset",
+    "type": "reset",
+    "label": "Reset",
+    "primary": false,
+    "disabled": false,
+    "position": "bottom"
+  }
+]
+
+--- Validation Checks ---
+Submit label is 'Save Item': true
+Cancel label is 'Discard Changes': true
+
+
+======================================
+=== TEST 3: No Cancel Button ===
+======================================
+
+Output Actions:
+[
+  {
+    "id": "submit",
+    "type": "submit",
+    "label": "Create",
+    "primary": true,
+    "disabled": false,
+    "position": "bottom"
+  },
+  {
+    "id": "reset",
+    "type": "reset",
+    "label": "Reset",
+    "primary": false,
+    "disabled": false,
+    "position": "bottom"
+  }
+]
+
+--- Validation Checks ---
+Correct number of actions (Submit, Reset): true
+Cancel button hidden: true
+
+
+======================================
+=== TEST 4: No Reset Button ===
+======================================
+
+Output Actions:
+[
+  {
+    "id": "submit",
+    "type": "submit",
+    "label": "Create",
+    "primary": true,
+    "disabled": false,
+    "position": "bottom"
+  },
+  {
+    "id": "cancel",
+    "type": "button",
+    "label": "Cancel",
+    "primary": false,
+    "disabled": false,
+    "position": "bottom"
+  }
+]
+
+--- Validation Checks ---
+Correct number of actions (Submit, Cancel): true
+Reset button hidden: true
+
+
+======================================
+=== TEST 5: Top Button Position ===
+======================================
+
+Output Actions:
+[
+  {
+    "id": "submit",
+    "type": "submit",
+    "label": "Create",
+    "primary": true,
+    "disabled": false,
+    "position": "top"
+  },
+  {
+    "id": "cancel",
+    "type": "button",
+    "label": "Cancel",
+    "primary": false,
+    "disabled": false,
+    "position": "top"
+  },
+  {
+    "id": "reset",
+    "type": "reset",
+    "label": "Reset",
+    "primary": false,
+    "disabled": false,
+    "position": "top"
+  }
+]
+
+--- Validation Checks ---
+Button position is 'top': true
+
+
+======================================
+=== All Action Tests Complete ===
+======================================
+Verify the generated actions match the expected configurations based on the context.

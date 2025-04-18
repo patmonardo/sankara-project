@@ -21,7 +21,6 @@ export const StyleViewMorph = new SimpleMorph<ViewOutput, ViewOutput>(
 
     // Deep clone might be safer
     const result: ViewOutput = {
-      // ... (rest of StyleViewMorph implementation as before) ...
        ...view,
       fields: view.fields.map((field) => ({
         ...field,
@@ -31,14 +30,20 @@ export const StyleViewMorph = new SimpleMorph<ViewOutput, ViewOutput>(
             ...(field.meta?.styles || {}),
             container: {
               ...(field.meta?.styles?.container || {}),
-              padding:
-                density === "compact"
-                  ? "4px"
-                  : density === "comfortable"
-                  ? "12px"
-                  : "8px",
+              padding: density === "compact" ? "4px" : density === "comfortable" ? "12px" : "8px",
               margin: density === "compact" ? "2px 0" : "4px 0",
+              borderBottom: "1px solid var(--outline-color, #e0e0e0)",  // Add subtle separator
             },
+            label: {  // Add label styling
+              fontWeight: 'medium',
+              marginBottom: '4px',
+              fontSize: density === "compact" ? "0.875rem" : "1rem",
+            },
+            value: {  // Add value styling
+              fontSize: density === "compact" ? "0.875rem" : "1rem",
+              lineHeight: '1.5',
+              color: "var(--text-primary-color, #212121)",
+            }
           },
         },
       })),

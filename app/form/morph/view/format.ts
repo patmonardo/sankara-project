@@ -185,7 +185,6 @@ export type ViewFormatType =
   | "csv"
   | "html"
   | "markdown"
-  | "prisma";
 
 /**
  * Base formatted view output
@@ -258,14 +257,6 @@ export interface MarkdownViewOutput extends FormattedViewOutput {
 }
 
 /**
- * Prisma schema formatted view
- */
-export interface PrismaViewOutput extends FormattedViewOutput {
-  format: "prisma";
-  content: string; // Prisma schema string
-}
-
-/**
  * Union type of all formatted outputs
  */
 export type AnyFormattedViewOutput =
@@ -275,12 +266,11 @@ export type AnyFormattedViewOutput =
   | CSVViewOutput
   | HTMLViewOutput
   | MarkdownViewOutput
-  | PrismaViewOutput;
 
 /**
  * Convert view output to a specific format
  */
-export const ViewFormatMorph = new SimpleMorph<
+export const FormatViewMorph = new SimpleMorph<
   ViewOutput | GroupedViewOutput,
   AnyFormattedViewOutput
 >(
@@ -325,8 +315,6 @@ function formatOutput(
       return formatAsHTML(view, viewContext);
     case "markdown":
       return formatAsMarkdown(view, viewContext);
-    case "prisma":
-      return formatAsPrisma(view, viewContext);
     default:
       throw new Error(`Unsupported view format: ${format}`);
   }
@@ -560,124 +548,6 @@ function formatAsMarkdown(
       renderTime: new Date().toISOString(),
     },
   };
-}
-
-function formatAsPrisma(
-  view: ViewOutput,
-  context: ViewContext
-): PrismaViewOutput {
-  const modelName = view.id
-    .replace(/Form$/, "") // Remove "Form" suffix if present
-    .replace(/(^|_)([a-z])/g, (match, p1, p2) => p2.toUpperCase()); // Convert to PascalCase
-
-  let prismaSchema = `// Prisma schema generated from form definition\n\n`;
-  prismaSchema += `model ${modelName} {\n`;
-
-  // Add ID field (assuming all models need one)
-  prismaSchema += `  id String @id @default(uuid())\n`;
-
-  // Map form field types to Prisma types
-  view.fields.forEach((field) => {
-    if (field.meta?.excludeFromSchema) return; // Skip if marked to exclude
-
-    const fieldName = field.id;
-    let prismaType = mapToPrismaType(field.type, field);
-    const required = field.required ? "" : "?";
-    const attributes = generatePrismaAttributes(field);
-
-    prismaSchema += `  ${fieldName} ${prismaType}${required}${attributes}\n`;
-  });
-
-  // Add timestamps if configured
-  if (context.prisma?.timestamps !== false) {
-    prismaSchema += `  createdAt DateTime @default(now())\n`;
-    prismaSchema += `  updatedAt DateTime @updatedAt\n`;
-  }
-
-  prismaSchema += `}\n`;
-
-  // Add any relations specified in form metadata
-  if (view.meta?.prismaRelations) {
-    prismaSchema += `\n// Relations\n`;
-    prismaSchema += view.meta.prismaRelations;
-  }
-
-  return {
-    id: view.id,
-    format: "prisma",
-    content: prismaSchema,
-    meta: {
-      generatedAt: new Date().toISOString(),
-      form: view.id,
-      modelName: modelName,
-      fieldCount: view.fields.length,
-    },
-  };
-}
-
-// Helper function to map form field types to Prisma types
-function mapToPrismaType(type: string, field: ViewField): string {
-  switch (type) {
-    case "text":
-    case "email":
-    case "url":
-    case "password":
-    case "tel":
-      return "String";
-    case "number":
-      return field.format === "currency" ? "Decimal" : "Int";
-    case "boolean":
-      return "Boolean";
-    case "date":
-      return "DateTime";
-    case "datetime":
-      return "DateTime";
-    case "time":
-      return "DateTime";
-    case "select":
-      return field.options ? `Enum${toTitleCase(field.id)}` : "String";
-    case "checkbox":
-      return "Boolean";
-    case "radio":
-      return field.options ? `Enum${toTitleCase(field.id)}` : "String";
-    case "object":
-    case "json":
-      return "Json";
-    case "array":
-      return field.meta?.itemType
-        ? `${mapToPrismaType(field.meta.itemType, field)}[]`
-        : "Json";
-    default:
-      return "String";
-  }
-}
-
-// Helper function to generate Prisma field attributes
-function generatePrismaAttributes(field: ViewField): string {
-  const attrs = [];
-
-  // Add unique constraint if specified
-  if (field.meta?.unique) {
-    attrs.push("@unique");
-  }
-
-  // Add default value if specified
-  if (field.defaultValue !== undefined && field.defaultValue !== null) {
-    if (typeof field.defaultValue === "string") {
-      attrs.push(`@default("${field.defaultValue}")`);
-    } else if (typeof field.defaultValue === "boolean") {
-      attrs.push(`@default(${field.defaultValue})`);
-    } else if (typeof field.defaultValue === "number") {
-      attrs.push(`@default(${field.defaultValue})`);
-    }
-  }
-
-  // Add any custom attributes
-  if (field.meta?.prismaAttributes) {
-    attrs.push(field.meta.prismaAttributes);
-  }
-
-  return attrs.length > 0 ? " " + attrs.join(" ") : "";
 }
 
 /**

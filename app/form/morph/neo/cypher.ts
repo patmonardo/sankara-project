@@ -1,5 +1,4 @@
 import { SimpleMorph } from "../morph";
-import { FormExecutionContext } from "../../schema/context";
 import { FormShape } from "../../schema/form";
 import { NeoContext } from "../mode";
 
@@ -10,15 +9,17 @@ import { NeoContext } from "../mode";
 
 /**
  * Represents a Neo4j node or relationship property with proper typing
+ * Using an index signature for the map/object part as a potential
+ * workaround for TS server glitches with recursive Record<string, T>.
  */
-export type CypherProperty = 
-  | string 
-  | number 
-  | boolean 
-  | null 
-  | Date 
-  | CypherProperty[] 
-  | Record<string, CypherProperty>;
+export type CypherProperty =
+  | string
+  | number
+  | boolean
+  | null
+  | Date
+  | CypherProperty[] // Array recursion
+  | { [key: string]: CypherProperty }; // Index signature for map/object recursion
 
 /**
  * Represents a Neo4j node structure
@@ -491,7 +492,7 @@ function formatCypherValue(value: any): string {
 }
 
 /**
- * Convert a form ID to a Neo4j node label with proper casing
+ * Convert ashape ID to a Neo4j node label with proper casing
  */
 export function toNodeLabel(formId: string, prefix?: string): string {
   // Remove common prefixes/suffixes
@@ -512,10 +513,10 @@ export function toNodeLabel(formId: string, prefix?: string): string {
   return label;
 }
 
-// ======= SPECIALIZED FORM MORPHISMS ========
+// ======= SPECIALIZEDshape MORPHISMS ========
 
 /**
- * Configuration for form-to-cypher generation
+ * Configuration forshape-to-cypher generation
  */
 export interface FormToCypherConfig {
   /** Whether to generate parameterized queries (default: true) */
@@ -533,34 +534,34 @@ export interface FormToCypherConfig {
 }
 
 /**
- * Transforms a form shape and data into Cypher queries
+ * Transforms ashape shape and data into Cypher queries
  */
 export const FormToCypherMorph = new SimpleMorph<FormShape, CypherOutput>(
   "FormToCypherMorph",
-  (form, context) => {
-    // Validate form input
-    if (!form || !form.id) {
-      throw new Error("Invalid form provided to FormToCypherMorph");
+  (shape, context) => {
+    // Validateshape input
+    if (!shape || !shape.id) {
+      throw new Error("Invalidshape provided to FormToCypherMorph");
     }
 
     // Convert context to NeoContext
     const neoContext = context as NeoContext;
     const config = neoContext.cypher || {};
     
-    // Get form data from context
-    const formData = neoContext.sthiti || {};
+    // Getshape data from context
+    const data = neoContext.data || {};
     
-    // Generate a default node label from the form id
-    const nodeLabel = config.defaultNodeLabel || toNodeLabel(form.id, config.labelPrefix);
+    // Generate a default node label from theshape id
+    const nodeLabel = config.defaultNodeLabel || toNodeLabel(shape.id, config.labelPrefix);
     
     // Initialize result
     const result: CypherOutput = {
-      id: `cypher-${form.id}-${Date.now()}`,
+      id: `cypher-${shape.id}-${Date.now()}`,
       queries: [],
       parameters: {},
       meta: {
         generatedAt: new Date().toISOString(),
-        sourceFormId: form.id,
+        sourceFormId:shape.id,
         queryCount: 0,
       }
     };
@@ -571,16 +572,16 @@ export const FormToCypherMorph = new SimpleMorph<FormShape, CypherOutput>(
     // Generate appropriate query based on operation
     switch (operation) {
       case 'create':
-        generateCreateCypher(form, formData, nodeLabel, result, config);
+        generateCreateCypher(shape, data, nodeLabel, result, config);
         break;
       case 'match':
-        generateMatchCypher(form, formData, nodeLabel, result, config);
+        generateMatchCypher(shape, data, nodeLabel, result, config);
         break;
       case 'update':
-        generateUpdateCypher(form, formData, nodeLabel, result, config);
+        generateUpdateCypher(shape, data, nodeLabel, result, config);
         break;
       case 'delete':
-        generateDeleteCypher(form, formData, nodeLabel, result, config);
+        generateDeleteCypher(shape, data, nodeLabel, result, config);
         break;
       default:
         throw new Error(`Unsupported operation: ${operation}`);
@@ -600,23 +601,23 @@ export const FormToCypherMorph = new SimpleMorph<FormShape, CypherOutput>(
 );
 
 /**
- * Generate CREATE query for a form
+ * Generate CREATE query for ashape
  */
 function generateCreateCypher(
-  form: FormShape, 
-  formData: Record<string, any>, 
+ shape: FormShape, 
+  data: Record<string, any>, 
   nodeLabel: string,
   result: CypherOutput,
   config: FormToCypherConfig
 ): void {
-  // Build properties object based on form fields
+  // Build properties object based onshape fields
   const properties: Record<string, any> = {};
   
-  form.fields.forEach(field => {
+ shape.fields.forEach(field => {
     // Skip fields that shouldn't be included in graph
     if (field.meta?.excludeFromGraph) return;
     
-    const value = formData[field.id];
+    const value = data[field.id];
     if (value !== undefined) {
       properties[field.id] = value;
     }
@@ -624,13 +625,13 @@ function generateCreateCypher(
   
   // Add metadata if configured
   if (config.includeMetadata) {
-    properties._formId = form.id;
+    properties._formId = shape.id;
     properties._createdAt = new Date().toISOString();
   }
   
   // Create a query definition using our substrate
   const createQuery: CypherQuery = {
-    id: `create-${form.id}`,
+    id: `create-${shape.id}`,
     name: `Create ${nodeLabel} node`,
     patterns: [
       {
@@ -662,21 +663,21 @@ function generateCreateCypher(
   Object.assign(result.parameters, parameters);
   
   // Generate relationship queries if needed
-  generateRelationshipCypher(form, formData, nodeLabel, result, config);
+  generateRelationshipCypher(shape, data, nodeLabel, result, config);
 }
 
 /**
- * Generate relationship queries for a form
+ * Generate relationship queries for ashape
  */
 function generateRelationshipCypher(
-  form: FormShape, 
-  formData: Record<string, any>, 
+ shape: FormShape, 
+  data: Record<string, any>, 
   nodeLabel: string,
   result: CypherOutput,
   config: FormToCypherConfig
 ): void {
   // Check for relationship definitions
-  const relationships = form.meta?.relationships || [];
+  const relationships = shape.meta?.relationships || [];
   
   if (!Array.isArray(relationships) || relationships.length === 0) {
     return;
@@ -685,24 +686,24 @@ function generateRelationshipCypher(
   relationships.forEach((rel, index) => {
     if (!rel.field || !rel.type || !rel.target) return;
     
-    const fieldValue = formData[rel.field];
+    const fieldValue = data[rel.field];
     if (fieldValue === undefined || fieldValue === null) return;
     
     const targetLabel = rel.targetLabel || rel.target;
     
     // Determine identifier properties for the source node
     const identifiers = config.identifierProperties || 
-      Object.keys(formData)
-        .filter(key => !Array.isArray(formData[key]) && typeof formData[key] !== 'object')
+      Object.keys(data)
+        .filter(key => !Array.isArray(data[key]) && typeof data[key] !== 'object')
         .slice(0, 3);
     
     // Create conditions to identify the source node
     const conditions: CypherCondition[] = identifiers
-      .filter(prop => formData[prop] !== undefined)
+      .filter(prop => data[prop] !== undefined)
       .map(prop => ({
         left: 'source.' + prop,
         operator: '=',
-        right: formData[prop],
+        right: data[prop],
         parameterized: true
       }));
     
@@ -715,7 +716,7 @@ function generateRelationshipCypher(
     if (Array.isArray(fieldValue)) {
       // Create a relationship to multiple target nodes
       const unwindQuery: CypherQuery = {
-        id: `rel-${form.id}-${rel.field}`,
+        id: `rel-${shape.id}-${rel.field}`,
         name: `Create ${rel.type.toUpperCase()} relationships from ${nodeLabel} to ${targetLabel}`,
         patterns: [
           {
@@ -777,12 +778,12 @@ function generateRelationshipCypher(
         query: cypher,
         purpose: 'create',
         executionOrder: unwindQuery.executionOrder || 1,
-        dependencies: [`create-${form.id}`]
+        dependencies: [`create-${shape.id}`]
       });
     } else {
       // Create a relationship to a single target node
       const relQuery: CypherQuery = {
-        id: `rel-${form.id}-${rel.field}`,
+        id: `rel-${shape.id}-${rel.field}`,
         name: `Create ${rel.type.toUpperCase()} relationship from ${nodeLabel} to ${targetLabel}`,
         patterns: [
           {
@@ -840,25 +841,25 @@ function generateRelationshipCypher(
         query: cypher,
         purpose: 'create',
         executionOrder: relQuery.executionOrder || 1,
-        dependencies: [`create-${form.id}`]
+        dependencies: [`create-${shape.id}`]
       });
     }
   });
 }
 
 /**
- * Generate MATCH query for a form
+ * Generate MATCH query for ashape
  */
 function generateMatchCypher(
-  form: FormShape, 
-  formData: Record<string, any>, 
+ shape: FormShape, 
+  data: Record<string, any>, 
   nodeLabel: string,
   result: CypherOutput,
   config: FormToCypherConfig
 ): void {
   // Determine which properties to use for matching
   const matchProps = config.identifierProperties || 
-    form.fields
+   shape.fields
       .filter(f => f.meta?.identifier || f.id === 'id')
       .map(f => f.id);
   
@@ -868,11 +869,11 @@ function generateMatchCypher(
   
   // Create conditions for each match property
   const conditions: CypherCondition[] = matchProps
-    .filter(prop => formData[prop] !== undefined)
+    .filter(prop => data[prop] !== undefined)
     .map(prop => ({
       left: 'n.' + prop,
       operator: '=',
-      right: formData[prop],
+      right: data[prop],
       parameterized: config.parameterized !== false
     }));
   
@@ -882,7 +883,7 @@ function generateMatchCypher(
   
   // Create a query definition
   const matchQuery: CypherQuery = {
-    id: `match-${form.id}`,
+    id: `match-${shape.id}`,
     name: `Match ${nodeLabel} node`,
     patterns: [
       {
@@ -915,11 +916,11 @@ function generateMatchCypher(
 }
 
 /**
- * Generate UPDATE query for a form
+ * Generate UPDATE query for ashape
  */
 function generateUpdateCypher(
-  form: FormShape, 
-  formData: Record<string, any>, 
+ shape: FormShape, 
+  data: Record<string, any>, 
   nodeLabel: string,
   result: CypherOutput,
   config: FormToCypherConfig
@@ -928,7 +929,7 @@ function generateUpdateCypher(
   
   // Determine which properties to use for matching
   const matchProps = config.identifierProperties || 
-    form.fields
+    shape.fields
       .filter(f => f.meta?.identifier || f.id === 'id')
       .map(f => f.id);
   
@@ -938,11 +939,11 @@ function generateUpdateCypher(
   
   // Create conditions
   const conditions: CypherCondition[] = matchProps
-    .filter(prop => formData[prop] !== undefined)
+    .filter(prop => data[prop] !== undefined)
     .map(prop => ({
       left: 'n.' + prop,
       operator: '=',
-      right: formData[prop],
+      right: data[prop],
       parameterized: config.parameterized !== false
     }));
   
@@ -952,14 +953,14 @@ function generateUpdateCypher(
   
   // Collect properties to update
   const updateProps: Record<string, any> = {};
-  form.fields.forEach(field => {
+ shape.fields.forEach(field => {
     // Skip fields used for matching
     if (matchProps.includes(field.id)) return;
     
     // Skip fields that shouldn't be included in graph
     if (field.meta?.excludeFromGraph) return;
     
-    const value = formData[field.id];
+    const value = data[field.id];
     if (value !== undefined) {
       updateProps[field.id] = value;
     }
@@ -976,7 +977,7 @@ function generateUpdateCypher(
   
   // Create query definition
   const updateQuery: CypherQuery = {
-    id: `update-${form.id}`,
+    id: `update-${shape.id}`,
     name: `Update ${nodeLabel} node`,
     patterns: [
       {
@@ -1017,18 +1018,18 @@ function generateUpdateCypher(
 }
 
 /**
- * Generate DELETE query for a form
+ * Generate DELETE query for ashape
  */
 function generateDeleteCypher(
-  form: FormShape, 
-  formData: Record<string, any>, 
+ shape: FormShape, 
+  data: Record<string, any>, 
   nodeLabel: string,
   result: CypherOutput,
   config: FormToCypherConfig
 ): void {
   // Determine which properties to use for matching
   const matchProps = config.identifierProperties || 
-    form.fields
+   shape.fields
       .filter(f => f.meta?.identifier || f.id === 'id')
       .map(f => f.id);
   
@@ -1038,11 +1039,11 @@ function generateDeleteCypher(
   
   // Create conditions
   const conditions: CypherCondition[] = matchProps
-    .filter(prop => formData[prop] !== undefined)
+    .filter(prop => data[prop] !== undefined)
     .map(prop => ({
       left: 'n.' + prop,
       operator: '=',
-      right: formData[prop],
+      right: data[prop],
       parameterized: config.parameterized !== false
     }));
   
@@ -1052,7 +1053,7 @@ function generateDeleteCypher(
   
   // Create query definition
   const deleteQuery: CypherQuery = {
-    id: `delete-${form.id}`,
+    id: `delete-${shape.id}`,
     name: `Delete ${nodeLabel} node`,
     patterns: [
       {

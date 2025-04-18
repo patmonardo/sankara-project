@@ -1,9 +1,7 @@
 import { FormExecutionContext } from "../../schema/context";
 import { SimpleMorph, createPipeline } from "../morph";
 import { FormShape, FormField } from "../../schema/form";
-// Adjust context import path if needed
 import { CreateContext, isCreateContext } from "../mode";
-// Import the standard pipeline and its output type
 import { CreateModePipeline, CreateOutput } from "./pipeline";
 
 /**
@@ -29,7 +27,7 @@ export interface TemplateCreateContext extends CreateContext {
  */
 export function isTemplateContext(context: FormExecutionContext): context is TemplateCreateContext {
   // 1. Basic context checks
-  if (!context || context.prakāra !== 'sṛṣṭi') {
+  if (!context || context.mode !== 'create') {
     return false;
   }
 
@@ -194,8 +192,8 @@ export function withTemplate(
   baseContext: CreateContext,
   template: FormTemplate
 ): TemplateCreateContext {
-  // Ensure baseContext has the correct prakāra if needed
-  const contextWithType: CreateContext = { ...baseContext, prakāra: 'sṛṣṭi' };
+  // Ensure baseContext has the correct mode if needed
+  const contextWithType: CreateContext = { ...baseContext, mode: 'create' };
   return {
     ...contextWithType,
     template
@@ -212,7 +210,7 @@ export function applyTemplate(
   context: CreateContext
 ): CreateOutput {
   // Create the full TemplateCreateContext
-  const templateContext = withTemplate({ ...context, prakāra: 'sṛṣṭi' }, template);
+  const templateContext = withTemplate({ ...context, mode: 'create' }, template);
   // Apply the dedicated template pipeline
   return TemplateCreatePipeline.apply(shape, templateContext);
 }

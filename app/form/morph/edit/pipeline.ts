@@ -1,8 +1,7 @@
 import { createMorph, createPipeline } from "../morph";
 import { FormShape, FormField, FormAction } from "../../schema/form";
-import { FormContext } from "../../schema/context";
 import { EditContext, isEditContext } from "../mode";
-import { GenerateEditActionsMorph } from "./actions";
+import { GenerateEditActionsMorph } from "./action";
 import { determineInputType, getDefaultForType } from "../mode"; // Example import
 
 /**
@@ -61,15 +60,27 @@ export interface EditOutput extends Omit<FormShape, "fields" | "actions"> {
  * Determine if a field should be included in edit mode.
  */
 function shouldIncludeInEdit(field: FormField, context?: EditContext): boolean {
+  // Basic checks
   if (!field || !field.id) return false;
   if (field.visible === false) return false;
+
+  // Metadata checks
   if (field.meta?.excludeFromEdit) return false;
   if (field.meta?.createOnly) return false;
-  if (field.meta?.editOnly) return true;
+  if (field.meta?.editOnly) {
+    // Still respect includeFields if it exists
+    if (context?.includeFields && context.includeFields.length > 0) {
+      return context.includeFields.includes(field.id);
+    }
+    return true;
+  }
+  // Contextual checks
+  if (context?.excludeFields?.includes(field.id)) return false;
 
-  // Contextual checks (if needed)
-  // if (context?.excludeFields?.includes(field.id)) return false;
-  // if (context?.includeFields?.includes(field.id)) return true;
+  // Check if includeFields exists and has entries
+  if (context?.includeFields && context.includeFields.length > 0) {
+    return context.includeFields.includes(field.id);
+  }
 
   // Default: include if not explicitly excluded/hidden
   return true;

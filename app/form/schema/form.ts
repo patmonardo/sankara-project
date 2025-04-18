@@ -19,78 +19,6 @@ export const FormOptionSchema = z.object({
   label: z.string(),
 });
 
-export const FormHandlerSchema = z.object({
-  submit: z.function(),
-  reset: z.function().optional(),
-  cancel: z.function().optional(),
-  delete: z.function().optional(),
-});
-
-export const FormActionSchema = z.object({
-  id: z.string(),
-  type: z.enum(["submit", "reset", "button"]),
-  label: z.string(),
-  primary: z.boolean().optional().default(false),
-  disabled: z.boolean().optional().default(false),
-  position: z.enum(["top", "bottom", "both"]).optional().default("bottom"),
-});
-
-/**
- * Base field properties schema
- */
-export const BaseFieldSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  label: z.string().optional(),
-  required: z.boolean().optional().default(false).optional(),
-  description: z.string().optional(),
-  placeholder: z.string().optional(),
-  defaultValue: z.any().optional(),
-});
-
-/**
- * Validation properties schema
- */
-export const ValidationSchema = z.object({
-  valid: z.boolean().optional(),
-  errors: z.array(z.string()).optional(),
-  warnings: z.array(z.string()).optional(),
-  touched: z.boolean().optional(),
-  dirty: z.boolean().optional()
-});
-
-/**
- * Field metadata schema
- */
-export const FieldMetaSchema = z.object({
-  sectionHint: z.string().optional(),
-  validation: z.object({
-    performed: z.boolean().optional(),
-    timestamp: z.number().optional(),
-    level: z.string().optional()
-  }).optional(),
-  accessibility: z.object({
-    enhanced: z.boolean().optional(),
-    level: z.string().optional(),
-    guideline: z.string().optional()
-  }).optional(),
-  localization: z.object({
-    applied: z.boolean().optional(),
-    locale: z.string().optional()
-  }).optional()
-});
-
-/**
- * Accessibility properties schema
- */
-export const AccessibilitySchema = z.object({
-  ariaLabel: z.string().optional(),
-  ariaDescribedBy: z.string().optional(),
-  ariaErrorMessage: z.string().optional(),
-  descriptionId: z.string().optional(),
-  tabIndex: z.number().optional()
-});
-
 export const FormFieldSchema = z.object({
   id: z.string(),
   type: z.string(),
@@ -115,6 +43,65 @@ export const FormFieldSchema = z.object({
 });
 
 /**
+ * Field metadata schema
+ */
+export const FieldMetaSchema = z.object({
+  sectionHint: z.string().optional(),
+  validation: z.object({
+    performed: z.boolean().optional(),
+    timestamp: z.number().optional(),
+    level: z.string().optional()
+  }).optional(),
+  accessibility: z.object({
+    enhanced: z.boolean().optional(),
+    level: z.string().optional(),
+    guideline: z.string().optional()
+  }).optional(),
+  localization: z.object({
+    applied: z.boolean().optional(),
+    locale: z.string().optional()
+  }).optional()
+});
+
+export const FormHandlerSchema = z.object({
+  submit: z.function(),
+  reset: z.function().optional(),
+  cancel: z.function().optional(),
+  delete: z.function().optional(),
+});
+
+export const FormActionSchema = z.object({
+  id: z.string(),
+  type: z.enum(["submit", "reset", "button"]),
+  label: z.string(),
+  primary: z.boolean().optional().default(false).optional(),
+  disabled: z.boolean().optional().default(false).optional(),
+  position: z.enum(["top", "bottom", "both"]).optional().default("bottom").optional(),
+});
+
+/**
+ * Validation properties schema
+ */
+export const ValidationSchema = z.object({
+  valid: z.boolean().optional(),
+  errors: z.array(z.string()).optional(),
+  warnings: z.array(z.string()).optional(),
+  touched: z.boolean().optional(),
+  dirty: z.boolean().optional()
+});
+
+/**
+ * Accessibility properties schema
+ */
+export const AccessibilitySchema = z.object({
+  ariaLabel: z.string().optional(),
+  ariaDescribedBy: z.string().optional(),
+  ariaErrorMessage: z.string().optional(),
+  descriptionId: z.string().optional(),
+  tabIndex: z.number().optional()
+});
+
+/**
  * Section schema for form layout
  * - A section groups fields together visually
  */
@@ -132,34 +119,16 @@ export const FormSectionSchema = z.object({
   
 });
 
-/**
- * Layout schema for the dynamically generated layout
- */
-export const DynamicLayoutSchema = z.object({
-  type: z.string(),
-  sections: z.array(FormSectionSchema),
-  device: z.string(),
-  orientation: z.string(),
-  generated: z.boolean()
-});
-
-/**
- * Form layout schema - used for structured layout definition
- */
 export const FormLayoutSchema = z.object({
   title: z.string().optional(),
   columns: z.enum(["single", "double"]).optional(),
   actions: z.array(FormActionSchema).optional(),
-  sections: z.array(FormSectionSchema).optional()
-});
-
-/**
- * Form state schema for tracking form submission state
- */
-export const FormStateSchema = z.object({
-  status: z.enum(["idle", "submitting", "success", "error"]),
-  errors: z.record(z.array(z.string())).optional(),
-  message: z.string().optional()
+  sections: z.array(FormSectionSchema).optional(),
+  // Add responsive hints that Tailwind can use
+  responsive: z.object({
+    sectionBreakpoints: z.record(z.enum(["stack", "grid", "tabs"])).optional(),
+    fieldArrangement: z.enum(["natural", "importance", "groupRelated"]).optional()
+  }).optional()
 });
 
 /**
@@ -197,6 +166,15 @@ export const FormMetaSchema = z.object({
 });
 
 /**
+ * Form state schema for tracking form submission state
+ */
+export const FormStateSchema = z.object({
+  status: z.enum(["idle", "submitting", "success", "error"]),
+  errors: z.record(z.array(z.string())).optional(),
+  message: z.string().optional()
+});
+
+/**
  * Complete Form Shape schema
  */
 export const FormShapeSchema = z.object({
@@ -209,9 +187,6 @@ export const FormShapeSchema = z.object({
   
   // Structural layout - top level property
   layout: FormLayoutSchema.optional(),
-  
-  // Dynamic layout - used by DynamicLayoutMorph
-  dynamicLayout: DynamicLayoutSchema.optional(),
   
   // Processing metadata - not structural
   meta: FormMetaSchema.optional(),
@@ -230,7 +205,6 @@ export type FormAction = z.infer<typeof FormActionSchema>;
 export type FormField = z.infer<typeof FormFieldSchema>;
 export type FormSection = z.infer<typeof FormSectionSchema>;
 export type FormLayout = z.infer<typeof FormLayoutSchema>;
-export type DynamicLayout = z.infer<typeof DynamicLayoutSchema>;
 export type FormState = z.infer<typeof FormStateSchema>;
 export type FormMeta = z.infer<typeof FormMetaSchema>;
 export type FormShape = z.infer<typeof FormShapeSchema>;

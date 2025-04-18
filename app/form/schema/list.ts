@@ -2,6 +2,13 @@ import { z } from 'zod';
 import { FormLayoutSchema, FormShapeSchema } from './form';
 import { LinkShapeSchema } from './link';
 
+// List item schema
+export const ListItemSchema = z.object({
+  id: z.string(),
+  content: z.record(z.string(), z.any()),
+  relations: z.array(LinkShapeSchema).optional(),
+});
+
 // ListLayoutSchema extends FormLayoutSchema
 export const ListLayoutSchema = FormLayoutSchema.extend({
   type: z.enum(['linear', 'grid', 'hierarchical']).default('linear'),
@@ -18,28 +25,18 @@ export const ListNavigationSchema = z.object({
   sort: z.boolean().optional(),
 });
 
-// List item content
-export const ListItemContentSchema = z.record(z.any());
-
-// List item schema
-export const ListItemSchema = z.object({
-  id: z.string(),
-  content: ListItemContentSchema,
-  relations: z.array(LinkShapeSchema).optional(),
-});
 
 // Complete ListShape extending FormShapeSchema
 export const ListShapeSchema = FormShapeSchema.extend({
   type: z.literal('list').default('list'),
-  layout: ListLayoutSchema,
   items: z.array(ListItemSchema),
+  layout: ListLayoutSchema,
   navigation: ListNavigationSchema.optional(),
   relations: z.array(LinkShapeSchema).optional(),
 });
 
 // Export types
+export type ListItem = z.infer<typeof ListItemSchema>;
 export type ListLayout = z.infer<typeof ListLayoutSchema>;
 export type ListNavigation = z.infer<typeof ListNavigationSchema>;
-export type ListItemContent = z.infer<typeof ListItemContentSchema>;
-export type ListItem = z.infer<typeof ListItemSchema>;
 export type ListShape = z.infer<typeof ListShapeSchema>;

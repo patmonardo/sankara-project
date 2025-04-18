@@ -1,0 +1,31 @@
+=== Testing View System Pipeline ===
+
+Form ID: sample-form
+Mode: view
+Fields processed: 4
+
+--- Field Summary ---
+
+Field: name (text)
+Label: Full Name
+Value: John Doe
+Display Value: John Doe
+Truncated: false
+
+Field: age (number)
+Label: Age
+Value: 35
+Display Value: 35
+Truncated: false
+
+Field: bio (text)
+Label: Biography
+Value: This is a long biography that might be truncated by the pipeline. It contains multiple sentences to demonstrate how truncation works in the view pipeline.
+Display Value: This is a long biography that might be truncated by the pipeline. It contains multiple sentences to demonstrate how truncation works in the view pipeline.
+Truncated: false
+
+Field: notes (text)
+Label: Notes
+Value: undefined
+Display Value: —
+Truncated: false

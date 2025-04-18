@@ -133,8 +133,8 @@ async function testDetailLevels() {
       id: `detail-${level}-context`,
       name: `Detail ${level} context`,
       timestamp: Date.now(),
-      prakāra: "darśana",
-      sthiti: sampleData,
+      mode:  "view",
+      data: sampleData,
       mode: "view",
       detail: {
         level: level,
@@ -208,8 +208,8 @@ async function testDetailLevels() {
     id: "specific-expansion-context",
     name: "Specific fields expansion context",
     timestamp: Date.now(),
-    prakāra: "darśana",
-    sthiti: sampleData,
+    mode:  "view",
+    data: sampleData,
     mode: "view",
     detail: {
       level: 'standard', // Standard level but with explicit expansions

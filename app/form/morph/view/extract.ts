@@ -126,8 +126,8 @@ export function shouldIncludeField(field: FormField, context: ViewContext): bool
  */
 export function extractFieldValue(field: FormField, context: FormExecutionContext): any {
   // Check context.data safely
-  if (context?.sthiti && typeof context.sthiti === 'object' && context.sthiti.hasOwnProperty(field.id)) {
-    const valueFromData = context.sthiti[field.id];
+  if (context?.data && typeof context.data === 'object' && context.data.hasOwnProperty(field.id)) {
+    const valueFromData = context.data[field.id];
     // Return data value even if it's null or undefined, as it's explicitly set
     return valueFromData;
   }

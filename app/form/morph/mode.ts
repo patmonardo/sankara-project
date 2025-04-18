@@ -1,4 +1,4 @@
-import { FormMode, FormField, FormState } from "../schema/form";
+import { FormField, FormState } from "../schema/form";
 import { FormExecutionContext } from "../schema/context";
 import { EditField, EditOutput } from "./edit/pipeline";
 import { TruncationConfig } from "./view/truncate";
@@ -19,7 +19,7 @@ export interface MorphContext extends FormExecutionContext {
  * Context specifically for 'sṛṣṭi' (create) morph operations.
  */
 export interface CreateContext extends MorphContext {
-  prakāra: "sṛṣṭi";
+  mode?: "create";
 
   // Data for creation
   initialValues?: Record<string, any>;
@@ -64,7 +64,7 @@ type FieldValidationRule = (
  * Context specifically for 'pariṇāma' (edit) morph operations.
  */
 export interface EditContext extends MorphContext {
-  prakāra?: "pariṇāma"; // Ensure mode is edit
+  mode?: "edit"; // Ensure mode is edit
 
   // Identifier for the entity being edited
   targetId: string;
@@ -127,7 +127,7 @@ export interface EditContext extends MorphContext {
  */
 
 export interface ViewContext extends MorphContext {
-  mode: "view";
+  mode?: "view";
   title?: string;
   description?: string;
   userId?: string;
@@ -184,9 +184,7 @@ export function isCreateContext(
   context: FormExecutionContext | any
 ): context is CreateContext {
   return (
-    context !== null &&
-    typeof context === "object" &&
-    context.prakāra === "sṛṣṭi"
+    context !== null && typeof context === "object" && context.mode === "create"
   );
 }
 
@@ -196,34 +194,20 @@ export function isCreateContext(
 export function isEditContext(
   context: FormExecutionContext | any
 ): context is EditContext {
-  return context !== null && typeof context === "object";
+  return (
+    context !== null && typeof context === "object" && context.mode === "edit"
+  );
 }
 
 /**
  * Type guard for ViewContext.
  */
-export function isViewContext(context: any): context is ViewContext {
-  return context && context.mode === "view";
-}
-
-/**
- * Maps the public FormMode string to the internal prakāra literal type.
- */
-function getPrakaraForMode(mode: FormMode): "sṛṣṭi" | "pariṇāma" | "darśana" {
-  switch (mode) {
-    case "create":
-      return "sṛṣṭi";
-    case "edit":
-      return "pariṇāma";
-    case "view":
-      return "darśana";
-    default:
-      // Should not happen if FormMode is used correctly, but provides a fallback.
-      console.warn(
-        `Unknown FormMode "${mode}" provided. Defaulting to 'darśana' (view).`
-      );
-      return "darśana";
-  }
+export function isViewContext(
+  context: FormExecutionContext | any
+): context is ViewContext {
+  return (
+    context !== null && typeof context === "object" && context.mode === "view"
+  );
 }
 
 // --- Utility Functions ---

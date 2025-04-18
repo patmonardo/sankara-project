@@ -1,5 +1,5 @@
 import { createMorph, createPipeline } from "../morph";
-import { FormShape, FormField } from "../../schema/form";
+import { FormShape, FormField, FormAction } from "../../schema/form";
 // Import context types/guards from modes.ts
 import { CreateContext, isCreateContext } from "../mode";
 // Import morphs needed for the pipeline
@@ -31,11 +31,12 @@ export interface CreateField extends FormField {
  * Extends the base FormShape, using CreateField[] and adding create-specific properties/metadata.
  */
 export interface CreateOutput extends Omit<FormShape, 'fields'> {
-  fields: CreateField[]; // Use the specialized CreateField type
+  fields: CreateField[];
   mode: "create";
   isNew: true;
   valid: boolean;
   complete: boolean;
+  actions?: FormAction[];
   submitButton?: { label: string; position: 'top' | 'bottom' | 'both'; };
   cancelButton?: { label: string; position: 'top' | 'bottom' | 'both'; };
   clearOnSubmit?: boolean;
@@ -67,7 +68,11 @@ function shouldIncludeInCreate(field: FormField, context?: CreateContext): boole
 
   // Contextual checks
   if (context?.excludeFields?.includes(field.id)) return false;
-  if (context?.includeFields?.includes(field.id)) return true;
+  
+  // This is the key change - check if includeFields exists and has entries
+  if (context?.includeFields && context.includeFields.length > 0) {
+    return context.includeFields.includes(field.id);
+  }
 
   // Default: include if not explicitly excluded/hidden
   return true;
@@ -77,18 +82,56 @@ function shouldIncludeInCreate(field: FormField, context?: CreateContext): boole
  * Determine the appropriate input type for a field for UI rendering.
  * Operates on the original FormField.
  */
-function determineInputType(field: FormField): string { // <-- Takes FormField
-  if (field.inputType) return field.inputType; // Explicit inputType takes precedence
+function determineInputType(field: FormField): string {
+  // 1. If explicit inputType is provided, use it
+  if (field.inputType) return field.inputType;
 
+  // 2. Check for special formats in metadata
+  if (field.meta) {
+    // Check for specific formats
+    if (field.meta.format === "email") return "email";
+    if (field.meta.format === "password") return "password";
+    if (field.meta.format === "url") return "url";
+    if (field.meta.format === "tel") return "tel";
+    
+    // Check for multiline text
+    if (field.meta.multiline === true) return "textarea";
+    
+    // Check for custom widget/renderer
+    if (field.meta.widget) return field.meta.widget;
+  }
+
+  // 3. Map based on field type
   const typeToInputMap: Record<string, string> = {
-    string: 'text', number: 'number', boolean: 'checkbox', date: 'date',
-    datetime: 'datetime-local', email: 'email', password: 'password',
-    tel: 'tel', url: 'url', object: 'complex', array: 'complex',
+    string: 'text',
+    text: 'text',
+    number: 'number',
+    integer: 'number',
+    float: 'number',
+    decimal: 'number',
+    boolean: 'checkbox',
+    date: 'date',
+    datetime: 'datetime-local',
+    time: 'time',
+    email: 'email',
+    password: 'password',
+    tel: 'tel',
+    url: 'url',
+    object: 'complex',
+    array: 'complex',
+    select: 'select',
+    multiselect: 'select',
+    radio: 'radio',
+    checkbox: 'checkbox',
+    file: 'file',
+    color: 'color',
+    range: 'range',
+    hidden: 'hidden',
     default: 'text'
   };
-  return typeToInputMap[field.type] || typeToInputMap.default;
-}
 
+  return typeToInputMap[field.type || 'default'] || typeToInputMap.default;
+}
 /**
  * Get a default value based on field type.
  */

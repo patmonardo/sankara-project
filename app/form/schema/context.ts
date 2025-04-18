@@ -1,18 +1,18 @@
-import { z } from "zod";
+ import { z } from "zod";
 
 /**
  * Prakāra Schema - Defines the fundamental modes of consciousness in our Form system
  * Replacing FormContextTypeSchema with consciousness modes from Sanskrit philosophy
  */
 export const PrakāraSchema = z.enum([
-  "darśana", // For viewing/perceiving entities (was "view")
-  "pariṇāma", // For transforming/modifying existing entities (was "edit")
-  "sṛṣṭi", // For creating/manifesting new entities (was "create")
-  "saṃgraha", // For collecting/aggregating entities (was "list")
-  "anveṣaṇa", // For seeking/searching entities (was "search")
-  "karma", // For performing actions/operations (was "action")
-  "samuccaya", // For combining/synthesizing multiple contexts (was "composite")
-  "krama", // For sequential/procedural processing (was "workflow")
+  "view", // For viewing/perceiving entities (was "view")
+  "edit", // For transforming/modifying existing entities (was "edit")
+  "create", // For creating/manifesting new entities (was "create")
+  "list", // For collecting/aggregating entities (was "list")
+  "search", // For seeking/searching entities (was "search")
+  "action", // For performing actions/operations (was "action")
+  "composite", // For combining/synthesizing multiple contexts (was "composite")
+  "workflow", // For sequential/procedural processing (was "workflow")
 ]);
 
 /**
@@ -22,12 +22,16 @@ export const PrakāraSchema = z.enum([
 export const MūlaSchema = z.object({
   // Identity (Svarūpa - self-nature)
   id: z.string(),
-  name: z.string(),
+  name: z.string().optional(),
   description: z.string().optional(),
-  prakāra: PrakāraSchema.optional(), // Replacing "type" with prakāra (mode/category)
+  mode: PrakāraSchema.optional(), // Replacing "type" with mode (mode/category)
 
   // Hierarchical structure (Sopāna - hierarchical structure)
   parentId: z.string().optional(),
+
+ // Context-specific data (Jñāna - knowledge)
+ data: z.record(z.any()).optional().default({}).optional(),
+ mark: z.record(z.any()).optional().default({}).optional(),
 
   // State tracking (Avasthā - state/condition)
   active: z.boolean().default(false).optional(),
@@ -38,10 +42,7 @@ export const MūlaSchema = z.object({
   sambandha: z.array(z.string()).optional().default([]).optional(),
   ghaṭanā: z.array(z.string()).optional().default([]).optional(),
 
-  // Context-specific data (Jñāna - knowledge)
-  sthiti: z.record(z.any()).optional().default({}).optional(),
-  lakṣaṇa: z.record(z.any()).optional().default({}).optional(),
-
+ 
   // Access control (Adhikāra - authority/rights)
   adhikāra: z.record(z.boolean()).optional(),
   // Lifecycle properties (Jīvana-cakra - life cycle)
@@ -103,12 +104,12 @@ export const SvabhāvaSchema = z.object({
  * Replacing FormContextQuerySchema with Sanskrit term for "inquiry/search"
  */
 export const AnveṣaṇaSchema = z.object({
-  prakāra: PrakāraSchema.optional(),
+  mode: PrakāraSchema.optional(),
   sakriya: z.boolean().optional(),
   janakId: z.string().optional(),
   vastuDhārita: z.string().optional(),
   sambandhaDhārita: z.string().optional(),
-  lakṣaṇa: z.record(z.any()).optional(),
+  mark: z.record(z.any()).optional(),
   punaḥpraveśa: z.boolean().optional().default(false).optional(),
   niṣkriyaAnṭarbhāva: z.boolean().optional().default(false).optional(),
 });
@@ -159,7 +160,7 @@ export const NiṣpādanaPhalaSchema = z.object({
   kriyā: KriyāPrakāraSchema, // operation/action
   sandarbhaId: z.string(), // Context ID
   kālamudrā: z.number().default(() => Date.now()), // timestamp
-  lakṣaṇa: z.record(z.any()).optional(), // metadata
+  mark: z.record(z.any()).optional(), // metadata
   doṣa: z
     .object({
       // error/defect
@@ -252,7 +253,7 @@ export const SandarbhaSchema = MūlaSchema.extend({
     .array(
       z.object({
         name: z.string(),
-        prakāra: z.enum(["vastu", "sambandha", "ghaṭanā"]), // Replacing "type" with prakāra
+        mode: z.enum(["vastu", "sambandha", "ghaṭanā"]), // Replacing "type" with mode
         kṣetra: z.array(z.string()), // Replacing "fields" with kṣetra (fields/domains)
       })
     )

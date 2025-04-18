@@ -1,7 +1,7 @@
 import { FormShape } from "../../schema/form";
 import { createPipeline } from "../morph";
 import { PrepareEditMorph, EditOutput } from "./pipeline";
-import { GenerateEditActionsMorph } from "./actions";
+import { GenerateEditActionsMorph } from "./action";
 import { EditFieldsPipeline } from "./fields";
 import { EditLayoutPipeline } from "./layout";
 import { EditValidationPipeline } from "./validation";
@@ -51,7 +51,7 @@ export const EditSystemPipeline = createPipeline<FormShape>("EditSystemPipeline"
  * Export all edit-related morphisms and pipelines for external use
  */
 export * from "./pipeline";
-export * from "./actions";
+export * from "./action";
 export * from "./fields";
 export * from "./layout";
 export * from "./validation";

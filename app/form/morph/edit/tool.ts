@@ -978,4 +978,4 @@ export const KBPowerToolsPipeline = createPipeline<EditOutput>(
 
 // Export all power tools
 export * from "./pipeline";
-export * from "./actions";
+export * from "./action";
