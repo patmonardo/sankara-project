@@ -97,6 +97,21 @@ export class SimpleMorph<
   apply(input: TInput, context: FormExecutionContext): TOutput {
     return this.transformer(input, context);
   }
+
+  /**
+   * Run the morph with a default context
+   * Convenience method that creates a default context and calls apply
+   */
+  run(input: TInput): TOutput {
+    // Create a default context with minimum required properties
+    const defaultContext: FormExecutionContext = {
+      id: `default-${this.name}-${Date.now()}`,
+      timestamp: Date.now(),
+      data: {}
+    };
+    
+    return this.apply(input, defaultContext);
+  }
 }
 
 /**

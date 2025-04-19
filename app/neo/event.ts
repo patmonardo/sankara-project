@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { type NeoRelation } from "@/form/relation/relation";
+import { NeoRelation } from "@/form/relation/relation";
 import { NeoComponentId } from "./extension";
 
 /**

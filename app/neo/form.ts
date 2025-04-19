@@ -3,8 +3,8 @@ import { NeoEvent } from "./event";
 import { NeoCore } from "./neo";
 import { NeoComponentId } from "./extension";
 import { NeoGraph } from "./graph";
-import { NeoEntityService, NeoEntity } from "./entity";
-import { NeoContextService, getActiveContext } from "./context";
+import { EntityService } from "@/form/entity/service";
+import { ContextService, getActiveContext } from "@/form/context/service";
 
 /**
  * NeoForm - The Absolute Middle Mediating Machine
@@ -195,7 +195,7 @@ export class NeoForm {
     if (this.graph) {
       try {
         // We'll assume forms are stored as entities with type 'form:definition'
-        const formEntities = NeoEntityService.queryEntities({
+        const formEntities = EntityService.queryEntities({
           type: 'form:definition',
           properties: { id: formId }
         });
@@ -346,7 +346,7 @@ export class NeoForm {
     this.logVerbose(`Creating NeoEntity for form: ${formDef.id}`);
 
     // Create NeoEntity instance with BEC · MVC · NEO unity
-    const entity = NeoEntityService.create({
+    const entity = EntityService.create({
       // BEC aspects
       being: result.universal.being,
       essence: result.universal.essence,
@@ -491,7 +491,7 @@ export class NeoForm {
 
     // Create a contextual reference
     const contextRef = context.contextId ? 
-      NeoContextService.getContext(context.contextId) : 
+      ContextService.getContext(context.contextId) : 
       getActiveContext();
 
     return {

@@ -13,7 +13,7 @@ import { SaraRelation, EntityReference } from "./sara";
 /**
  * The three primary aspects of Citta (consciousness substance)
  */
-export enum CittalAspect {
+export enum CittaAspect {
   /** 
    * Buddhi - Higher intellect, wisdom, discernment, insight
    * The faculty that knows, decides, and discriminates
@@ -97,7 +97,7 @@ export interface StateOfConsciousness {
   stateType: 'perception' | 'concept' | 'intention' | 'memory' | 'reflection' | 'abstract';
   
   /** Primary Citta aspect of this state */
-  cittaAspect: CittalAspect;
+  cittaAspect: CittaAspect;
   
   /** Predominant guna quality */
   predominantGuna: Guna;
@@ -172,7 +172,7 @@ export interface ConsciousTransition {
   transitionType: 'causal' | 'associative' | 'intentional' | 'inferential' | 'dialectical' | 'transcendent';
   
   /** Citta aspect driving this transition */
-  drivingAspect: CittalAspect;
+  drivingAspect: CittaAspect;
   
   /** Gunas transformation */
   gunaTransformation: {
@@ -225,7 +225,7 @@ export interface ConsciousCondition {
   required: boolean;
   
   /** Citta aspect evaluating this condition */
-  evaluatingAspect: CittalAspect;
+  evaluatingAspect: CittaAspect;
   
   /** Consciousness level at which this condition operates */
   operatingLevel: ConsciousnessLevel;
@@ -382,7 +382,7 @@ export interface ConsciousContext {
     type: 'human' | 'agent' | 'collective' | 'abstract';
     
     /** Current dominant Citta aspect */
-    dominantAspect: CittalAspect;
+    dominantAspect: CittaAspect;
     
     /** Guna balance */
     gunaBalance: {
@@ -428,7 +428,7 @@ export interface ConsciousContext {
     accessibility: number;
     
     /** Associated Citta aspect */
-    cittaAspect: CittalAspect;
+    cittaAspect: CittaAspect;
     
     /** Emotional coloring */
     emotionalValence: number;
@@ -443,7 +443,7 @@ export interface ConsciousContext {
     priority: number;
     
     /** Associated Citta aspect */
-    cittaAspect: CittalAspect;
+    cittaAspect: CittaAspect;
   }>;
   
   /** Vasanas (latent tendencies/dispositions) */
@@ -569,7 +569,7 @@ export const TaskToConsciousnessMorph = new SimpleMorph<CognitiveWorkflow, Consc
         fromStateId: intentionState.id,
         toStateId: conceptState.id,
         transitionType: 'intentional',
-        drivingAspect: CittalAspect.AHAMKARA,
+        drivingAspect: CittaAspect.AHAMKARA,
         gunaTransformation: {
           sattvaChange: 'increase',
           rajasChange: 'decrease',
@@ -591,7 +591,7 @@ export const TaskToConsciousnessMorph = new SimpleMorph<CognitiveWorkflow, Consc
         fromStateId: conceptState.id,
         toStateId: reflectionState.id,
         transitionType: 'inferential',
-        drivingAspect: CittalAspect.BUDDHI,
+        drivingAspect: CittaAspect.BUDDHI,
         gunaTransformation: {
           sattvaChange: 'increase',
           rajasChange: 'decrease',
@@ -616,7 +616,7 @@ export const TaskToConsciousnessMorph = new SimpleMorph<CognitiveWorkflow, Consc
           fromStateId: perceivedInputId,
           toStateId: intentionState.id,
           transitionType: 'causal',
-          drivingAspect: CittalAspect.MANAS,
+          drivingAspect: CittaAspect.MANAS,
           gunaTransformation: {
             sattvaChange: 'unchanged',
             rajasChange: 'increase',
@@ -696,7 +696,7 @@ function createPerceptionState(input: TaskInput): StateOfConsciousness {
     meaning: `Perception of ${input.id}`,
     content: null, // Will be populated at runtime
     stateType: 'perception',
-    cittaAspect: CittalAspect.MANAS,
+    cittaAspect: CittaAspect.MANAS,
     predominantGuna: Guna.RAJAS,
     level: ConsciousnessLevel.SENSORY,
     qualities: {
@@ -740,7 +740,7 @@ function createIntentionState(task: CognitiveTask): StateOfConsciousness {
       purpose: task.description
     },
     stateType: 'intention',
-    cittaAspect: CittalAspect.AHAMKARA,
+    cittaAspect: CittaAspect.AHAMKARA,
     predominantGuna: Guna.RAJAS,
     level: ConsciousnessLevel.MENTAL,
     qualities: {
@@ -780,7 +780,7 @@ function createConceptState(task: CognitiveTask): StateOfConsciousness {
     meaning: `Conceptualization of ${task.name}`,
     content: null, // Will be populated during execution
     stateType: 'concept',
-    cittaAspect: CittalAspect.BUDDHI,
+    cittaAspect: CittaAspect.BUDDHI,
     predominantGuna: Guna.SATTVA,
     level: ConsciousnessLevel.MENTAL,
     qualities: {
@@ -821,7 +821,7 @@ function createReflectionState(task: CognitiveTask): StateOfConsciousness {
     meaning: `Reflection on results of ${task.name}`,
     content: null, // Will be populated during execution
     stateType: 'reflection',
-    cittaAspect: CittalAspect.BUDDHI,
+    cittaAspect: CittaAspect.BUDDHI,
     predominantGuna: Guna.SATTVA,
     level: ConsciousnessLevel.INTUITIVE,
     qualities: {
@@ -868,13 +868,13 @@ function mapDependencyTypeToTransition(depType: string): ConsciousTransition['tr
 /**
  * Determine the driving Citta aspect based on dependency type
  */
-function determineDrivingAspect(depType: string): CittalAspect {
+function determineDrivingAspect(depType: string): CittaAspect {
   switch (depType) {
-    case 'data': return CittalAspect.MANAS;
-    case 'control': return CittalAspect.AHAMKARA;
-    case 'resource': return CittalAspect.MANAS;
-    case 'temporal': return CittalAspect.BUDDHI;
-    default: return CittalAspect.MANAS;
+    case 'data': return CittaAspect.MANAS;
+    case 'control': return CittaAspect.AHAMKARA;
+    case 'resource': return CittaAspect.MANAS;
+    case 'temporal': return CittaAspect.BUDDHI;
+    default: return CittaAspect.MANAS;
   }
 }
 
@@ -925,7 +925,7 @@ function mapConditionToConsciousCondition(condition: any): ConsciousCondition {
     expression: `${condition.left} ${condition.operator} ${condition.right}`,
     references: [condition.left],
     required: true,
-    evaluatingAspect: CittalAspect.BUDDHI, // Discernment is a Buddhi function
+    evaluatingAspect: CittaAspect.BUDDHI, // Discernment is a Buddhi function
     operatingLevel: ConsciousnessLevel.MENTAL
   };
 }
@@ -938,7 +938,7 @@ function createInitialContext(workflow: CognitiveWorkflow, context: any): Consci
     subject: {
       id: context?.subject?.id || 'tara-agent',
       type: context?.subject?.type || 'agent',
-      dominantAspect: CittalAspect.BUDDHI,
+      dominantAspect: CittaAspect.BUDDHI,
       gunaBalance: {
         sattva: 0.6,
         rajas: 0.3,
@@ -962,10 +962,10 @@ function createInitialContext(workflow: CognitiveWorkflow, context: any): Consci
     },
     activeMemory: [],
     values: [
-      { name: 'accuracy', priority: 0.9, cittaAspect: CittalAspect.BUDDHI },
-      { name: 'coherence', priority: 0.8, cittaAspect: CittalAspect.BUDDHI },
-      { name: 'utility', priority: 0.7, cittaAspect: CittalAspect.MANAS },
-      { name: 'creativity', priority: 0.6, cittaAspect: CittalAspect.AHAMKARA }
+      { name: 'accuracy', priority: 0.9, cittaAspect: CittaAspect.BUDDHI },
+      { name: 'coherence', priority: 0.8, cittaAspect: CittaAspect.BUDDHI },
+      { name: 'utility', priority: 0.7, cittaAspect: CittaAspect.MANAS },
+      { name: 'creativity', priority: 0.6, cittaAspect: CittaAspect.AHAMKARA }
     ],
     vasanas: [
       { 
@@ -1116,7 +1116,7 @@ function mapStateTypeToNodeType(stateType: StateOfConsciousness['stateType']): s
  */
 function mapStateTypeToClass(
   stateType: StateOfConsciousness['stateType'], 
-  cittaAspect: CittalAspect
+  cittaAspect: CittaAspect
 ): string {
   const aspect = cittaAspect.toLowerCase();
   

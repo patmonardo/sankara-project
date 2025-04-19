@@ -1,0 +1,104 @@
+═════════════════════════════════════
+            GRAPH MORPH              
+═════════════════════════════════════
+
+▸ Input:
+  • Form: customerForm (5 fields)
+  • Relationship Definitions: 1
+
+▸ Output:
+  • Generated At: 2025-04-18T20:55:34.403Z
+  • Entities: 2
+  • Relationships: 1
+
+▸ Entity Types:
+  1. Graphschemacustomer [Graphschemacustomer]
+     ↳ 7 fields defined
+  2. Customer [Customer]
+
+▸ Relationship Types:
+  1. Graphschemacustomer -[REFERRED_BY]→ Customer
+
+▸ Complete Structure:
+{
+  id: [32m'graph-schema-customerForm'[39m,
+  title: [32m'Customer Form Graph Schema'[39m,
+  description: [32m'A form for customer data'[39m,
+  fields: [
+    {
+      id: [32m'name'[39m,
+      type: [32m'text'[39m,
+      label: [32m'Customer Name'[39m,
+      required: [33mtrue[39m
+    },
+    {
+      id: [32m'email'[39m,
+      type: [32m'email'[39m,
+      label: [32m'Email Address'[39m,
+      required: [33mtrue[39m
+    },
+    { id: [32m'phone'[39m, type: [32m'text'[39m, label: [32m'Phone Number'[39m },
+    { id: [32m'referrer'[39m, type: [32m'text'[39m, label: [32m'Referred By'[39m },
+    { id: [32m'notes'[39m, type: [32m'textarea'[39m, label: [32m'Additional Notes'[39m }
+  ],
+  entities: [
+    {
+      id: [32m'Graphschemacustomer'[39m,
+      labels: [ [32m'Graphschemacustomer'[39m ],
+      properties: {
+        _fieldSchema: {
+          name: { type: [32m'text'[39m, label: [32m'Customer Name'[39m, required: [33mtrue[39m },
+          email: { type: [32m'email'[39m, label: [32m'Email Address'[39m, required: [33mtrue[39m },
+          phone: { type: [32m'text'[39m, label: [32m'Phone Number'[39m, required: [33mfalse[39m },
+          notes: {
+            type: [32m'textarea'[39m,
+            label: [32m'Additional Notes'[39m,
+            required: [33mfalse[39m
+          },
+          _formId: { type: [32m'string'[39m, label: [32m'Source Form ID'[39m },
+          _createdAt: { type: [32m'datetime'[39m, label: [32m'Creation Timestamp'[39m },
+          _updatedAt: { type: [32m'datetime'[39m, label: [32m'Update Timestamp'[39m }
+        }
+      },
+      meta: {
+        source: [32m'FormShape'[39m,
+        originalShapeId: [32m'graph-schema-customerForm'[39m,
+        description: [32m'A form for customer data'[39m,
+        isNodeType: [33mtrue[39m
+      }
+    },
+    {
+      id: [32m'Customer'[39m,
+      labels: [ [32m'Customer'[39m ],
+      properties: { _placeholder: [33mtrue[39m },
+      meta: { source: [32m'RelationshipDefinition'[39m, isNodeType: [33mtrue[39m }
+    }
+  ],
+  relationships: [
+    {
+      id: [32m'reltype-Graphschemacustomer-REFERRED_BY-Customer'[39m,
+      fromId: [32m'Graphschemacustomer'[39m,
+      toId: [32m'Customer'[39m,
+      type: [32m'REFERRED_BY'[39m,
+      properties: { _propertySchema: {} },
+      meta: { source: [32m'FormRelationship'[39m, isRelationshipType: [33mtrue[39m }
+    }
+  ],
+  meta: {
+    relationDefs: [
+      {
+        field: [32m'referrer'[39m,
+        type: [32m'REFERRED_BY'[39m,
+        target: [32m'Customer'[39m,
+        direction: [32m'OUTGOING'[39m
+      }
+    ],
+    validation: { performed: [33mtrue[39m, timestamp: [33m1745009734403[39m, fieldErrors: [33m0[39m },
+    labelPrefix: [32m''[39m,
+    includeMetadata: [33mtrue[39m,
+    generatedAt: [32m'2025-04-18T20:55:34.403Z'[39m,
+    sourceMorph: [32m'FormToGraphSchemaMorph'[39m,
+    entityCount: [33m2[39m,
+    relationshipCount: [33m1[39m
+  }
+}

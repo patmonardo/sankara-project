@@ -3,7 +3,7 @@ import { NeoCore, NeoExtension } from '../neo';
 /**
  * Sara Extension
  * 
- * Extends the Neo Core's manifestation into the Conceptual domain.
+ * Extends the Neo Core's manifestation into the Relational domain.
  */
 export class SaraExtension implements NeoExtension {
   id = 'sara';

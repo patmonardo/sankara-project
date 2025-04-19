@@ -1,0 +1,127 @@
+=== TESTING FormToCypherMorph ===
+Operation: create
+Shape ID: userForm
+Data Keys: userId, name, email, isActive, roles, managerId
+Config: {
+  "operation": "create",
+  "parameterized": true,
+  "includeMetadata": true,
+  "labelPrefix": "Test_"
+}
+
+--- Cypher Output ---
+{
+  "id": "cypher-userForm-1744992983920",
+  "name": "User Form",
+  "description": "Form to capture user details",
+  "fields": [
+    {
+      "id": "userId",
+      "type": "text",
+      "label": "User ID",
+      "meta": {
+        "identifier": true
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "label": "Full Name"
+    },
+    {
+      "id": "email",
+      "type": "email",
+      "label": "Email Address"
+    },
+    {
+      "id": "isActive",
+      "type": "boolean",
+      "label": "Is Active"
+    },
+    {
+      "id": "roles",
+      "type": "select",
+      "label": "Roles",
+      "meta": {
+        "excludeFromGraph": true
+      }
+    },
+    {
+      "id": "managerId",
+      "type": "text",
+      "label": "Manager ID"
+    }
+  ],
+  "mode": "create",
+  "queries": [
+    {
+      "id": "create-userForm",
+      "name": "Create Test_User node",
+      "query": "CREATE (n:Test_User $nProps)\nRETURN n",
+      "purpose": "create",
+      "executionOrder": 1
+    },
+    {
+      "id": "rel-userForm-managerId",
+      "name": "Create REPORTS_TO relationship from Test_User to User",
+      "query": "MATCH (source:Test_User)\nWHERE source.userId = $source_userId AND source.name = $source_name AND source.email = $source_email\nMATCH (target:User {userId: $value_managerId})\nCREATE (source)-[:REPORTS_TO]->(target)\nRETURN source, target",
+      "purpose": "create",
+      "executionOrder": 2,
+      "dependencies": [
+        "create-userForm"
+      ]
+    }
+  ],
+  "parameters": {
+    "nProps": {
+      "userId": "usr-007",
+      "name": "James Bond",
+      "email": "jbond@mi6.gov.uk",
+      "isActive": true,
+      "managerId": "M",
+      "_formId": "userForm",
+      "_createdAt": "2025-04-18T16:16:23.920Z"
+    },
+    "source_userId": "usr-007",
+    "source_name": "James Bond",
+    "source_email": "jbond@mi6.gov.uk",
+    "value_managerId": "M"
+  },
+  "meta": {
+    "generatedAt": "2025-04-18T16:16:23.920Z",
+    "sourceFormId": "userForm",
+    "queryCount": 2
+  }
+}
+
+--- Generated Queries ---
+
+-- Query: Create Test_User node (ID: create-userForm, Order: 1) --
+CREATE (n:Test_User $nProps)
+RETURN n
+
+-- Query: Create REPORTS_TO relationship from Test_User to User (ID: rel-userForm-managerId, Order: 2) --
+MATCH (source:Test_User)
+WHERE source.userId = $source_userId AND source.name = $source_name AND source.email = $source_email
+MATCH (target:User {userId: $value_managerId})
+CREATE (source)-[:REPORTS_TO]->(target)
+RETURN source, target
+
+--- Generated Parameters ---
+{
+  "nProps": {
+    "userId": "usr-007",
+    "name": "James Bond",
+    "email": "jbond@mi6.gov.uk",
+    "isActive": true,
+    "managerId": "M",
+    "_formId": "userForm",
+    "_createdAt": "2025-04-18T16:16:23.920Z"
+  },
+  "source_userId": "usr-007",
+  "source_name": "James Bond",
+  "source_email": "jbond@mi6.gov.uk",
+  "value_managerId": "M"
+}
+
+=== TEST COMPLETE ===

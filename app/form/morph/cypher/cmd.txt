@@ -1,0 +1,284 @@
+═════════════════════════════════════
+            CYPHER MORPH             
+═════════════════════════════════════
+
+▸ Input:
+  • Shape: customerGraph
+  • Entities: 2
+  • Relationships: 2
+  • Initial Queries: 0
+
+▸ Output:
+  • Generated At: 2025-04-18T22:58:38.092Z
+  • Total Queries: 17
+  • Source Morph: CypherMorph
+
+▸ Generated Queries by Type:
+  • SCHEMA (3):
+    1. Create unique constraint for Customer.id
+    2. Create index on Customer.email
+    3. Create unique constraint for Product.id
+  • CREATE (4):
+    1. Create Customer node
+    2. Create Product node
+    3. Create PURCHASED relationship
+    4. Create REFERRED_BY relationship
+  • MATCH (6):
+    1. Match Customer node by id
+    2. Match Customer nodes with filter
+    3. Match Product node by id
+    4. Match Product nodes with filter
+    5. Traverse from Customer
+    6. Find path between Customer and Product
+  • UPDATE (2):
+    1. Update Customer node
+    2. Update Product node
+  • DELETE (2):
+    1. Delete Customer node
+    2. Delete Product node
+
+▸ Sample CREATE Query:
+  ```cypher
+  CREATE (n:Customer $props)
+  RETURN n
+  ```
+
+▸ Sample MATCH Query:
+  ```cypher
+  MATCH (n:Customer {id: $id})
+  RETURN n
+  ```
+
+▸ Sample SCHEMA Query:
+  ```cypher
+  CREATE CONSTRAINT IF NOT EXISTS FOR (n:Customer) REQUIRE n.id IS UNIQUE
+  ```
+
+▸ Query Count Summary:
+  • SCHEMA: 3 queries
+  • CREATE: 4 queries
+  • MATCH: 6 queries
+  • UPDATE: 2 queries
+  • DELETE: 2 queries
+  • TOTAL: 17 queries
+
+▸ Complete Structure:
+{
+  id: [32m'customerGraph'[39m,
+  title: [32m'Customer Graph'[39m,
+  description: [32m'A graph representation of customer data'[39m,
+  fields: [
+    { id: [32m'id'[39m, type: [32m'text'[39m, label: [32m'ID'[39m, required: [33mtrue[39m },
+    {
+      id: [32m'name'[39m,
+      type: [32m'text'[39m,
+      label: [32m'Customer Name'[39m,
+      required: [33mtrue[39m
+    },
+    {
+      id: [32m'email'[39m,
+      type: [32m'email'[39m,
+      label: [32m'Email Address'[39m,
+      required: [33mtrue[39m
+    },
+    { id: [32m'phone'[39m, type: [32m'text'[39m, label: [32m'Phone Number'[39m },
+    { id: [32m'referrer'[39m, type: [32m'text'[39m, label: [32m'Referred By'[39m }
+  ],
+  entities: [
+    {
+      id: [32m'Customer'[39m,
+      labels: [ [32m'Customer'[39m ],
+      properties: {
+        _fieldSchema: {
+          id: [36m[Object][39m,
+          name: [36m[Object][39m,
+          email: [36m[Object][39m,
+          phone: [36m[Object][39m
+        }
+      },
+      meta: { source: [32m'FormShape'[39m, isNodeType: [33mtrue[39m }
+    },
+    {
+      id: [32m'Product'[39m,
+      labels: [ [32m'Product'[39m ],
+      properties: {
+        _fieldSchema: { id: [36m[Object][39m, name: [36m[Object][39m, price: [36m[Object][39m }
+      },
+      meta: { source: [32m'FormShape'[39m, isNodeType: [33mtrue[39m }
+    }
+  ],
+  relationships: [
+    {
+      id: [32m'rel-customer-purchased-product'[39m,
+      fromId: [32m'Customer'[39m,
+      toId: [32m'Product'[39m,
+      type: [32m'PURCHASED'[39m,
+      properties: { _propertySchema: { quantity: [36m[Object][39m } },
+      meta: { isRelationshipType: [33mtrue[39m }
+    },
+    {
+      id: [32m'rel-customer-referred-by-customer'[39m,
+      fromId: [32m'Customer'[39m,
+      toId: [32m'Customer'[39m,
+      type: [32m'REFERRED_BY'[39m,
+      properties: {},
+      meta: { isRelationshipType: [33mtrue[39m }
+    }
+  ],
+  queries: [
+    {
+      id: [32m'constraint-Customer-id'[39m,
+      name: [32m'Create unique constraint for Customer.id'[39m,
+      query: [32m'CREATE CONSTRAINT IF NOT EXISTS FOR (n:Customer) REQUIRE n.id IS UNIQUE'[39m,
+      purpose: [32m'schema'[39m,
+      executionOrder: [33m0[39m
+    },
+    {
+      id: [32m'index-Customer-email'[39m,
+      name: [32m'Create index on Customer.email'[39m,
+      query: [32m'CREATE INDEX IF NOT EXISTS FOR (n:Customer) ON (n.email)'[39m,
+      purpose: [32m'schema'[39m,
+      executionOrder: [33m0[39m
+    },
+    {
+      id: [32m'constraint-Product-id'[39m,
+      name: [32m'Create unique constraint for Product.id'[39m,
+      query: [32m'CREATE CONSTRAINT IF NOT EXISTS FOR (n:Product) REQUIRE n.id IS UNIQUE'[39m,
+      purpose: [32m'schema'[39m,
+      executionOrder: [33m0[39m
+    },
+    {
+      id: [32m'create-Customer'[39m,
+      name: [32m'Create Customer node'[39m,
+      query: [32m'CREATE (n:Customer $props)\nRETURN n'[39m,
+      purpose: [32m'create'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'match-by-id-Customer'[39m,
+      name: [32m'Match Customer node by id'[39m,
+      query: [32m'MATCH (n:Customer {id: $id})\nRETURN n'[39m,
+      purpose: [32m'match'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'match-filtered-Customer'[39m,
+      name: [32m'Match Customer nodes with filter'[39m,
+      query: [32m'MATCH (n:Customer)\n'[39m +
+        [32m'WHERE $filter IS NULL OR ANY(key IN keys($filter) WHERE n[key] = $filter[key])\n'[39m +
+        [32m'RETURN n'[39m,
+      purpose: [32m'match'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'update-Customer'[39m,
+      name: [32m'Update Customer node'[39m,
+      query: [32m'MATCH (n:Customer {id: $id})\nSET n += $props\nRETURN n'[39m,
+      purpose: [32m'update'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'delete-Customer'[39m,
+      name: [32m'Delete Customer node'[39m,
+      query: [32m'MATCH (n:Customer {id: $id})\nDETACH DELETE n'[39m,
+      purpose: [32m'delete'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'create-Product'[39m,
+      name: [32m'Create Product node'[39m,
+      query: [32m'CREATE (n:Product $props)\nRETURN n'[39m,
+      purpose: [32m'create'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'match-by-id-Product'[39m,
+      name: [32m'Match Product node by id'[39m,
+      query: [32m'MATCH (n:Product {id: $id})\nRETURN n'[39m,
+      purpose: [32m'match'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'match-filtered-Product'[39m,
+      name: [32m'Match Product nodes with filter'[39m,
+      query: [32m'MATCH (n:Product)\n'[39m +
+        [32m'WHERE $filter IS NULL OR ANY(key IN keys($filter) WHERE n[key] = $filter[key])\n'[39m +
+        [32m'RETURN n'[39m,
+      purpose: [32m'match'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'update-Product'[39m,
+      name: [32m'Update Product node'[39m,
+      query: [32m'MATCH (n:Product {id: $id})\nSET n += $props\nRETURN n'[39m,
+      purpose: [32m'update'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'delete-Product'[39m,
+      name: [32m'Delete Product node'[39m,
+      query: [32m'MATCH (n:Product {id: $id})\nDETACH DELETE n'[39m,
+      purpose: [32m'delete'[39m,
+      executionOrder: [33m1[39m
+    },
+    {
+      id: [32m'create-rel-rel-customer-purchased-product'[39m,
+      name: [32m'Create PURCHASED relationship'[39m,
+      query: [32m'MATCH (source:Customer {id: $fromId})\n'[39m +
+        [32m'MATCH (target:Product {id: $toId})\n'[39m +
+        [32m'CREATE (source)-[r:PURCHASED $props]->(target)\n'[39m +
+        [32m'RETURN r, source, target'[39m,
+      purpose: [32m'create'[39m,
+      executionOrder: [33m2[39m
+    },
+    {
+      id: [32m'create-rel-rel-customer-referred-by-customer'[39m,
+      name: [32m'Create REFERRED_BY relationship'[39m,
+      query: [32m'MATCH (source:Customer {id: $fromId})\n'[39m +
+        [32m'MATCH (target:Customer {id: $toId})\n'[39m +
+        [32m'CREATE (source)-[r:REFERRED_BY $props]->(target)\n'[39m +
+        [32m'RETURN r, source, target'[39m,
+      purpose: [32m'create'[39m,
+      executionOrder: [33m2[39m
+    },
+    {
+      id: [32m'traversal-customerGraph'[39m,
+      name: [32m'Traverse from Customer'[39m,
+      query: [32m'MATCH path = (src:Customer {id: $id})-[*1..3]->(related)\n'[39m +
+        [32m'RETURN path LIMIT $limit'[39m,
+      purpose: [32m'match'[39m,
+      executionOrder: [33m3[39m
+    },
+    {
+      id: [32m'path-customerGraph'[39m,
+      name: [32m'Find path between Customer and Product'[39m,
+      query: [32m'MATCH path = shortestPath((src:Customer {id: $sourceId})-[*..10]->(dest:Product {id: $targetId}))\n'[39m +
+        [32m'RETURN path'[39m,
+      purpose: [32m'match'[39m,
+      executionOrder: [33m3[39m
+    }
+  ],
+  parameters: {},
+  meta: {
+    relationDefs: [
+      {
+        field: [32m'referrer'[39m,
+        type: [32m'REFERRED_BY'[39m,
+        target: [32m'Customer'[39m,
+        direction: [32m'OUTGOING'[39m
+      }
+    ],
+    generatedAt: [32m'2025-04-18T22:58:38.092Z'[39m,
+    entityCount: [33m2[39m,
+    relationshipCount: [33m2[39m,
+    dialectVersion: [32m'Neo4j 5.0'[39m,
+    parameterized: [33mtrue[39m,
+    labelPrefix: [32m''[39m,
+    includeMetadata: [33mtrue[39m,
+    defaultNodeLabel: [32m'Entity'[39m,
+    identifierProperties: [ [32m'id'[39m ],
+    createTargets: [33mtrue[39m,
+    queryCount: [33m17[39m,
+    sourceMorph: [32m'CypherMorph'[39m
+  }
+}

@@ -1,0 +1,61 @@
+bec
+├── bec-graph-adapter.ts
+├── bec-mvc-adapter.ts
+├── being
+│   ├── base.test.ts
+│   ├── base.ts
+│   ├── being.cypher.ts
+│   ├── being.ts
+│   ├── being.txt
+│   ├── context.test.ts
+│   ├── context.ts
+│   ├── entity.test.ts
+│   ├── entity.ts
+│   ├── existence.ts
+│   ├── existence.txt
+│   ├── membra.ts
+│   ├── registry.test.ts
+│   ├── registry.ts
+│   ├── relation.test.ts
+│   ├── relation.ts
+│   ├── schema
+│   │   ├── base.test.ts
+│   │   ├── base.ts
+│   │   ├── context.test.ts
+│   │   ├── context.ts
+│   │   ├── entity.test.ts
+│   │   ├── entity.ts
+│   │   ├── membra.ts
+│   │   ├── registry.test.ts
+│   │   ├── registry.ts
+│   │   ├── relation.test.ts
+│   │   └── relation.ts
+│   ├── self.ts
+│   └── self.txt
+├── concept
+│   ├── concept.ts
+│   ├── concept.txt
+│   ├── judgment.ts
+│   ├── judgment.txt
+│   ├── syllogism.ts
+│   └── syllogism.txt
+├── essence
+│   ├── codex.ts
+│   ├── essence.ts
+│   ├── essence.txt
+│   ├── ground.ts
+│   ├── ground.txt
+│   ├── reflection.ts
+│   ├── reflection.txt
+│   ├── schema
+│   │   ├── codex.ts
+│   │   ├── ground.ts
+│   │   ├── reflection.ts
+│   │   ├── shine.tsx
+│   │   ├── thing.ts
+│   │   └── world.ts
+│   ├── thing.ts
+│   └── world.ts
+└── index.ts
+
+6 directories, 53 files
