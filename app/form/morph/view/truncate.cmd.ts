@@ -1,6 +1,6 @@
 import { TruncateTextMorph } from "./truncate";
 import { ViewOutput } from "./pipeline";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 
 // Sample view with different field types and content lengths
 const sampleView: ViewOutput = {

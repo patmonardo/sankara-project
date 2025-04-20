@@ -1,6 +1,6 @@
 import { StyleViewMorph } from "./display";
 import { ViewOutput } from "./pipeline";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 
 // Very simple view for styling test
 const sampleView: ViewOutput = {

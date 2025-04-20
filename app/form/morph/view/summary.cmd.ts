@@ -1,5 +1,5 @@
 import { FormShape } from "../../schema/form";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 import { generateView, ViewOutput } from "./pipeline";
 import { SummaryViewMorph } from "./summary";
 import { FormatViewMorph } from "./format";

@@ -1,6 +1,6 @@
 import { createMorph } from "../morph";
 import { FormState } from "../../schema/form";
-import { isEditContext } from "../mode";
+import { isEditContext } from "../core/mode";
 import { EditOutput } from "./pipeline";
 
 /**

@@ -1,13 +1,13 @@
-import { createMorph } from "../morph";
-import { isCreateContext } from "../mode";
-import { CreateOutput } from "./pipeline";
 import { FormAction } from "../../schema/form"; // Import FormAction type
+import { createMorph } from "../morph";
+import { isCreateContext } from "../core/mode";
+import { CreateShape } from "././types";
 
 /**
  * Generates the standard form actions (Submit, Cancel, Reset) for create mode
  * based on properties directly within CreateContext.
  */
-export const GenerateCreateActionsMorph = createMorph<CreateOutput, CreateOutput>(
+export const GenerateCreateActionsMorph = createMorph<CreateShape, CreateShape>(
   "GenerateCreateActionsMorph",
   (outputShape, context) => {
     // Safely access CreateContext properties

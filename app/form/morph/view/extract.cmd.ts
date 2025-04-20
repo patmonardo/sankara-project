@@ -1,6 +1,6 @@
 import { FormShape } from "../../schema/form";
 import { FormExecutionContext } from "../../schema/context";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 import { 
   ExtractQualitiesMorph, 
   FilteredQualitiesMorph, 

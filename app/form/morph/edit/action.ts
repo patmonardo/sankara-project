@@ -1,7 +1,7 @@
 import { createMorph } from "../morph";
 // Assuming context/schema paths are correct
 import { FormAction, FormShape } from "../../schema/form";
-import { EditContext, isEditContext } from "../mode"; // Adjust path if needed
+import { EditContext, isEditContext } from "../core/mode"; // Adjust path if needed
 import { EditOutput } from "./pipeline"; // Assuming EditOutput is defined
 
 /**

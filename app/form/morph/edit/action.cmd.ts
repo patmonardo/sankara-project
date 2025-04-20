@@ -1,5 +1,5 @@
 import { FormShape } from "../../schema/form";
-import { EditContext } from "../mode";
+import { EditContext } from "../core/mode";
 import { EditModePipeline, EditOutput } from "./pipeline";
 import { GenerateEditActionsMorph } from "./action";
 

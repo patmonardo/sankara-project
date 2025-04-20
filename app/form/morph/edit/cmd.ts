@@ -2,7 +2,7 @@ import { EditFieldsPipeline } from "./fields";
 import { EditModePipeline } from "./pipeline";
 import { EditSystemPipeline } from "./system";
 import { EditOutput } from "./pipeline";
-import { EditContext } from "../mode";
+import { EditContext } from "../core/mode";
 import { FormShape }  from "../../schema/form";
 
 // --- 1. Minimal Sample Input Shape (EditOutput) ---

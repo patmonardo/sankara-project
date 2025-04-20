@@ -1,24 +1,6 @@
 import { FormModalPipeline } from "./pipeline";
 import { FormExecutionContext } from "../schema/context";
-
-/**
- * Command context for execution
- */
-export interface CommandContext<TOutput> {
-  readonly pipeline: FormModalPipeline<TOutput>;
-  readonly form: any; // Support both FormShape and GraphShape
-  readonly options?: Record<string, any>;
-  readonly executionContext?: FormExecutionContext;
-}
-
-/**
- * Command - Abstract representation of intent
- */
-export interface Command<TOutput> {
-  readonly name: string;
-  readonly description: string;
-  execute(context: CommandContext<TOutput>): Promise<any>;
-}
+import { Command, CommandContext } from "./types";
 
 /**
  * Modal Command - A command that transforms between different modes of representation
@@ -171,7 +153,9 @@ export class ExplainCommand<TOutput> extends ModalCommand<TOutput> {
     const explanation = `This pipeline will process the form "${formName}" using ${
       stats.morphCount
     } morphs:
-${stats.morphNames.map((name, i) => `${i + 1}. ${name}`).join("\n")}
+${stats.morphNames
+  .map((name: string, i: number) => `${i + 1}. ${name}`)
+  .join("\n")}
 
 Configuration:
 ${Object.entries(config)

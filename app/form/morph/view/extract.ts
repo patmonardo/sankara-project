@@ -1,6 +1,6 @@
 import { createMorph, morpheus } from "../morph"; // Import createMorph and morpheus
 import { FormExecutionContext } from "../../schema/context"; // Import context types and guard
-import { ViewContext, isViewContext } from "../mode"; // Import context types and guard
+import { ViewContext, isViewContext } from "../core/mode"; // Import context types and guard
 import { FormShape, FormField, FormOption } from "../../schema/form"; // Import form schema types
 import { getDefaultFormat } from "./format";
 

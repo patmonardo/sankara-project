@@ -1,5 +1,5 @@
 import { createMorph, morpheus } from "../morph";
-import { isViewContext } from "../mode";
+import { isViewContext } from "../core/mode";
 import { ViewOutput, ViewField } from "./pipeline";
 
 /**

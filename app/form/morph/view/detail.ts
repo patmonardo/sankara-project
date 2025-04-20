@@ -1,5 +1,5 @@
 import { SimpleMorph } from "../morph";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 import { ViewOutput, ViewField } from "./pipeline";
 
 /**

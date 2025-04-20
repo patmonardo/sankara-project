@@ -18,7 +18,7 @@ class ChakraTestPipeline extends FormModalPipeline<any> {
   }
 
   // Override generate method for our test implementation
-  generate(form: GraphShape, context?: FormExecutionContext): any {
+  generate(shape: GraphShape, context?: FormExecutionContext): any {
     const chakraMapping = {
       muladhara: { color: "red", element: "earth", focus: "stability" },
       svadhisthana: { color: "orange", element: "water", focus: "creativity" },
@@ -39,24 +39,24 @@ class ChakraTestPipeline extends FormModalPipeline<any> {
       chakraMapping.muladhara;
 
     return {
-      id: form.id,
-      name: form.title || "Unnamed Graph",
+      id: shape.id,
+      name: shape.name || "Unnamed Graph",
       chakraOutput: {
         level: selectedChakra,
         ...chakraInfo,
         timestamp: new Date().toISOString(),
-        sourceFields: Object.keys(form).length,
+        sourceFields: Object.keys(shape).length,
         energyFlow: this.config.energyFlow,
         resonance: Math.random() * 100,
         balanceState: "harmonizing",
       },
       transformationResult: {
-        inputForm: form.id,
+        inputForm: shape.id,
         outputGenerated: true,
         processComplete: true,
       },
       meta: {
-        ...form.meta,
+        ...shape.meta,
         processedBy: "ChakraTestPipeline",
         modalTransformation: "form → energy → consciousness",
       },
@@ -279,7 +279,7 @@ async function runCommanderTests() {
   console.log(formatHeader("Test 2: Generate Command (Default Config)"));
   try {
     const result = await commander.execute("generate", graph);
-    console.log(`Result for graph: ${result.title}`);
+    console.log(`Result for graph: ${result.name}`);
     console.log(
       `Chakra Level: ${result.chakraOutput.level} (${result.chakraOutput.focus})`
     );
@@ -326,7 +326,7 @@ async function runCommanderTests() {
       runtimeConfig,
       customContext
     );
-    console.log(`Result for graph: ${result.title}`);
+    console.log(`Result for graph: ${result.name}`);
     console.log(
       `Chakra Level: ${result.chakraOutput.level} (${result.chakraOutput.focus})`
     );

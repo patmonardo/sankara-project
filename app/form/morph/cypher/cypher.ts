@@ -1,74 +1,69 @@
-import { SimpleMorph } from "../morph";
+import { createMorph } from "../../morph/core";
 import { CypherShape, CypherQuery } from "./types";
 
 /**
- * Transforms a CypherShape to an enhanced CypherShape with Neo4j query generation
- * Pure transformation that reads from shape and writes to shape
+ * Transforms a CypherShape to generate Neo4j queries based on entities and relationships
  */
-export const CypherMorph = new SimpleMorph<CypherShape, CypherShape>(
+export const CypherMorph = createMorph<CypherShape, CypherShape>(
   "CypherMorph",
-  (cypherShape) => {
+  (shape, context) => {
     // Validate input
-    if (!cypherShape || !cypherShape.id) {
+    if (!shape || !shape.id) {
       throw new Error("Invalid shape provided to CypherMorph");
     }
 
-    // Create a new shape to avoid mutations
-    const enhancedShape: CypherShape = {
-      ...cypherShape,
-      // Initialize or maintain query arrays
-      queries: [...(cypherShape.queries || [])],
-      parameters: { ...(cypherShape.parameters || {}) },
-      meta: {
-        ...(cypherShape.meta || {}),
-        // Add timestamp but preserve any existing value
-        generatedAt: cypherShape.meta?.generatedAt || new Date().toISOString(),
-        sourceMorph: "CypherMorph",
-      }
-    };
+    // Initialize arrays if not present
+    shape.queries = shape.queries || [];
+    shape.parameters = shape.parameters || {};
+    
+    // Initialize or update meta
+    shape.meta = shape.meta || {};
+    shape.meta.generatedAt = shape.meta.generatedAt || new Date().toISOString();
+    shape.meta.sourceMorph = "CypherMorph";
 
     // Generate schema/constraint queries
-    generateSchemaQueries(enhancedShape);
+    generateSchemaQueries(shape);
     
     // Generate CRUD queries for entities
-    if (enhancedShape.entities) {
-      enhancedShape.entities.forEach(entity => {
+    if (shape.entities) {
+      shape.entities.forEach(entity => {
         // Create
-        generateCreateQuery(entity, enhancedShape);
+        generateCreateQuery(entity, shape);
         
         // Read
-        generateMatchQuery(entity, enhancedShape);
+        generateMatchQuery(entity, shape);
         
         // Update
-        generateUpdateQuery(entity, enhancedShape);
+        generateUpdateQuery(entity, shape);
         
         // Delete
-        generateDeleteQuery(entity, enhancedShape);
+        generateDeleteQuery(entity, shape);
       });
     }
     
     // Generate relationship queries
-    if (enhancedShape.relationships) {
-      enhancedShape.relationships.forEach(rel => {
-        generateRelationshipQuery(rel, enhancedShape);
+    if (shape.relationships) {
+      shape.relationships.forEach(rel => {
+        generateRelationshipQuery(rel, shape);
       });
     }
     
     // Generate graph traversal queries
-    if (enhancedShape.relationships && enhancedShape.relationships.length > 0) {
-      generateTraversalQueries(enhancedShape);
+    if (shape.relationships && shape.relationships.length > 0) {
+      generateTraversalQueries(shape);
     }
 
     // Update query count in meta
-    enhancedShape.meta.queryCount = enhancedShape.queries.length;
+    shape.meta.queryCount = shape.queries.length;
 
-    return enhancedShape;
+    return shape;
   },
   {
     pure: false, // Due to Date() when generatedAt not provided
     fusible: true,
     cost: 3,
-    memoizable: false // Due to potential Date()
+    memoizable: false, // Due to potential Date()
+    description: "Generates Neo4j Cypher queries from a graph shape"
   }
 );
 

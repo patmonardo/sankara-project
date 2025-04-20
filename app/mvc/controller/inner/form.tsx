@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { FormShape, FormMode } from '../../../ui/graphics/schema/form';
-import { MorpheusContext } from '../../../ui/graphics/schema/context';
 import { MatrixProjection } from '../../../ui/graphics/morph/matrix/matrix';
 
 /**

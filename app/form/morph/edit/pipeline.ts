@@ -1,8 +1,8 @@
 import { createMorph, createPipeline } from "../morph";
 import { FormShape, FormField, FormAction } from "../../schema/form";
-import { EditContext, isEditContext } from "../mode";
+import { EditContext, isEditContext } from "../core/mode";
 import { GenerateEditActionsMorph } from "./action";
-import { determineInputType, getDefaultForType } from "../mode"; // Example import
+import { determineInputType, getDefaultForType } from "../core/mode"; // Example import
 
 /**
  * Represents a FormField tailored for the 'edit' mode UI and logic.

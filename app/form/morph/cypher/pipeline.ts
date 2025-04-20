@@ -1,4 +1,4 @@
-import { SimpleMorph, MorphPipeline } from "../morph";
+import { SimpleMorph, MorphPipeline } from "../../morph/core";
 import { FormShape } from "../../schema/form";
 import { GraphShape } from "../graph/types";
 import { CypherShape } from "./types";

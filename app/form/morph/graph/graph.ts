@@ -1,5 +1,4 @@
-import { SimpleMorph } from "../morph";
-import { FormShape } from "../../schema/form";
+import { createMorph } from "../../morph/core";
 import {
     GraphShape,
     GraphEntity,
@@ -18,7 +17,7 @@ function generateLabel(id: string): string {
  * Transforms a FormShape definition into a GraphShape schema model.
  * Creates entities and relationships from the form definition.
  */
-export const FormToGraphSchemaMorph = new SimpleMorph<GraphShape, GraphShape>(
+export const FormToGraphSchemaMorph = createMorph<GraphShape, GraphShape>(
   "FormToGraphSchemaMorph",
   (shape) => { // Input is GraphShape
     // Validate input
@@ -30,7 +29,7 @@ export const FormToGraphSchemaMorph = new SimpleMorph<GraphShape, GraphShape>(
     const graphShape: GraphShape = {
       ...shape,
       id: `graph-schema-${shape.id}`,
-      title: `${shape.title || shape.id} Graph Schema`,
+      name: `${shape.name || shape.id} Graph Schema`,
       // Initialize empty arrays for graph elements
       entities: [],
       relationships: [],
@@ -71,6 +70,7 @@ export const FormToGraphSchemaMorph = new SimpleMorph<GraphShape, GraphShape>(
   }
 );
 
+// Rest of the file remains unchanged
 /**
  * Creates a GraphEntity representing the Node Type defined by the FormShape.
  */

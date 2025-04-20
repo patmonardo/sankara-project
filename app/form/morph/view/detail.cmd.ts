@@ -1,5 +1,5 @@
 import { FormShape } from "../../schema/form";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 import { generateView } from "./pipeline";
 import { GroupedViewOutput } from "./group";
 import { DetailLevel } from "./detail";

@@ -1,5 +1,5 @@
 import { createMorph } from "../morph";
-import { EditContext } from "../mode";
+import { EditContext } from "../core/mode";
 import { EditOutput } from "./pipeline";
 
 /**

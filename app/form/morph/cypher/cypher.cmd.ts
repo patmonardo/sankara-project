@@ -8,7 +8,7 @@ import { inspect } from "util";
 function createSampleInput(): CypherShape {
   return {
     id: "customerGraph",
-    title: "Customer Graph",
+    name: "Customer Graph",
     description: "A graph representation of customer data",
     fields: [
       { id: "id", type: "text", label: "ID", required: true },

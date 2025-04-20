@@ -1,4 +1,9 @@
-import { MorphPipeline, FormMorph, SimpleMorph, IdentityMorph } from "../morph/morph";
+import { 
+  Morph, 
+  IdentityMorph, 
+  createMorph, 
+  ComposedMorph 
+} from "../morph";
 import { FormShape } from "../schema/form";
 import { FormExecutionContext } from "../schema/context";
 
@@ -6,17 +11,12 @@ import { FormExecutionContext } from "../schema/context";
  * RootPipeline - The base pipeline abstraction for any transformation sequence
  */
 export abstract class RootPipeline<TInput, TOutput> {
-  protected pipeline: MorphPipeline<TInput, TOutput>;
+  protected pipeline: Morph<TInput, TOutput>;
   protected context: FormExecutionContext;
+  
   constructor() {
-    // Create an initial pipeline and explicitly cast it
-    const initialPipeline = new MorphPipeline<TInput, TInput>(
-      new IdentityMorph<TInput>(),
-      "IdentityPipeline"
-    );
-    
-    // Cast to the desired type
-    this.pipeline = initialPipeline as unknown as MorphPipeline<TInput, TOutput>;
+    // Create an initial identity morph and cast it to the desired output type
+    this.pipeline = new IdentityMorph<TInput>() as unknown as Morph<TInput, TOutput>;
     
     // Create a default context with mark structure
     this.context = {
@@ -27,8 +27,22 @@ export abstract class RootPipeline<TInput, TOutput> {
     };
   }
 
-  add(morph: FormMorph<any, any>): void {
-    this.pipeline = this.pipeline.then(morph);
+  add(morph: Morph<any, any>): void {
+    // Compose the current pipeline with the new morph
+    if (this.pipeline instanceof ComposedMorph) {
+      // If we already have a composed morph, add to it
+      const currentSteps = (this.pipeline as ComposedMorph<any, any>).getSteps();
+      this.pipeline = ComposedMorph.compose<TInput, TOutput>(
+        "ExtendedPipeline",
+        [...currentSteps, morph]
+      );
+    } else {
+      // Otherwise create a composed morph with the current and new
+      this.pipeline = ComposedMorph.compose<TInput, TOutput>(
+        "ComposedPipeline",
+        [this.pipeline, morph]
+      );
+    }
   }
 
   run(input: TInput, externalContext?: FormExecutionContext): TOutput {
@@ -38,21 +52,29 @@ export abstract class RootPipeline<TInput, TOutput> {
     // Update timestamp for fresh execution
     runContext.timestamp = Date.now();
 
-    return this.pipeline.apply(input, runContext);
+    return this.pipeline.transform(input, runContext);
   }
 
   /**
    * Get the number of morphs in the pipeline
    */
   length(): number {
-    return this.pipeline.getMorphs().length;
+    if (this.pipeline instanceof ComposedMorph) {
+      return (this.pipeline as ComposedMorph<any, any>).getSteps().length;
+    }
+    return 1; // Just a single morph
   }
 
   /**
    * Get the names of morphs in the pipeline
    */
   getMorphNames(): string[] {
-    return this.pipeline.getMorphs().map((m) => m.name || "unnamed");
+    if (this.pipeline instanceof ComposedMorph) {
+      return (this.pipeline as ComposedMorph<any, any>)
+        .getSteps()
+        .map(m => m.name || "unnamed");
+    }
+    return [this.pipeline.name || "unnamed"];
   }
 
   /**
@@ -154,7 +176,7 @@ export abstract class ModalPipeline<TInput, TOutput> extends RootPipeline<
 }
 
 /**
- * FormModalPipeline - Specialized modal pipeline for form-based transformations
+ * FormModalPipeline - Specialized modal pipeline for shape-based transformations
  *
  * This represents a pipeline that transforms forms into different modal representations
  * using configuration to guide the transformation process.
@@ -164,20 +186,20 @@ export abstract class FormModalPipeline<TOutput> extends ModalPipeline<
   TOutput
 > {
   /**
-   * Generate output from a form
+   * Generate output from a shape
    */
-  generate(form: FormShape): TOutput {
-    return this.run(form);
+  generate(shape: FormShape): TOutput {
+    return this.run(shape);
   }
 
   /**
    * Generate output with custom runtime config
    */
   generateWithConfig(
-    form: FormShape,
+    shape: FormShape,
     runtimeConfig: Record<string, any> = {}
   ): TOutput {
-    return this.runWithConfig(form, runtimeConfig);
+    return this.runWithConfig(shape, runtimeConfig);
   }
 }
 
@@ -187,8 +209,8 @@ export abstract class FormModalPipeline<TOutput> extends ModalPipeline<
 export function createBridgeMorph<TInput, TOutput>(
   name: string,
   transformer: (input: TInput, config: Record<string, any>) => TOutput
-): SimpleMorph<TInput, TOutput> {
-  return new SimpleMorph<TInput, TOutput>(
+): Morph<TInput, TOutput> {
+  return createMorph<TInput, TOutput>(
     name,
     (input, context) => {
       // Safely extract config from context - handle case where data might be undefined

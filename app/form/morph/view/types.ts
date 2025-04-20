@@ -1,5 +1,5 @@
 import { FormShape, FormField } from "../../schema/form";
-import { ViewContext, isViewContext } from "../mode";
+import { ViewContext, isViewContext } from "../core/mode";
 import { createPipeline, createMorph } from "../morph";
 import {
   determineDisplayType,

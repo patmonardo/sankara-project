@@ -43,5 +43,4 @@ export class Form {
     };
   }
 
-  // All complex methods remain REMOVED
 }

@@ -1,5 +1,5 @@
 import { FormShape } from "../../schema/form";
-import { EditContext } from "../mode";
+import { EditContext } from "../core/mode";
 import { EditSystemPipeline } from "./system";
 
 console.log("=== EDIT SYSTEM PIPELINE TESTS ===");

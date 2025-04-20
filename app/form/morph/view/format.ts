@@ -1,6 +1,6 @@
 import { SimpleMorph } from "../morph";
 import { FormExecutionContext } from "../../schema/context";
-import { ViewContext } from "../mode";
+import { ViewContext } from "../core/mode";
 import { ViewOutput, ViewField } from "./pipeline";
 import { FieldGroup, GroupedViewOutput } from "./group";
 import { FormOption } from "../../schema/form";
