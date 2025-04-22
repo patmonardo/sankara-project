@@ -1,238 +1,261 @@
-import { FormModalPipeline } from "./pipeline";
-import { FormExecutionContext } from "../schema/context";
 import { Command, CommandContext } from "./types";
+import { FormPipeline } from "../morph/core/pipeline";
 
 /**
- * Modal Command - A command that transforms between different modes of representation
+ * Command registry for storing and retrieving commands
  */
-export abstract class ModalCommand<TOutput> implements Command<TOutput> {
-  abstract readonly name: string;
-  abstract readonly description: string;
+export class CommandRegistry {
+  private commands = new Map<string, Command<any>>();
 
   /**
-   * Create execution context for this command
+   * Register a command
    */
-  protected createExecutionContext(
-    options?: Record<string, any>
-  ): FormExecutionContext {
-    return {
-      id: `${this.name}-${Date.now()}`,
-      timestamp: Date.now(),
-      data: {
-        config: options || {},
-        metrics: {
-          startTime: Date.now(),
-        },
-      },
-      mark: {
-        command: this.name,
-        pipeline: { morphs: [] },
-      },
-    };
-  }
-
-  /**
-   * Execute this command with the given context
-   */
-  abstract execute(context: CommandContext<TOutput>): Promise<any>;
-}
-
-/**
- * Generate Command - Basic generation operation
- */
-export class GenerateCommand<TOutput> extends ModalCommand<TOutput> {
-  readonly name = "generate";
-  readonly description = "Generate output from a form using the pipeline";
-
-  async execute(context: CommandContext<TOutput>): Promise<TOutput> {
-    const { pipeline, form, options, executionContext } = context;
-
-    // Use provided execution context or create new one
-    const runContext = executionContext || this.createExecutionContext(options);
-
-    try {
-      // Important: Return the actual transformed result!
-      if (options) {
-        if (typeof pipeline.generateWithConfig === "function") {
-          return pipeline.generateWithConfig(form, options);
-        } else if (typeof pipeline.runWithConfig === "function") {
-          return pipeline.runWithConfig(form, options);
-        } else {
-          return pipeline.generate(form);
-        }
-      } else {
-        return pipeline.generate(form);
-      }
-    } catch (error) {
-      console.error(`Error in GenerateCommand: ${error}`);
-      throw error;
+  register<TOutput>(command: Command<TOutput>): void {
+    if (this.commands.has(command.name)) {
+      console.warn(
+        `Command "${command.name}" already registered. Overwriting.`
+      );
     }
-  }
-}
-
-/**
- * Diagnostics Command - Generate with detailed diagnostics
- */
-export class DiagnosticsCommand<TOutput> extends ModalCommand<TOutput> {
-  readonly name = "diagnostics";
-  readonly description = "Generate output with detailed diagnostics";
-
-  async execute(context: CommandContext<TOutput>): Promise<{
-    result: TOutput;
-    diagnostics: {
-      executionTime: number;
-      morphCount: number;
-      morphNames: string[];
-      timestamp: number;
-    };
-  }> {
-    const { pipeline, form, options } = context;
-
-    // Create custom context
-    const runContext = this.createExecutionContext(options);
-
-    // Start timing
-    const start = performance.now();
-
-    // Run the pipeline
-    let result;
-    try {
-      if (typeof pipeline.generateWithConfig === "function") {
-        result = pipeline.generateWithConfig(form, options);
-      } else if (typeof pipeline.runWithConfig === "function") {
-        // Fix: Pass correct parameters to runWithConfig
-        result = pipeline.runWithConfig(form, options); // <-- Remove the bind approach
-      } else {
-        result = pipeline.generate(form);
-      }
-    } catch (error) {
-      console.error(`Error in DiagnosticsCommand: ${error}`);
-      throw error;
-    }
-
-    // Calculate execution time
-    const executionTime = performance.now() - start;
-
-    // Get pipeline stats
-    const stats = pipeline.stats();
-
-    return {
-      result,
-      diagnostics: {
-        executionTime,
-        morphCount: stats.morphCount,
-        morphNames: stats.morphNames,
-        timestamp: runContext.timestamp,
-      },
-    };
-  }
-}
-
-/**
- * Explain Command - Provides pipeline explanation
- */
-export class ExplainCommand<TOutput> extends ModalCommand<TOutput> {
-  readonly name = "explain";
-  readonly description = "Explain how the pipeline will process the form";
-
-  async execute(context: CommandContext<TOutput>): Promise<{
-    morphCount: number;
-    morphNames: string[];
-    config: Record<string, any>;
-    explanation: string;
-  }> {
-    const { pipeline, form } = context;
-
-    const stats = pipeline.stats();
-    const config = pipeline.getConfig();
-
-    // Handle both FormShape and GraphShape by checking for both name and title
-    const formName = form.name || form.title || "Unnamed";
-
-    // Generate explanation of the pipeline
-    const explanation = `This pipeline will process the form "${formName}" using ${
-      stats.morphCount
-    } morphs:
-${stats.morphNames
-  .map((name: string, i: number) => `${i + 1}. ${name}`)
-  .join("\n")}
-
-Configuration:
-${Object.entries(config)
-  .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-  .join("\n")}`;
-
-    return {
-      morphCount: stats.morphCount,
-      morphNames: stats.morphNames,
-      config: config,
-      explanation,
-    };
-  }
-}
-
-/**
- * Commander - Orchestrates commands execution
- */
-export class Commander<TOutput> {
-  private commands: Map<string, Command<TOutput>> = new Map();
-
-  constructor(private readonly pipeline: FormModalPipeline<TOutput>) {
-    // Register default commands
-    this.registerCommand(new GenerateCommand());
-    this.registerCommand(new DiagnosticsCommand());
-    this.registerCommand(new ExplainCommand());
-  }
-
-  /**
-   * Register a new command
-   */
-  registerCommand(command: Command<TOutput>): void {
     this.commands.set(command.name, command);
+  }
+
+  /**
+   * Get a command by name
+   */
+  get<TOutput>(name: string): Command<TOutput> | undefined {
+    return this.commands.get(name) as Command<TOutput> | undefined;
+  }
+
+  /**
+   * List all available commands
+   */
+  listCommands(): Array<{ name: string; description: string }> {
+    return Array.from(this.commands.entries()).map(([name, command]) => ({
+      name,
+      description: command.description,
+    }));
+  }
+}
+
+/**
+ * Commander - Main class for executing commands
+ */
+export class Commander {
+  private registry = new CommandRegistry();
+
+  constructor(private defaultPipeline?: FormPipeline<any>) {}
+
+  /**
+   * Register a command
+   */
+  register<TOutput>(command: Command<TOutput>): this {
+    this.registry.register(command);
+    return this;
   }
 
   /**
    * Execute a command by name
    */
-  async execute(
+  async execute<TOutput>(
     commandName: string,
-    form: any, // Support both FormShape and GraphShape
-    options?: Record<string, any>,
-    executionContext?: FormExecutionContext
+    form: any,
+    options: Record<string, any> = {},
+    pipeline?: FormPipeline<TOutput>
   ): Promise<any> {
-    const command = this.commands.get(commandName);
+    const command = this.registry.get<TOutput>(commandName);
 
     if (!command) {
-      throw new Error(`Unknown command: ${commandName}`);
+      throw new Error(`Command "${commandName}" not found.`);
     }
 
-    // Create command context
+    const usePipeline =
+      pipeline || (this.defaultPipeline as FormPipeline<TOutput>);
+
+    if (!usePipeline) {
+      throw new Error(`No pipeline provided for command "${commandName}".`);
+    }
+
     const context: CommandContext<TOutput> = {
-      pipeline: this.pipeline,
+      pipeline: usePipeline,
       form,
       options,
-      executionContext,
+      executionContext: {
+        id: `cmd-${commandName}-${Date.now()}`,
+        timestamp: Date.now(),
+        data: { options },
+      },
     };
 
     return command.execute(context);
   }
 
   /**
-   * Get available commands
+   * List all available commands
    */
-  getAvailableCommands(): { name: string; description: string }[] {
-    return Array.from(this.commands.values()).map((cmd) => ({
-      name: cmd.name,
-      description: cmd.description,
-    }));
+  listCommands(): Array<{ name: string; description: string }> {
+    return this.registry.listCommands();
   }
 }
 
 /**
- * Create a commander for a pipeline
+ * CLI Interface for the commander
  */
-export function createCommander<TOutput>(
-  pipeline: FormModalPipeline<TOutput>
-): Commander<TOutput> {
-  return new Commander<TOutput>(pipeline);
+export class CommanderCLI {
+  constructor(private commander: Commander) {}
+
+  /**
+   * Parse and execute a command from CLI args
+   */
+  async parseAndExecute(args: string[]): Promise<any> {
+    if (args.length < 1) {
+      return this.showHelp();
+    }
+
+    const commandName = args[0];
+
+    if (commandName === "help" || commandName === "--help") {
+      return this.showHelp();
+    }
+
+    if (commandName === "list" || commandName === "ls") {
+      return this.listCommands();
+    }
+
+    // Parse options
+    const options: Record<string, any> = {};
+    let formPath: string | undefined;
+
+    for (let i = 1; i < args.length; i++) {
+      const arg = args[i];
+
+      if (arg.startsWith("--")) {
+        // Handle --key=value format
+        const parts = arg.substring(2).split("=");
+        if (parts.length === 2) {
+          options[parts[0]] = this.parseValue(parts[1]);
+        } else {
+          // Boolean flag
+          options[parts[0]] = true;
+        }
+      } else if (arg.startsWith("-")) {
+        // Handle -k value format
+        const key = arg.substring(1);
+        const nextArg = args[i + 1];
+        if (nextArg && !nextArg.startsWith("-")) {
+          options[key] = this.parseValue(nextArg);
+          i++; // Skip next arg since we've used it
+        } else {
+          options[key] = true;
+        }
+      } else if (!formPath) {
+        // First non-option arg is the form path
+        formPath = arg;
+      }
+    }
+
+    if (!formPath) {
+      console.error("Error: No form specified.");
+      return this.showHelp();
+    }
+
+    // Load form data
+    let formData;
+    try {
+      const fs = require("fs");
+      const formContent = fs.readFileSync(formPath, "utf8");
+      formData = JSON.parse(formContent);
+    } catch (error) {
+      console.error(`Error loading form from ${formPath}:`);
+      console.error(error);
+      return 1;
+    }
+
+    try {
+      const result = await this.commander.execute(
+        commandName,
+        formData,
+        options
+      );
+      return result;
+    } catch (error) {
+      console.error(`Error executing command "${commandName}":`);
+      console.error(error);
+      return 1;
+    }
+  }
+
+  /**
+   * Parse string values into appropriate types
+   */
+  private parseValue(value: string): any {
+    // Try to parse as number
+    if (!isNaN(Number(value))) {
+      return Number(value);
+    }
+
+    // Try to parse as boolean
+    if (value.toLowerCase() === "true") return true;
+    if (value.toLowerCase() === "false") return false;
+
+    // Default to string
+    return value;
+  }
+
+  /**
+   * Show help information
+   */
+  private showHelp(): void {
+    console.log("Form Modality Command Line Interface");
+    console.log("-----------------------------------");
+    console.log("Usage: modality <command> <form-path> [options]");
+    console.log("\nCommands:");
+
+    const commands = this.commander.listCommands();
+    commands.forEach((cmd) => {
+      console.log(`  ${cmd.name.padEnd(15)} - ${cmd.description}`);
+    });
+
+    console.log("\nOptions:");
+    console.log("  --key=value       Set option with value");
+    console.log("  -k value          Set option with value");
+    console.log("  --flag            Set boolean flag to true");
+
+    console.log("\nExamples:");
+    console.log("  modality graph path/to/form.json --test-data");
+    console.log("  modality analyze path/to/graph.json -c true");
+  }
+
+  /**
+   * List all available commands
+   */
+  private listCommands(): void {
+    console.log("Available commands:");
+    const commands = this.commander.listCommands();
+    commands.forEach((cmd) => {
+      console.log(`  ${cmd.name.padEnd(15)} - ${cmd.description}`);
+    });
+  }
+}
+
+/**
+ * Create a standard commander with default configuration
+ */
+export function createCommander(
+  defaultPipeline?: FormPipeline<any>
+): Commander {
+  const commander = new Commander(defaultPipeline);
+
+  // Here we could pre-register standard commands if needed
+  // This pattern allows for customization while providing sensible defaults
+
+  return commander;
+}
+
+/**
+ * Create a standalone CLI entry point
+ */
+export function createCommanderCLI(): CommanderCLI {
+  // Now use the createCommander function
+  const commander = createCommander();
+  return new CommanderCLI(commander);
 }

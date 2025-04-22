@@ -1,40 +1,18 @@
 import { FormShape, FormField, FormAction } from "../../schema/form";
-
-/**
- * Represents a FormField tailored for the 'create' mode UI and logic.
- */
-export interface CreateField extends FormField {
-  value: any; // Holds the initial value for the create form
-  inputType: string; // Determined input type for UI rendering
-  visible: boolean; // Resolved visibility for create mode (always true if included)
-  disabled: boolean; // Resolved disabled state for create mode
-  readOnly: boolean; // Resolved readOnly state for create mode
-  
-  // Optional custom component information
-  component?: string;
-  props?: Record<string, any>;
-  
-  meta: FormField["meta"] & {
-    mode: "create";
-    pristine: boolean; // Field hasn't been interacted with yet
-    touched: boolean; // Field hasn't received focus/blur yet
-    customized?: boolean;
-    originalValues?: Partial<FormField>;
-  };
-}
+import { FormExecutionContext } from "../../schema/context";
 
 /**
  * Represents a FormShape tailored for the 'create' mode.
  */
-export interface CreateShape extends FormShape {
-  fields: CreateField[];
+export interface CreateFormShape extends FormShape {
+  fields: CreateFormField[];
   mode: "create";
   isNew: true;
   valid: boolean;
   complete: boolean;
   actions?: FormAction[];
-  submitButton?: { label: string; position: 'top' | 'bottom' | 'both'; };
-  cancelButton?: { label: string; position: 'top' | 'bottom' | 'both'; };
+  submitButton?: { label: string; position: "top" | "bottom" | "both" };
+  cancelButton?: { label: string; position: "top" | "bottom" | "both" };
   clearOnSubmit?: boolean;
   meta: FormShape["meta"] & {
     mode: "create";
@@ -47,9 +25,32 @@ export interface CreateShape extends FormShape {
 }
 
 /**
+ * Represents a FormField tailored for the 'create' mode UI and logic.
+ */
+export interface CreateFormField extends FormField {
+  value: any; // Holds the initial value for the create form
+  inputType: string; // Determined input type for UI rendering
+  visible: boolean; // Resolved visibility for create mode (always true if included)
+  disabled: boolean; // Resolved disabled state for create mode
+  readOnly: boolean; // Resolved readOnly state for create mode
+  validationMessages?: Record<string, string[]>;
+  // Optional custom component information
+  component?: string;
+  props?: Record<string, any>;
+
+  meta: FormField["meta"] & {
+    mode: "create";
+    pristine: boolean; // Field hasn't been interacted with yet
+    touched: boolean; // Field hasn't received focus/blur yet
+    customized?: boolean;
+    originalValues?: Partial<FormField>;
+  };
+}
+
+/**
  * Template data for form creation
  */
-export interface FormTemplate {
+export interface CreateFormTemplate {
   id: string;
   name: string;
   description?: string;
@@ -58,59 +59,72 @@ export interface FormTemplate {
 }
 
 /**
- * Context for create mode operations
+ * Context for form creation operations
  */
-export interface CreateContext {
-  // Basic create context
-  initialValues?: Record<string, any>;
-  includeFields?: string[];
-  excludeFields?: string[];
-  submitLabel?: string;
-  cancelLabel?: string;
-  buttonPosition?: 'top' | 'bottom' | 'both';
-  showCancel?: boolean;
-  showReset?: boolean;
-  
-  // Custom field configuration
-  customization?: {
-    // Override field properties
-    fieldConfigs?: Record<string, Partial<FormField>>;
+export interface CreateFormContext extends FormExecutionContext {
+  id: string;
+  timestamp: number;
+  operation: "create";
+  data: {
+    // Initial values for fields
+    initialValues?: Record<string, any>;
     
-    // Custom component mapping
-    components?: Record<string, string>;
+    // Field filtering
+    includeFields?: string[];
+    excludeFields?: string[];
     
-    // Field transformers for specific types
-    fieldTransformers?: Record<string, (field: CreateField) => CreateField>;
-    
-    // Additional metadata
-    metadata?: Record<string, any>;
-  };
+    // UI configuration
+    submitLabel?: string;
+    cancelLabel?: string;
+    showCancel?: boolean;
+    showReset?: boolean;
+    buttonPosition?: "top" | "bottom" | "both";
 
-  // Template support
-  template?: FormTemplate;
-  
-  // Template options
-  templateOptions?: {
-    preserveOriginalDefaults?: boolean;
-    templateReadOnlyFields?: string[];
-    mergeStrategy?: 'override' | 'preserve-existing' | 'smart-merge';
-    titlePrefix?: string;
+    // Behavior configuration
+    config?: {
+      validateOnChange?: boolean;
+      validateOnBlur?: boolean;
+      validateOnSubmit?: boolean;
+      submitOnEnter?: boolean;
+      showLabels?: boolean;
+      showRequiredIndicator?: boolean;
+      showValidationErrors?: boolean;
+      trackChanges?: boolean;
+      confirmDiscardChanges?: boolean;
+      labelPosition?: "top" | "left" | "right";
+    };
+    
+    // Template handling
+    templateData?: CreateFormTemplate;
+    templateOptions?: {
+      preserveOriginalDefaults?: boolean;
+      readOnlyFields?: string[];
+      titlePrefix?: string;
+      mergeStrategy?: 'preserve-existing' | 'smart-merge' | 'override';
+    };
+    
+    // Customization options
+    customization?: Record<string, any>;
   };
+  
+  // Optional additional namespaces
+  meta?: Record<string, any>;
+  ui?: Record<string, any>;
 }
 
 /**
- * Type guard to check if a context is a CreateContext
+ * Type guard to check if a context is a CreateFormContext
  */
-export function isCreateContext(context: any): context is CreateContext {
-  return context && (
-    context.initialValues !== undefined ||
-    context.includeFields !== undefined ||
-    context.excludeFields !== undefined ||
-    context.submitLabel !== undefined ||
-    context.cancelLabel !== undefined ||
-    context.buttonPosition !== undefined ||
-    context.showCancel !== undefined ||
-    context.showReset !== undefined ||
-    context.customization !== undefined
+export function isCreateFormContext(
+  context: any
+): context is CreateFormContext {
+  return (
+    context &&
+    typeof context === "object" &&
+    context.operation === "create" &&
+    (
+      (context.data && typeof context.data === "object") ||
+      (context.config && typeof context.config === "object")
+    )
   );
 }

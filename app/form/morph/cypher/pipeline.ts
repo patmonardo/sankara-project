@@ -1,183 +1,88 @@
-import { SimpleMorph, MorphPipeline } from "../../morph/core";
+import { FormPipeline } from "../core";
 import { FormShape } from "../../schema/form";
-import { GraphShape } from "../graph/types";
-import { CypherShape } from "./types";
-import { FormToGraphSchemaMorph } from "../graph/graph";
-import { CypherMorph } from "./cypher";
-
-/**
- * Configuration for the Cypher pipeline
- */
-export interface CypherPipelineConfig {
-  /** Neo4j version to target */
-  dialectVersion?: string;
-  
-  /** Whether to use parameterized queries */
-  parameterized?: boolean;
-  
-  /** Prefix for node labels */
-  labelPrefix?: string;
-  
-  /** Whether to include metadata properties */
-  includeMetadata?: boolean;
-  
-  /** Default node label when not specified */
-  defaultNodeLabel?: string;
-  
-  /** Property keys to use as identifiers when matching */
-  identifierProperties?: string[];
-  
-  /** Whether to create or match target nodes */
-  createTargets?: boolean;
-}
+import { CypherShape, CypherConfig } from "./types";
+import { CypherQueryMorph } from "./query";
 
 /**
  * CypherPipeline - A specialized pipeline for generating Neo4j Cypher queries from forms
- * 
- * This pipeline handles context/config at the root level, allowing individual morphs
- * to focus on their specific transformations by reading from meta properties.
+ *
+ * This pipeline extends FormPipeline to provide Cypher generation capabilities.
  */
-export class CypherPipeline {
-  private pipeline: MorphPipeline<FormShape, CypherShape>;
-  private config: CypherPipelineConfig;
-  
+export class CypherPipeline extends FormPipeline<CypherShape> {
   /**
    * Create a new CypherPipeline with optional configuration
    */
-  constructor(config: CypherPipelineConfig = {}) {
-    // Store configuration with defaults
-    this.config = {
-      dialectVersion: config.dialectVersion || "Neo4j 5.0",
-      parameterized: config.parameterized !== false,
-      labelPrefix: config.labelPrefix || "",
-      includeMetadata: config.includeMetadata !== false, 
-      defaultNodeLabel: config.defaultNodeLabel || "Entity",
-      identifierProperties: config.identifierProperties || ["id"],
-      createTargets: config.createTargets !== false
-    };
-    
-    // Create the core pipeline
-    this.pipeline = new MorphPipeline<FormShape, CypherShape>();
-    
-    // Add the form-to-graph transformation
-    this.pipeline.add(FormToGraphSchemaMorph);
-    
-    // Add the cross-domain bridge (handles the mode transition)
-    this.pipeline.add(new SimpleMorph<GraphShape, CypherShape>(
-      "GraphToCypherBridge",
-      (graphShape) => {
-        // Initialize the CypherShape with config values in meta
-        return {
-          ...graphShape,
-          queries: [],
-          parameters: {},
-          meta: {
-            ...graphShape.meta,
-            // Root pipeline injects config into meta
-            dialectVersion: this.config.dialectVersion,
-            parameterized: this.config.parameterized,
-            labelPrefix: this.config.labelPrefix,
-            includeMetadata: this.config.includeMetadata,
-            defaultNodeLabel: this.config.defaultNodeLabel,
-            identifierProperties: this.config.identifierProperties,
-            createTargets: this.config.createTargets,
-            queryCount: 0
-          }
-        } as CypherShape;
-      }
-    ));
-    
+  constructor(config: CypherConfig = {}) {
+    // Initialize with configuration
+    super({
+      ...config,
+      operation: "generate",
+    });
+
     // Add the cypher query generator
-    // (This morph reads from meta, doesn't need direct context access)
-    this.pipeline.add(CypherMorph);
+    this.add(CypherQueryMorph);
   }
-  
+
   /**
-   * Generate Cypher queries from a form definition
-   * 
-   * @param form The form definition to transform
-   * @returns A CypherShape with generated queries
+   * Generate Cypher queries from a shape definition
    */
-  generate(form: FormShape): CypherShape {
-    return this.pipeline.run(form);
+  generateCypher(shape: FormShape): CypherShape {
+    return this.run(shape);
   }
-  
+
+  /**
+   * Generate Cypher with specific configuration
+   */
+  generateCypherWithConfig(
+    shape: FormShape,
+    config: Partial<CypherConfig>
+  ): CypherShape {
+    // Fixed: Pass operation at top level, config inside data.config
+    return this.runWithConfig(shape, {
+      operation: "generate",
+      config: { config },
+    });
+  }
+
   /**
    * Get diagnostic information about the pipeline execution
-   * 
-   * @param form The form to process
-   * @returns Diagnostic information for each stage
    */
-  explain(form: FormShape): Array<{
+  explain(shape: FormShape): Array<{
     stage: string;
     entityCount: number;
     relationshipCount: number;
     queryCount?: number;
   }> {
     const result = [];
-    
+
     // Form stage
     result.push({
       stage: "Form Definition",
-      entityCount: 0, 
-      relationshipCount: 0
+      entityCount: 0,
+      relationshipCount: 0,
     });
-    
-    // Graph stage
-    const graphShape = FormToGraphSchemaMorph.run(form);
-    result.push({
-      stage: "Graph Structure",
-      entityCount: graphShape.entities?.length || 0,
-      relationshipCount: graphShape.relationships?.length || 0
+
+    // Execute with tracking
+    const { intermediateResults } = this.executeWithTracking(shape);
+
+    // Process intermediate results
+    intermediateResults.forEach((ir, index) => {
+      const stageName = ir.morphName || `Stage ${index + 1}`;
+      const data = ir.result;
+
+      result.push({
+        stage: stageName,
+        entityCount: data.entities?.length || 0,
+        relationshipCount: data.relationships?.length || 0,
+        queryCount: data.queries?.length || 0,
+      });
     });
-    
-    // CypherShape stage (before query generation)
-    const bridgeMorph = new SimpleMorph<GraphShape, CypherShape>(
-      "GraphToCypherBridge",
-      (graphShape) => {
-        return {
-          ...graphShape,
-          queries: [],
-          parameters: {},
-          meta: {
-            ...graphShape.meta,
-            dialectVersion: this.config.dialectVersion,
-            parameterized: this.config.parameterized,
-            labelPrefix: this.config.labelPrefix,
-            includeMetadata: this.config.includeMetadata,
-            defaultNodeLabel: this.config.defaultNodeLabel,
-            identifierProperties: this.config.identifierProperties,
-            createTargets: this.config.createTargets,
-            queryCount: 0
-          }
-        } as CypherShape;
-      }
-    );
-    const cypherShapeEmpty = bridgeMorph.run(graphShape);
-    result.push({
-      stage: "Cypher Container",
-      entityCount: cypherShapeEmpty.entities?.length || 0,
-      relationshipCount: cypherShapeEmpty.relationships?.length || 0,
-      queryCount: 0
-    });
-    
-    // Final CypherShape with queries
-    const cypherShapeFinal = CypherMorph.run(cypherShapeEmpty);
-    result.push({
-      stage: "Cypher Complete",
-      entityCount: cypherShapeFinal.entities?.length || 0,
-      relationshipCount: cypherShapeFinal.relationships?.length || 0,
-      queryCount: cypherShapeFinal.queries?.length || 0
-    });
-    
+
     return result;
   }
-  
+
   /**
    * Get summary statistics about the generated queries
-   * 
-   * @param cypherShape The generated cypher shape
-   * @returns Statistics about query types and counts
    */
   queryStats(cypherShape: CypherShape): {
     total: number;
@@ -187,14 +92,14 @@ export class CypherPipeline {
     const stats = {
       total: cypherShape.queries?.length || 0,
       byPurpose: {} as Record<string, number>,
-      byEntityCount: {} as Record<string, number>
+      byEntityCount: {} as Record<string, number>,
     };
-    
+
     // Skip if no queries
     if (!cypherShape.queries?.length) {
       return stats;
     }
-    
+
     // Group by purpose
     for (const query of cypherShape.queries) {
       if (!stats.byPurpose[query.purpose]) {
@@ -202,7 +107,7 @@ export class CypherPipeline {
       }
       stats.byPurpose[query.purpose]++;
     }
-    
+
     // Count per entity
     for (const entity of cypherShape.entities || []) {
       let count = 0;
@@ -213,23 +118,70 @@ export class CypherPipeline {
       }
       stats.byEntityCount[entity.id] = count;
     }
-    
+
     return stats;
+  }
+
+  /**
+   * Execute pipeline with tracking of intermediate results
+   * @private
+   */
+  private executeWithTracking(shape: FormShape): {
+    result: CypherShape;
+    intermediateResults: Array<{
+      morphName: string;
+      result: any;
+    }>;
+  } {
+    const intermediateResults: Array<{
+      morphName: string;
+      result: any;
+    }> = [];
+
+    // Get the morphs
+    const morphs = this.getMorphs();
+
+    // Run each morph in sequence, capturing results
+    let currentResult: any = shape;
+
+    for (const morph of morphs) {
+      currentResult = morph.transform(currentResult, {
+        id: `explain-${morph.name}`,
+        timestamp: Date.now(),
+        data: { config: this.getConfig() },
+      });
+
+      intermediateResults.push({
+        morphName: morph.name,
+        result: currentResult,
+      });
+    }
+
+    return {
+      result: currentResult,
+      intermediateResults,
+    };
   }
 }
 
 /**
- * Quick helper function to generate Cypher from a form
+ * Quick helper function to generate Cypher from a shape
  */
-export function generateCypher(form: FormShape, config?: CypherPipelineConfig): CypherShape {
-  return new CypherPipeline(config).generate(form);
+export function generateCypher(
+  shape: FormShape,
+  config?: CypherConfig
+): CypherShape {
+  return new CypherPipeline(config).generateCypher(shape);
 }
 
 /**
- * Quick helper function to get query statistics from a form
+ * Quick helper function to get query statistics from a shape
  */
-export function getCypherStats(form: FormShape, config?: CypherPipelineConfig): ReturnType<CypherPipeline['queryStats']> {
+export function getCypherStats(
+  shape: FormShape,
+  config?: CypherConfig
+): ReturnType<CypherPipeline["queryStats"]> {
   const pipeline = new CypherPipeline(config);
-  const result = pipeline.generate(form);
+  const result = pipeline.generateCypher(shape);
   return pipeline.queryStats(result);
 }

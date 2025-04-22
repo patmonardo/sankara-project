@@ -171,7 +171,7 @@ export const EditFieldHistoryMorph = createMorph<EditOutput, EditOutput>(
 /**
  * Complete edit core pipeline
  */
-import { createPipeline } from "../morph";
+import { createPipeline } from "../core";
 
 export const EditFieldsPipeline = createPipeline<EditOutput>("EditCorePipeline")
   .pipe(EditFieldValuesMorph)

@@ -1,0 +1,18 @@
+{
+  "id": "test-form",
+  "name": "Test Form",
+  "fields": [
+    {
+      "id": "name",
+      "label": "Full Name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "email",
+      "label": "Email Address",
+      "type": "email",
+      "required": true
+    }
+  ]
+}

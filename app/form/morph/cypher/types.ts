@@ -58,6 +58,32 @@ export interface CypherMeta {
 }
 
 /**
+ * Configuration for the Cypher pipeline
+ */
+export interface CypherConfig {
+  /** Neo4j version to target */
+  dialectVersion?: string;
+  
+  /** Whether to use parameterized queries */
+  parameterized?: boolean;
+  
+  /** Prefix for node labels */
+  labelPrefix?: string;
+  
+  /** Whether to include metadata properties */
+  includeMetadata?: boolean;
+  
+  /** Default node label when not specified */
+  defaultNodeLabel?: string;
+  
+  /** Property keys to use as identifiers when matching */
+  identifierProperties?: string[];
+  
+  /** Whether to create or match target nodes */
+  createTargets?: boolean;
+}
+
+/**
  * Represents a single Cypher query
  */
 export interface CypherQuery {

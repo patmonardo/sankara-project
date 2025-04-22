@@ -1,25 +1,25 @@
-import { FormAction } from "../../schema/form"; // Import FormAction type
-import { createMorph } from "../morph";
-import { isCreateContext } from "../core/mode";
-import { CreateShape } from "././types";
+import { FormAction } from "../../schema/form";
+import { createMorph } from "../../morph";
+import { isCreateFormContext } from "./types";
+import { CreateFormShape } from "././types";
 
 /**
  * Generates the standard form actions (Submit, Cancel, Reset) for create mode
  * based on properties directly within CreateContext.
  */
-export const GenerateCreateActionsMorph = createMorph<CreateShape, CreateShape>(
+export const GenerateCreateActionsMorph = createMorph<CreateFormShape, CreateFormShape>(
   "GenerateCreateActionsMorph",
   (outputShape, context) => {
     // Safely access CreateContext properties
-    const createContext = isCreateContext(context) ? context : undefined;
+    const createContext = isCreateFormContext(context) ? context : undefined;
 
     // Determine button properties from context or use defaults
-    const submitLabel = createContext?.submitLabel || "Create";
-    const cancelLabel = createContext?.cancelLabel || "Cancel";
-    const buttonPosition = createContext?.buttonPosition || "bottom";
+    const submitLabel = createContext?.data.submitLabel || "Create";
+    const cancelLabel = createContext?.data.cancelLabel || "Cancel";
+    const buttonPosition = createContext?.data.buttonPosition || "bottom";
     // Default to true if showReset/showCancel is undefined or null in context
-    const showReset = createContext?.showReset !== false;
-    const showCancel = createContext?.showCancel !== false;
+    const showReset = createContext?.data.showReset !== false;
+    const showCancel = createContext?.data.showCancel !== false;
 
     // Build the actions array
     const actions: FormAction[] = [];

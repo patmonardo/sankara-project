@@ -1,4 +1,4 @@
-import { FormToGraphSchemaMorph } from "./graph";
+import { GraphMorph } from "./graph";
 import { GraphShape } from "./types";
 import { inspect } from "util";
 
@@ -45,7 +45,7 @@ function createSampleInput(): GraphShape {
 function runGraphMorph() {
   // Create input and run morph with the simpler run() method
   const input = createSampleInput();
-  const output = FormToGraphSchemaMorph.run(input); // Much cleaner!
+  const output = GraphMorph.transform(input); // Much cleaner!
   
   // Display results - keeping your preferred Unicode characters
   console.log("═════════════════════════════════════");

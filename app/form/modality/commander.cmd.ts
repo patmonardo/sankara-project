@@ -1,14 +1,14 @@
 import { FormExecutionContext } from "../schema/context";
 import { GraphShape } from "../morph/graph/types";
-import { FormModalPipeline } from "./pipeline";
-import { createCommander } from "./commander";
+import { FormPipeline } from "../morph/core/pipeline";
+import { createCommander, Commander } from "./commander";
 import util from "util";
 import chalk from "chalk";
 
 /**
- * ChakraTestPipeline - A test pipeline that implements FormModalPipeline interface
+ * ChakraTestPipeline - A test pipeline that implements FormPipeline interface
  */
-class ChakraTestPipeline extends FormModalPipeline<any> {
+class ChakraTestPipeline extends FormPipeline<any> {
   constructor(config: Record<string, any> = {}) {
     super({
       chakraLevel: config.chakraLevel || "muladhara",
@@ -202,8 +202,6 @@ function createTestGraph(): GraphShape {
       includeMetadata: true,
       entityCount: 2,
       relationshipCount: 1,
-      version: 1,
-      tags: ["consciousness", "middle-way", "chakra"],
     },
   };
 }
@@ -256,12 +254,17 @@ async function runCommanderTests() {
   const graph = createTestGraph();
 
   console.log(chalk.yellow("► Available Commands:"));
-  const commands = commander.getAvailableCommands();
+
+  // UPDATED: Use listCommands() instead of getAvailableCommands()
+  const commands = commander.listCommands();
   commands.forEach((cmd) => {
     console.log(
       `  ${chalk.green("•")} ${chalk.bold(cmd.name)}: ${cmd.description}`
     );
   });
+
+  // Register all our test commands
+  registerTestCommands(commander);
 
   // TEST 1: Run the explain command
   console.log(formatHeader("Test 1: Explain Command"));
@@ -320,12 +323,10 @@ async function runCommanderTests() {
       intensityLevel: 9,
     };
 
-    const result = await commander.execute(
-      "generate",
-      graph,
-      runtimeConfig,
-      customContext
-    );
+    const result = await commander.execute("generate", graph, {
+      ...runtimeConfig,
+      _executionContext: customContext,
+    });
     console.log(`Result for graph: ${result.name}`);
     console.log(
       `Chakra Level: ${result.chakraOutput.level} (${result.chakraOutput.focus})`
@@ -408,7 +409,7 @@ async function runCommanderTests() {
   }
 
   // Register the custom command
-  commander.registerCommand(new ChakraBalanceCommand());
+  commander.register(new ChakraBalanceCommand());
 
   // Test the new command
   try {
@@ -430,6 +431,68 @@ async function runCommanderTests() {
   console.log(formatHeader("Test Complete - The Middle Way Emerges"));
 }
 
+/**
+ * Register all test commands needed for the tests
+ */
+function registerTestCommands(commander: Commander) {
+  // Explain command
+  commander.register({
+    name: "explain",
+    description: "Explain the pipeline and its morphs",
+    async execute(context: CommandContext<any>): Promise<any> {
+      const { pipeline } = context;
+      const stats = pipeline.stats();
+
+      return {
+        explanation:
+          "This pipeline transforms forms through chakra energy centers, " +
+          "elevating consciousness through progressive vibrational states.",
+        morphCount: stats.morphCount,
+        morphs: stats.morphNames,
+        config: pipeline.getConfig ? pipeline.getConfig() : {},
+      };
+    },
+  });
+
+  // Generate command
+  commander.register({
+    name: "generate",
+    description: "Generate output using the chakra pipeline",
+    async execute(context: CommandContext<any>): Promise<any> {
+      const { pipeline, form, options, executionContext } = context;
+
+      // Use runtime config if provided
+      if (options && Object.keys(options).length > 0) {
+        return pipeline.generateWithConfig(form, options, executionContext);
+      }
+
+      // Otherwise use default config
+      return pipeline.generate(form, executionContext);
+    },
+  });
+
+  // Diagnostics command
+  commander.register({
+    name: "diagnostics",
+    description: "Run diagnostics on the pipeline",
+    async execute(context: CommandContext<any>): Promise<any> {
+      const { pipeline, form } = context;
+      const start = performance.now();
+      const result = pipeline.generate(form);
+      const end = performance.now();
+
+      return {
+        result,
+        diagnostics: {
+          executionTime: end - start,
+          morphCount: pipeline.stats().morphCount,
+          morphNames: pipeline.stats().morphNames,
+          timestamp: new Date().toISOString(),
+        },
+      };
+    },
+  });
+}
 // Run the tests
 runCommanderTests().catch((error) => {
   console.error(chalk.red("Fatal error in test execution:"), error);

@@ -1,4 +1,4 @@
-import { CypherMorph } from "./cypher";
+import { CypherMorph } from "./query";
 import { CypherShape } from "./types";
 import { inspect } from "util";
 

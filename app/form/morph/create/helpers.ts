@@ -1,10 +1,14 @@
 import { FormField, FormShape } from "../../schema/form";
-import { CreateContext } from "./types";
+import { CreateFormShape, CreateFormContext } from "./types";
+import { CreateFormPipeline } from "./pipeline";
 
 /**
  * Determine if a field should be included in create mode based on context and field metadata.
  */
-export function shouldIncludeInCreate(field: FormField, context?: CreateContext): boolean {
+export function shouldIncludeInCreate(
+  field: FormField,
+  context?: CreateFormContext
+): boolean {
   // Basic checks
   if (!field || !field.id) return false;
   if (field.visible === false) return false; // Explicitly hidden
@@ -15,11 +19,11 @@ export function shouldIncludeInCreate(field: FormField, context?: CreateContext)
   if (field.meta?.createOnly) return true; // Explicitly included
 
   // Contextual checks
-  if (context?.excludeFields?.includes(field.id)) return false;
-  
+  if (context?.data.excludeFields?.includes(field.id)) return false;
+
   // This is the key change - check if includeFields exists and has entries
-  if (context?.includeFields && context.includeFields.length > 0) {
-    return context.includeFields.includes(field.id);
+  if (context?.data.includeFields && context.data.includeFields.length > 0) {
+    return context.data.includeFields.includes(field.id);
   }
 
   // Default: include if not explicitly excluded/hidden
@@ -40,44 +44,44 @@ export function determineInputType(field: FormField): string {
     if (field.meta.format === "password") return "password";
     if (field.meta.format === "url") return "url";
     if (field.meta.format === "tel") return "tel";
-    
+
     // Check for multiline text
     if (field.meta.multiline === true) return "textarea";
-    
+
     // Check for custom widget/renderer
     if (field.meta.widget) return field.meta.widget;
   }
 
   // 3. Map based on field type
   const typeToInputMap: Record<string, string> = {
-    string: 'text',
-    text: 'text',
-    number: 'number',
-    integer: 'number',
-    float: 'number',
-    decimal: 'number',
-    boolean: 'checkbox',
-    date: 'date',
-    datetime: 'datetime-local',
-    time: 'time',
-    email: 'email',
-    password: 'password',
-    tel: 'tel',
-    url: 'url',
-    object: 'complex',
-    array: 'complex',
-    select: 'select',
-    multiselect: 'select',
-    radio: 'radio',
-    checkbox: 'checkbox',
-    file: 'file',
-    color: 'color',
-    range: 'range',
-    hidden: 'hidden',
-    default: 'text'
+    string: "text",
+    text: "text",
+    number: "number",
+    integer: "number",
+    float: "number",
+    decimal: "number",
+    boolean: "checkbox",
+    date: "date",
+    datetime: "datetime-local",
+    time: "time",
+    email: "email",
+    password: "password",
+    tel: "tel",
+    url: "url",
+    object: "complex",
+    array: "complex",
+    select: "select",
+    multiselect: "select",
+    radio: "radio",
+    checkbox: "checkbox",
+    file: "file",
+    color: "color",
+    range: "range",
+    hidden: "hidden",
+    default: "text",
   };
 
-  return typeToInputMap[field.type || 'default'] || typeToInputMap.default;
+  return typeToInputMap[field.type || "default"] || typeToInputMap.default;
 }
 
 /**
@@ -85,21 +89,39 @@ export function determineInputType(field: FormField): string {
  */
 export function getDefaultForType(type?: string): any {
   switch (type) {
-    case "string": case "text": case "email": case "url": case "tel": case "password": return "";
-    case "number": case "integer": case "float": case "decimal": return null;
-    case "boolean": return false;
-    case "date": case "datetime": case "time": return null;
-    case "select": case "radio": return null;
-    case "multiselect": case "checkbox": return [];
-    case "object": return {};
-    case "array": return [];
-    default: return undefined;
+    case "string":
+    case "text":
+    case "email":
+    case "url":
+    case "tel":
+    case "password":
+      return "";
+    case "number":
+    case "integer":
+    case "float":
+    case "decimal":
+      return null;
+    case "boolean":
+      return false;
+    case "date":
+    case "datetime":
+    case "time":
+      return null;
+    case "select":
+    case "radio":
+      return null;
+    case "multiselect":
+    case "checkbox":
+      return [];
+    case "object":
+      return {};
+    case "array":
+      return [];
+    default:
+      return undefined;
   }
 }
 
-/**
- * Create a form from a template
- */
 export function createFromTemplate(
   shape: FormShape,
   template: {
@@ -116,21 +138,45 @@ export function createFromTemplate(
     submitLabel?: string;
     cancelLabel?: string;
   } = {}
-): CreateShape {
-  // Prepare context with both template and standard options
-  const context: CreateContext = {
-    initialValues: options.initialValues,
-    submitLabel: options.submitLabel,
-    cancelLabel: options.cancelLabel,
-    template: template,
-    templateOptions: {
-      preserveOriginalDefaults: options.preserveOriginalDefaults,
-      templateReadOnlyFields: options.templateReadOnlyFields,
-      titlePrefix: options.titlePrefix || 'New from',
-      mergeStrategy: 'override'
-    }
+): CreateFormShape {
+  // Build the context using the CreateFormContext interface
+  const context: CreateFormContext = {
+    id: `create-from-template-${template.id}`,
+    timestamp: Date.now(),
+    operation: "create",
+    data: {
+      // Merge the template values with any override provided in options
+      initialValues: {
+        ...template.values,
+        ...(options.initialValues || {})
+      },
+      // Attach template details
+      templateData: {
+        id: template.id,
+        name: template.name,
+        description: template.description,
+        values: template.values
+      },
+      // UI configuration from options
+      submitLabel: options.submitLabel || "Create",
+      cancelLabel: options.cancelLabel || "Cancel",
+      showCancel: true,
+      // (Optional) behavior configuration can be added here under config if needed
+      config: {},
+      // Template specific options now go under templateOptions
+      templateOptions: {
+        preserveOriginalDefaults: !!options.preserveOriginalDefaults,
+        readOnlyFields: options.templateReadOnlyFields || [],
+        titlePrefix: options.titlePrefix || "New from",
+        mergeStrategy: "override"
+      },
+      // You can add includeFields/excludeFields or customization here if needed
+    },
+    // Optionally set meta and ui namespaces if required
+    meta: {},
+    ui: {}
   };
-  
-  // Use the standard pipeline
-  return CreateModePipeline.transform(shape, context);
+
+  // Generate the form based on the pipeline and assert the return type.
+  return CreateFormPipeline.run(shape, context) as CreateFormShape;
 }

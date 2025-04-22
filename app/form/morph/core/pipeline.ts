@@ -1,200 +1,188 @@
-import { Morph, MorphOptions, MorphCondition, MorphStep } from './types';
-import { createMorph, composeMorphs } from './morph';
+import { FormShape } from "../../schema/form";
+import { Morph } from "./types";
+import { createMorph } from "./morph";
 
 /**
- * Fluent interface for building pipelines
+ * Pipeline - Executes a series of morphs
  */
-export class FluentPipeline<T, U = T> {
-  private steps: Array<MorphStep<any, any>> = [];
-  private readonly name: string;
-
-  constructor(name: string) {
+export class Pipeline<TInput, TOutput = TInput> {
+  private name: string;
+  private morphs: Array<Morph<any, any>> = [];
+  private metadata: Record<string, any>;
+  private stages: Array<{ name: string; description: string; morphs: string[] }> = [];
+  private currentStage: string | null = null;
+  
+  /**
+   * Create a pipeline with a name and metadata
+   */
+  constructor(name: string, metadata: Record<string, any> = {}) {
     this.name = name;
+    this.metadata = { ...metadata };
   }
-
+  
   /**
    * Add a morph to the pipeline
    */
-  pipe<V>(morph: Morph<U, V>): FluentPipeline<T, V> {
-    this.steps.push({
-      type: "morph",
-      morph,
-    });
-    return this as unknown as FluentPipeline<T, V>;
+  pipe<TNext>(morph: Morph<any, TNext>): Pipeline<TInput, TNext> {
+    // Add morph to list
+    this.morphs.push(morph);
+    
+    // Track in current stage if we're in one
+    if (this.currentStage) {
+      const stageIndex = this.stages.findIndex(s => s.name === this.currentStage!);
+      if (stageIndex >= 0) {
+        this.stages[stageIndex].morphs.push(morph.name || "unnamed");
+      }
+    }
+    
+    // Return with updated output type
+    return this as unknown as Pipeline<TInput, TNext>;
   }
-
+  
   /**
-   * Conditionally apply a morph based on a condition function
+   * Add a conditional morph
    */
-  conditionally<V>(
-    condition: MorphCondition<U>,
-    morph: Morph<U, V>
-  ): FluentPipeline<T, V | U> {
-    this.steps.push({
-      type: "conditional",
-      condition,
-      morph,
-    });
-    return this as unknown as FluentPipeline<T, V | U>;
-  }
-
-  /**
-   * Apply a map function to the pipeline
-   */
-  map<V>(fn: (input: U, context?: any) => V): FluentPipeline<T, V> {
-    this.steps.push({
-      type: "map",
-      fn,
-    });
-    return this as unknown as FluentPipeline<T, V>;
-  }
-
-  /**
-   * Build the pipeline into a Morph
-   */
-  build(options: Partial<MorphOptions> = {}): Morph<T, U> {
-    // Default options if not provided
-    const buildOptions: MorphOptions = {
-      pure: true,
-      fusible: true,
-      cost: this.calculateTotalCost(),
-      memoizable: false,
-      description: options.description || `Pipeline: ${this.name}`,
-      tags: options.tags || [],
-      ...options
-    };
-
-    return createMorph<T, U>(
-      this.name,
-      (input: T, context?: any): U => {
-        // Start with the input
-        let result: any = input;
-
-        // Apply each step
-        for (const step of this.steps) {
-          if (step.type === "morph") {
-            result = step.morph.transform(result, context);
-          } else if (step.type === "map") {
-            result = step.fn(result, context);
-          } else if (step.type === "conditional") {
-            // Only apply the morph if the condition returns true
-            if (step.condition(result, context)) {
-              result = step.morph.transform(result, context);
-            }
-            // If condition is false, result passes through unchanged
-          }
+  conditionally(
+    predicate: (input: any, context: any) => boolean,
+    morph: Morph<any, any>
+  ): this {
+    const conditionalMorph = createMorph(
+      `Conditional(${morph.name || "unnamed"})`,
+      (input, context) => {
+        if (predicate(input, context)) {
+          return morph.transform(input, context);
         }
-
-        return result as U;
-      },
-      buildOptions
+        return input;
+      }
     );
-  }
-
-  /**
-   * Calculate the total cost of this pipeline
-   */
-  private calculateTotalCost(): number {
-    return this.steps.reduce((total, step) => {
-      if (step.type === "morph") {
-        return total + step.morph.options.cost;
-      } else if (step.type === "conditional") {
-        // Conditional steps cost slightly less since they might not run
-        return total + (step.morph.options.cost * 0.8); 
-      } else {
-        // Map functions are assumed to be low cost
-        return total + 1;
-      }
-    }, 0);
-  }
-
-  /**
-   * Optimize the pipeline by fusing compatible morphs
-   */
-  optimize(): FluentPipeline<T, U> {
-    if (this.steps.length <= 1) {
-      return this; // Nothing to optimize
-    }
-
-    const optimizedSteps: Array<MorphStep<any, any>> = [];
-    let currentMorphs: Array<Morph<any, any>> = [];
     
-    // Process each step
-    for (let i = 0; i < this.steps.length; i++) {
-      const step = this.steps[i];
-      
-      if (step.type === "morph" && step.morph.options.fusible) {
-        // Add to current fusible group
-        currentMorphs.push(step.morph);
-      } else {
-        // Fuse any pending morphs before adding a non-fusible step
-        if (currentMorphs.length > 0) {
-          optimizedSteps.push(this.fuseSteps(currentMorphs));
-          currentMorphs = [];
-        }
-        
-        // Add the non-fusible step
-        optimizedSteps.push(step);
+    this.morphs.push(conditionalMorph);
+    
+    // Track in current stage
+    if (this.currentStage) {
+      const stageIndex = this.stages.findIndex(s => s.name === this.currentStage!);
+      if (stageIndex >= 0) {
+        this.stages[stageIndex].morphs.push(conditionalMorph.name);
       }
     }
     
-    // Handle any remaining fusible morphs
-    if (currentMorphs.length > 0) {
-      optimizedSteps.push(this.fuseSteps(currentMorphs));
-    }
-    
-    // Create a new pipeline with the optimized steps
-    const result = new FluentPipeline<T, U>(this.name + "-optimized");
-    result.steps = optimizedSteps;
-    return result;
+    return this;
   }
   
   /**
-   * Fuse multiple morphs into a single step
+   * Start a named stage
    */
-  private fuseSteps(morphs: Array<Morph<any, any>>): MorphStep<any, any> {
-    if (morphs.length === 0) {
-      throw new Error("Cannot fuse empty morphs array");
+  stage(name: string, description: string = ""): this {
+    // End previous stage if exists
+    if (this.currentStage) {
+      this.currentStage = null;
     }
     
-    if (morphs.length === 1) {
-      return { type: "morph", morph: morphs[0] };
-    }
-    
-    // Compose all morphs into one
-    let fusedMorph = morphs[0];
-    for (let i = 1; i < morphs.length; i++) {
-      fusedMorph = composeMorphs(fusedMorph, morphs[i]);
-    }
-    
-    return { type: "morph", morph: fusedMorph };
-  }
-  
-  /**
-   * Print a debug representation of the pipeline
-   */
-  debug(): string {
-    let result = `Pipeline: ${this.name}\n`;
-    
-    this.steps.forEach((step, index) => {
-      if (step.type === "morph") {
-        result += `  ${index}. Morph: ${step.morph.name} (cost: ${step.morph.options.cost})\n`;
-      } else if (step.type === "map") {
-        result += `  ${index}. Map function (cost: 1)\n`;
-      } else if (step.type === "conditional") {
-        result += `  ${index}. Conditional: ${step.morph.name} (cost: ${step.morph.options.cost * 0.8})\n`;
-      }
+    // Create new stage
+    this.stages.push({
+      name,
+      description,
+      morphs: []
     });
     
-    result += `Total cost: ${this.calculateTotalCost()}\n`;
+    this.currentStage = name;
     
-    return result;
+    return this;
+  }
+  
+  /**
+   * End the current stage
+   */
+  endStage(): this {
+    this.currentStage = null;
+    return this;
+  }
+  
+  /**
+   * Build the pipeline with additional metadata
+   */
+  build(additionalMetadata: Record<string, any> = {}): this {
+    // End any open stage
+    if (this.currentStage) {
+      this.endStage();
+    }
+    
+    // Update metadata
+    this.metadata = {
+      ...this.metadata,
+      ...additionalMetadata,
+      stages: this.stages,
+    };
+    
+    return this;
+  }
+  
+  /**
+   * Execute the pipeline with context
+   */
+  run(input: TInput, context: any = {}): TOutput {
+    // Empty pipeline returns input as is
+    if (this.morphs.length === 0) {
+      return input as unknown as TOutput;
+    }
+    
+    // Add pipeline info to context
+    const enhancedContext = {
+      ...context,
+      pipeline: {
+        name: this.name,
+        stages: this.stages.map(s => s.name)
+      }
+    };
+    
+    // Execute each morph in sequence
+    let result: any = input;
+    for (const morph of this.morphs) {
+      result = morph.transform(result, enhancedContext);
+    }
+    
+    return result as TOutput;
+  }
+  
+  /**
+   * Get pipeline metadata
+   */
+  getMetadata(): { 
+    name: string; 
+    morphCount: number; 
+    morphs: string[]; 
+  } {
+    return {
+      name: this.name,
+      morphCount: this.morphs.length,
+      morphs: this.morphs.map(m => m.name || "unnamed")
+    };
   }
 }
 
 /**
- * Create a new pipeline
+ * Create a pipeline with a name and optional metadata
  */
-export function createPipeline<T>(name: string): FluentPipeline<T> {
-  return new FluentPipeline<T>(name);
+export function createPipeline<TInput, TOutput = TInput>(
+  name: string,
+  metadata: Record<string, any> = {}
+): Pipeline<TInput, TOutput> {
+  return new Pipeline<TInput, TOutput>(name, metadata);
+}
+
+/**
+ * FormPipeline - Specialized for form operations
+ */
+export class FormPipeline<TOutput> extends Pipeline<FormShape, TOutput> {
+  // Form-specific methods can go here
+}
+
+/**
+ * Create a form pipeline
+ */
+export function createFormPipeline<TOutput>(
+  name: string,
+  metadata: Record<string, any> = {}
+): FormPipeline<TOutput> {
+  return new FormPipeline<TOutput>(name, metadata);
 }

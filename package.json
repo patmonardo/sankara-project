@@ -1,5 +1,6 @@
 {
   "name": "sankara-v0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "generate": "prisma generate",
@@ -28,12 +29,15 @@
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tanstack/react-query": "^5.69.0",
+    "@types/figlet": "^1.7.0",
     "bcrypt": "^5.1.1",
     "chalk": "^5.4.1",
     "clsx": "^2.1.1",
+    "commander": "^13.1.0",
     "d3": "^7.9.0",
     "d3-cloud": "^1.2.7",
     "dotenv": "^16.4.7",
+    "figlet": "^1.8.1",
     "next": "^15.2.4",
     "node-fetch": "^3.3.2",
     "postgres": "^3.4.5",

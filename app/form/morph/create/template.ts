@@ -1,62 +1,6 @@
-import { createMorph } from "../morph";
+import { createMorph } from "../../morph";
 import { FormShape, FormField } from "../../schema/form";
-import { CreateContext, isCreateContext } from "./types";
-
-/**
- * Process a field using a template's values
- */
-function processFieldWithTemplate(
-  field: FormField, 
-  template: FormTemplate | CreateContext['template'], 
-  options?: CreateContext['templateOptions']
-): FormField {
-  if (!template || !field.id || field.meta?.excludeTemplate) {
-    return field;
-  }
-
-  const values = template.values || {};
-  const hasTemplateValue = field.id in values;
-  const templateValue = values[field.id];
-  
-  // Check if this field should be read-only when from template
-  const isTemplateReadOnly = options?.templateReadOnlyFields?.includes(field.id) || 
-                            field.meta?.templateReadOnly;
-
-  // Determine final default value
-  let finalDefaultValue = field.defaultValue;
-  
-  if (hasTemplateValue) {
-    if (options?.mergeStrategy === 'preserve-existing' && field.defaultValue !== undefined) {
-      // Keep existing default if strategy is to preserve
-      finalDefaultValue = field.defaultValue;
-    } else if (options?.mergeStrategy === 'smart-merge' && 
-               typeof templateValue === 'object' && 
-               typeof field.defaultValue === 'object') {
-      // Smart merge objects if both values are objects
-      finalDefaultValue = {
-        ...(field.defaultValue || {}),
-        ...(templateValue || {})
-      };
-    } else {
-      // Default: override with template value
-      finalDefaultValue = templateValue;
-    }
-  }
-
-  return {
-    ...field,
-    defaultValue: finalDefaultValue,
-    readOnly: field.readOnly || (isTemplateReadOnly && hasTemplateValue) || false,
-    meta: {
-      ...(field.meta || {}),
-      template: {
-        valueProvided: hasTemplateValue,
-        source: template.id,
-        originalDefault: options?.preserveOriginalDefaults ? field.defaultValue : undefined
-      }
-    }
-  };
-}
+import { CreateFormContext, CreateFormTemplate, isCreateFormContext } from "./types";
 
 /**
  * Apply template values to a form
@@ -65,22 +9,22 @@ export const ApplyTemplateMorph = createMorph<FormShape, FormShape>(
   "ApplyTemplateMorph",
   (shape, context) => {
     // Validate context has template data
-    if (!isCreateContext(context) || !context.template) {
+    if (!isCreateFormContext(context) || !context.data.templateData) {
       return shape;
     }
 
-    const template = context.template;
-    const options = context.templateOptions || {};
-
+    const templateData = context.data.templateData;
+    const options = context.data.templateOptions || {};
+    const mergeStrategy = context.data.templateOptions?.mergeStrategy ?? 'override';
     // Apply template to fields
     const fields = shape.fields.map(field => 
-      processFieldWithTemplate(field, template, options)
+      processFieldWithTemplate(field, templateData, mergeStrategy)
     );
 
-    // Update form title if template has a name
+    // Update form title if template has a name and titlePrefix is set
     let title = shape.title || shape.name;
-    if (template.name && options.titlePrefix) {
-      title = `${options.titlePrefix} ${template.name}`;
+    if (templateData.name && options.titlePrefix) {
+      title = `${options.titlePrefix} ${templateData.name}`;
     }
 
     // Return updated shape
@@ -91,11 +35,11 @@ export const ApplyTemplateMorph = createMorph<FormShape, FormShape>(
       meta: {
         ...(shape.meta || {}),
         template: {
-          id: template.id,
-          name: template.name,
-          description: template.description,
+          id: templateData.id,
+          name: templateData.name,
+          description: templateData.description,
           appliedAt: new Date().toISOString(),
-          valueCount: Object.keys(template.values || {}).length
+          valueCount: Object.keys(templateData.values || {}).length
         }
       }
     };
@@ -108,28 +52,84 @@ export const ApplyTemplateMorph = createMorph<FormShape, FormShape>(
   }
 );
 
-/**
- * Helper function to create a template context
- */
-export function withTemplate(
-  baseContext: Partial<CreateContext> = {},
-  template: FormTemplate
-): CreateContext {
+function processFieldWithTemplate(
+  field: FormField,
+  templateData: CreateFormTemplate,
+  mergeStrategy: 'preserve-existing' | 'smart-merge' | 'override'
+): FormField {
+  if (!templateData || !field.id || field.meta?.excludeTemplate) {
+    return field;
+  }
+
+  const values = templateData.values || {};
+  const hasTemplateValue = field.id in values;
+  const templateValue = values[field.id];
+
+  let finalDefaultValue = field.defaultValue;
+  if (hasTemplateValue) {
+    if (mergeStrategy === 'preserve-existing' && field.defaultValue !== undefined) {
+      finalDefaultValue = field.defaultValue;
+    } else if (mergeStrategy === 'smart-merge' &&
+               typeof templateValue === 'object' &&
+               typeof field.defaultValue === 'object') {
+      finalDefaultValue = {
+        ...(field.defaultValue || {}),
+        ...(templateValue || {})
+      };
+    } else {
+      finalDefaultValue = templateValue;
+    }
+  }
+
+  // Use default readOnly logic
+  const defaultTemplateReadOnlyFields: string[] = [];
+  const isTemplateReadOnly = defaultTemplateReadOnlyFields.includes(field.id) ||
+                             field.meta?.templateReadOnly;
+
   return {
-    ...baseContext,
-    template
+    ...field,
+    defaultValue: finalDefaultValue,
+    readOnly: field.readOnly || (isTemplateReadOnly && hasTemplateValue) || false,
+    meta: {
+      ...(field.meta || {}),
+      template: {
+        valueProvided: hasTemplateValue,
+        source: templateData.id,
+        originalDefault: false ? field.defaultValue : undefined // adjust as needed
+      }
+    }
   };
 }
 
 /**
- * Helper function to apply a template using the standard pipeline
+ * Helper function to attach a template to an existing CreateFormContext.
+ * Renamed the parameter to templateData to avoid confusion.
+ */
+export function withTemplate(
+  baseContext: Partial<CreateFormContext> = {},
+  templateData: CreateFormTemplate
+): CreateFormContext {
+  return {
+    ...baseContext,
+    id: baseContext.id || `create-form-${Date.now()}`,
+    timestamp: baseContext.timestamp || Date.now(),
+    operation: "create",
+    data: {
+      ...baseContext.data,
+      templateData
+    }
+  };
+}
+
+/**
+ * Helper function to apply a template using the standard pipeline.
+ * This creates a new context with the provided templateData and then applies the ApplyTemplateMorph.
  */
 export function applyTemplate(
   shape: FormShape,
-  template: FormTemplate,
-  options: Partial<CreateContext> = {}
+  templateData: CreateFormTemplate,
+  options: Partial<CreateFormContext> = {}
 ): FormShape {
-  const context = withTemplate(options, template);
-  // Only apply the template morph, not the full pipeline
+  const context = withTemplate(options, templateData);
   return ApplyTemplateMorph.transform(shape, context);
 }

@@ -1,5 +1,5 @@
 import { FormExecutionContext } from '../schema/context';
-import { FormModalPipeline } from "./pipeline";
+import { FormPipeline } from "../morph/core/pipeline";
 
 /**
  * Command - Abstract representation of intent
@@ -14,9 +14,8 @@ export interface Command<TOutput> {
  * Command context for execution
  */
 export interface CommandContext<TOutput> {
-    readonly pipeline: FormModalPipeline<TOutput>;
-    readonly form: any; // Support both FormShape and GraphShape
-    readonly options?: Record<string, any>;
-    readonly executionContext?: FormExecutionContext;
-  }
-  
+  readonly pipeline: FormPipeline<TOutput>;
+  readonly form: any; // Support both FormShape and GraphShape
+  readonly options?: Record<string, any>;
+  readonly executionContext?: FormExecutionContext;
+}

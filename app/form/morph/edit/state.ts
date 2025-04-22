@@ -5,7 +5,7 @@ import { EditOutput } from "./pipeline";
 
 /**
  * Update edit form state
- * 
+ *
  * This morph manages the form state for edit mode:
  * - Tracks submission status
  * - Handles error states
@@ -16,49 +16,53 @@ export const EditStateManagerMorph = createMorph<EditOutput, EditOutput>(
   (shape, context) => {
     // Get edit context options
     const editContext = isEditContext(context) ? context : undefined;
-    
+
     // Get current form state or create default
-    const currentState = shape.state || { status: 'idle' };
-    
+    const currentState = shape.state || { status: "idle" };
+
     // Collect field errors
     const fieldErrors: Record<string, string[]> = {};
-    shape.fields.forEach(field => {
-      if (field.id && field.validation?.errors && field.validation.errors.length > 0) {
+    shape.fields.forEach((field) => {
+      if (
+        field.id &&
+        field.validation?.errors &&
+        field.validation.errors.length > 0
+      ) {
         fieldErrors[field.id] = field.validation.errors;
       }
     });
-    
+
     // Update form state
     const newState: FormState = {
       ...currentState,
-      errors: Object.keys(fieldErrors).length > 0 ? fieldErrors : undefined
+      errors: Object.keys(fieldErrors).length > 0 ? fieldErrors : undefined,
     };
-    
+
     // Handle explicit state from context
     if (editContext?.formState) {
       Object.assign(newState, editContext.formState);
     }
-    
+
     // Add appropriate message if not provided
-    if (newState.status === 'error' && !newState.message) {
-      newState.message = 'Please correct the errors before submitting.';
+    if (newState.status === "error" && !newState.message) {
+      newState.message = "Please correct the errors before submitting.";
     }
-    
+
     return {
       ...shape,
-      state: newState
+      state: newState,
     };
   },
   {
     pure: true,
     fusible: true,
-    cost: 1
+    cost: 1,
   }
 );
 
 /**
  * Apply edit persistence tracking
- * 
+ *
  * This morph adds persistence tracking to the form:
  * - Tracks if changes have been saved
  * - Manages dirty state
@@ -70,11 +74,11 @@ export const EditPersistenceTrackingMorph = createMorph<EditOutput, EditOutput>(
     // Get changed fields
     const changedFields = shape.meta?.edit?.changedFields || [];
     const hasChanges = changedFields.length > 0;
-    
+
     // Get edit context options
     const editContext = isEditContext(context) ? context : undefined;
     const persistenceState = editContext?.persistenceState || {};
-    
+
     return {
       ...shape,
       meta: {
@@ -84,22 +88,22 @@ export const EditPersistenceTrackingMorph = createMorph<EditOutput, EditOutput>(
           lastSaved: persistenceState.lastSaved,
           autoSaveEnabled: persistenceState.autoSaveEnabled || false,
           saveAttempts: persistenceState.saveAttempts || 0,
-          saveHistory: persistenceState.saveHistory || []
-        }
-      }
+          saveHistory: persistenceState.saveHistory || [],
+        },
+      },
     };
   },
   {
     pure: true,
     fusible: true,
-    cost: 1
+    cost: 1,
   }
 );
 
 /**
  * Complete edit state pipeline
  */
-import { createPipeline } from "../morph";
+import { createPipeline } from "../core";
 
 export const EditStatePipeline = createPipeline<EditOutput>("EditStatePipeline")
   .pipe(EditStateManagerMorph)
@@ -108,6 +112,6 @@ export const EditStatePipeline = createPipeline<EditOutput>("EditStatePipeline")
     description: "Apply edit state management transformations",
     category: "form",
     tags: ["form", "edit", "state"],
-    inputType: "EditOutput",
-    outputType: "EditOutput"
+    inputType: "EditFormShape",
+    outputType: "EditFormShape",
   });

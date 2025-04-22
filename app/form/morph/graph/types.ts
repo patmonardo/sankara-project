@@ -1,4 +1,77 @@
+// Add these imports if needed
 import { FormShape, FormMeta } from "../../schema/form";
+
+
+// Complete GraphShape interface with ALL meta properties
+export interface GraphShape extends FormShape {
+  /** Entities in the graph */
+  entities: GraphEntity[];
+
+  /** Relationships in the graph */
+  relationships: GraphRelationship[];
+
+  /** Optional graph analysis results */
+  analysis?: GraphAnalysis;
+  
+  /** Optional graph visualization data */
+  visualization?: GraphVisualization;
+
+  /** Metadata specific to the graph - COMPLETE with NO omissions */
+  meta: FormMeta & {
+    
+    /** Generation timestamp */
+    generatedAt?: string;
+    
+    /** Source morph that created this graph */
+    sourceMorph?: string;
+    
+    /** Count of entities in the graph */
+    entityCount?: number;
+    
+    /** Count of relationships in the graph */
+    relationshipCount?: number;
+    
+    /** Label prefix for graph entities */
+    labelPrefix?: string;
+    
+    /** Whether to include metadata in graph entities */
+    includeMetadata?: boolean;
+    
+    /** Fields to exclude from graph representation */
+    excludeFromGraph?: string[];
+    
+    /** When analysis was performed */
+    analysisPerformed?: boolean;
+    analysisTimestamp?: string;
+    
+    /** When visualization was generated */
+    visualizationGenerated?: boolean;
+    visualizationTimestamp?: string;
+    
+    /** Analysis configuration */
+    analysisConfig?: {
+      includeCommunities?: boolean;
+      includeCentrality?: boolean;
+      includePaths?: boolean;
+    };
+    
+    /** Visualization configuration */
+    visualizationConfig?: {
+      layout?: string;
+      highlightCommunities?: boolean;
+      theme?: string;
+    };
+
+    /** Whether test data was generated */
+    testDataGenerated?: boolean;
+    
+    /** When test data was generated */
+    testDataTimestamp?: string;
+    
+    /** Count of test data entities */
+    testDataEntityCount?: number;
+  };
+}
 
 /**
  * A graph entity (node)
@@ -53,98 +126,45 @@ export interface GraphRelationship {
 }
 
 /**
- * Represents a form that has been transformed into a graph representation.
- * This is the output of FormToGraphSchemaMorph.
+ * Configuration options for graph operations
  */
-export interface GraphShape extends FormShape {
-  /** Entities in the graph */
-  entities: GraphEntity[];
-
-  /** Relationships in the graph */
-  relationships: GraphRelationship[];
-
-  /** Metadata specific to the graph */
-  meta: FormMeta & {
-    relationDefs?: FormRelationship[]; // Relationships defined in the form meta
-
-    /** When the graph was generated */
-    generatedAt?: string;
-
-    /** Source morph that generated the graph */
-    sourceMorph?: string;
-
-    /** Prefix to use for node labels */
-    labelPrefix?: string;
-
-    /** Whether to include metadata properties like _formId, _createdAt */
-    includeMetadata?: boolean;
-
-    /** Number of entities in the graph */
-    entityCount?: number;
-
-    /** Number of relationships in the graph */
-    relationshipCount?: number;
-
-    /** Graph schema information */
-    schema?: GraphSchema;
-
-    /** Other graph-specific generation options */
-    [key: string]: any;
+export interface GraphConfig {
+  /** Include test data in the graph */
+  includeTestData?: boolean;
+  
+  /** Label prefix for graph entities */
+  labelPrefix?: string;
+  
+  /** Whether to include metadata in graph entities */
+  includeMetadata?: boolean;
+  
+  /** Fields to exclude from graph representation */
+  excludeFromGraph?: string[];
+  
+  /** Analysis configuration */
+  analysis?: {
+    /** Whether to perform analysis */
+    perform?: boolean;
+    /** Include community detection */
+    includeCommunities?: boolean;
+    /** Include centrality measures */
+    includeCentrality?: boolean;
+    /** Include path analysis */
+    includePaths?: boolean;
+  };
+  
+  /** Visualization configuration */
+  visualization?: {
+    /** Whether to generate visualization */
+    perform?: boolean;
+    /** Layout algorithm to use */
+    layout?: 'force' | 'circular' | 'hierarchical';
+    /** Highlight communities in visualization */
+    highlightCommunities?: boolean;
+    /** Visual theme */
+    theme?: string;
   };
 }
-
-// --- Supporting Types (Can be refined or moved if not directly part of the core GraphShape) ---
-/*
- * Defines a relationship originating from this form's node,
- * based on the value of a specific form field.
- * This definition resides within FormShape.meta.relationships.
- */
-export interface FormRelationship {
-  /** The form field containing the identifier(s) of the target node(s) */
-  field: string;
-  /** The type of the relationship (e.g., 'HAS_AUTHOR', 'BELONGS_TO') */
-  type: string;
-  /** The label of the target node (e.g., 'User', 'Category') */
-  target: string;
-  /** The direction of the relationship (default: OUTGOING) */
-  direction?: "OUTGOING" | "INCOMING"; // Optional, default handled by logic
-  /** The property on the target node to match against the field value (default: 'id') */
-  targetProperty?: string; // Optional, default handled by logic
-  /** Whether to create/merge the target node if it doesn't exist (default: false) */
-  createTargets?: boolean; // Optional, default handled by logic
-  /** Static properties to set on the relationship itself */
-  properties?: Record<string, any>; // Using any for simplicity
-}
-
-/**
- * Graph schema information (potentially generated by a separate SchemaAnalysisMorph)
- */
-export interface GraphSchema {
-  /** Entity types (labels) */
-  entityTypes: {
-    label: string;
-    properties: {
-      name: string;
-      type: string;
-      required?: boolean;
-      description?: string;
-    }[];
-  }[];
-  /** Relationship types */
-  relationshipTypes: {
-    type: string;
-    from: string[];
-    to: string[];
-    properties?: {
-      name: string;
-      type: string;
-      required?: boolean;
-      description?: string;
-    }[];
-  }[];
-}
-
-// --- Analysis & Visualization Types (Belong to separate morphs, keep here temporarily or move) ---
 
 /**
  * Graph analysis results (Output of a GraphAnalysisMorph)
