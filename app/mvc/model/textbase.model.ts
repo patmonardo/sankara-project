@@ -1,4 +1,4 @@
-import { TextRef } from '@/data/schema/textref.js';
+import { TextRef } from '@/form/data/schema/textref.js';
 import { TextBaseRefModel } from '@/mvc/model/textbaserefmodel.js';
 
 export abstract class TextBaseModel extends TextBaseRefModel {

@@ -1,4 +1,4 @@
-import { createMorph } from "../../morph/core";
+import { createMorph } from "../core";
 import { GraphShape, GraphVisualization } from "./types";
 
 /**

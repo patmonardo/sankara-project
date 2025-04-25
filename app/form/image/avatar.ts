@@ -1,4 +1,4 @@
-import type { OperationResult } from "@/data/schema/base";
+import type { OperationResult } from "@/form/data/schema/base";
 import { ImageShapeSchema, type ImageShape } from '@/form/schema/image';
 import { Image } from './image';
 

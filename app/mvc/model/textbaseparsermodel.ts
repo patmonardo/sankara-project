@@ -1,5 +1,5 @@
-import { TextParser, TextParserOptions } from '@/data/schema/textparser.js';
-import { TextRef, TextRegistry } from '@/data/schema/textref.js';
+import { TextParser, TextParserOptions } from '@/form/data/schema/textparser.js';
+import { TextRef, TextRegistry } from '@/form/data/schema/textref.js';
 import jsdom from 'jsdom';
 const { JSDOM } = jsdom;
 

@@ -1,4 +1,4 @@
-import { TextRef } from '@/data/schema/textref';
+import { TextRef } from '@/form/data/schema/textref';
 import { TextDataRefModel } from '@/mvc/model/textdatarefmodel';
 import { TextBaseModel } from '@/mvc/model/textbase.model';
 

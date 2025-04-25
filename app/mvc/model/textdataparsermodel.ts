@@ -2,7 +2,7 @@ import {
   TextDataRef,
   TextDataType,
   TextDataRegistry,
-} from "@/data/schema/textdata.js";
+} from "@/form/data/schema/textdata.js";
 import {
   TextBook,
   TextChapter,
@@ -10,8 +10,8 @@ import {
   TextWord,
   TextComment,
   TextSection,
-} from "@/data/schema/textdata.js";
-import { TextDataParser, TextParserOptions } from "@/data/schema/textparser.js";
+} from "@/form/data/schema/textdata.js";
+import { TextDataParser, TextParserOptions } from "@/form/data/schema/textparser.js";
 import { TextBaseParserModel } from "./textbaseparsermodel.js";
 
 export class TextDataParserModel

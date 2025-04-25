@@ -1,5 +1,5 @@
 //@/mvc/model/dashboard.ts
-import { prisma } from '@/data/client';
+import { prisma } from '@/form/data/client';
 import { SankaraModel } from './sankara';
 import type { Dashboard, Widget, WidgetTypeString, CreateDashboard } from '@/data/schema/dashboard';
 

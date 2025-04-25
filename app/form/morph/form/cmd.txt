@@ -1,0 +1,374 @@
+Running filter tests...
+=== Minimal Detail Level Test ===
+Detail level: minimal
+Total fields: 9
+Expanded fields: 9
+
+Auto-expanded fields: [
+  {
+    id: 'name',
+    name: 'Full Name',
+    type: 'string',
+    value: 'Jane Smith'
+  },
+  { id: 'age', name: 'Age', type: 'number', value: 32 },
+  {
+    id: 'email',
+    name: 'Email',
+    type: 'string',
+    value: 'jane@example.com'
+  },
+  {
+    id: 'address',
+    name: 'Address',
+    type: 'object',
+    value: {
+      street: '123 Main St',
+      city: 'Anytown',
+      state: 'CA',
+      zip: '12345'
+    }
+  },
+  {
+    id: 'hobbies',
+    name: 'Hobbies',
+    type: 'array',
+    value: [ 'Reading', 'Hiking', 'Photography', 'Coding' ]
+  },
+  {
+    id: 'config',
+    name: 'Configuration',
+    type: 'json',
+    value: { theme: 'dark', notifications: true, privacy: [Object] }
+  },
+  {
+    id: 'bio',
+    name: 'Biography',
+    type: 'markdown',
+    value: '# About Jane\n' +
+      '\n' +
+      'Jane is a **software engineer** with expertise in:\n' +
+      '\n' +
+      '- TypeScript\n' +
+      '- React\n' +
+      '- Node.js'
+  },
+  {
+    id: 'snippet',
+    name: 'Code Snippet',
+    type: 'code',
+    value: 'function greeting(name) {\n  return `Hello, ${name}!`;\n}',
+    format: 'javascript'
+  },
+  {
+    id: 'salary',
+    name: 'Salary',
+    type: 'number',
+    value: 85000,
+    format: 'currency'
+  }
+]
+=== Standard Detail Level Test ===
+Detail level: standard
+Expanded fields count: 9
+
+No fields should be auto-expanded:
+Auto-expanded fields: [
+  {
+    id: 'name',
+    name: 'Full Name',
+    type: 'string',
+    value: 'Jane Smith'
+  },
+  { id: 'age', name: 'Age', type: 'number', value: 32 },
+  {
+    id: 'email',
+    name: 'Email',
+    type: 'string',
+    value: 'jane@example.com'
+  },
+  {
+    id: 'address',
+    name: 'Address',
+    type: 'object',
+    value: {
+      street: '123 Main St',
+      city: 'Anytown',
+      state: 'CA',
+      zip: '12345'
+    }
+  },
+  {
+    id: 'hobbies',
+    name: 'Hobbies',
+    type: 'array',
+    value: [ 'Reading', 'Hiking', 'Photography', 'Coding' ]
+  },
+  {
+    id: 'config',
+    name: 'Configuration',
+    type: 'json',
+    value: { theme: 'dark', notifications: true, privacy: [Object] }
+  },
+  {
+    id: 'bio',
+    name: 'Biography',
+    type: 'markdown',
+    value: '# About Jane\n' +
+      '\n' +
+      'Jane is a **software engineer** with expertise in:\n' +
+      '\n' +
+      '- TypeScript\n' +
+      '- React\n' +
+      '- Node.js'
+  },
+  {
+    id: 'snippet',
+    name: 'Code Snippet',
+    type: 'code',
+    value: 'function greeting(name) {\n  return `Hello, ${name}!`;\n}',
+    format: 'javascript'
+  },
+  {
+    id: 'salary',
+    name: 'Salary',
+    type: 'number',
+    value: 85000,
+    format: 'currency'
+  }
+]
+=== Expanded Detail Level Test ===
+Detail level: expanded
+Expanded fields count: 9
+
+Automatically expanded fields:
+[
+  {
+    id: 'name',
+    name: 'Full Name',
+    type: 'string',
+    value: 'Jane Smith',
+    additionalInfo: {}
+  },
+  {
+    id: 'age',
+    name: 'Age',
+    type: 'number',
+    value: 32,
+    additionalInfo: {}
+  },
+  {
+    id: 'email',
+    name: 'Email',
+    type: 'string',
+    value: 'jane@example.com',
+    additionalInfo: {}
+  },
+  {
+    id: 'address',
+    name: 'Address',
+    type: 'object',
+    value: {
+      street: '123 Main St',
+      city: 'Anytown',
+      state: 'CA',
+      zip: '12345'
+    },
+    expanded: { type: 'object-detail', value: [Object], renderedAs: 'table' },
+    additionalInfo: {}
+  },
+  {
+    id: 'hobbies',
+    name: 'Hobbies',
+    type: 'array',
+    value: [ 'Reading', 'Hiking', 'Photography', 'Coding' ],
+    expanded: {
+      type: 'array-detail',
+      value: [Array],
+      count: 4,
+      renderedAs: 'summary-list'
+    },
+    additionalInfo: {}
+  },
+  {
+    id: 'config',
+    name: 'Configuration',
+    type: 'json',
+    value: { theme: 'dark', notifications: true, privacy: [Object] },
+    expanded: { type: 'object-detail', value: [Object], renderedAs: 'table' },
+    additionalInfo: {}
+  },
+  {
+    id: 'bio',
+    name: 'Biography',
+    type: 'markdown',
+    value: '# About Jane\n' +
+      '\n' +
+      'Jane is a **software engineer** with expertise in:\n' +
+      '\n' +
+      '- TypeScript\n' +
+      '- React\n' +
+      '- Node.js',
+    expanded: {
+      type: 'rich-content',
+      renderedAs: 'formatted',
+      fullText: '# About Jane\n' +
+        '\n' +
+        'Jane is a **software engineer** with expertise in:\n' +
+        '\n' +
+        '- TypeScript\n' +
+        '- React\n' +
+        '- Node.js'
+    },
+    additionalInfo: {}
+  },
+  {
+    id: 'snippet',
+    name: 'Code Snippet',
+    type: 'code',
+    value: 'function greeting(name) {\n  return `Hello, ${name}!`;\n}',
+    format: 'javascript',
+    expanded: {
+      type: 'code-block',
+      language: 'javascript',
+      showLineNumbers: false
+    },
+    additionalInfo: { format: [Object] }
+  },
+  {
+    id: 'salary',
+    name: 'Salary',
+    type: 'number',
+    value: 85000,
+    format: 'currency',
+    additionalInfo: { format: [Object] }
+  }
+]
+
+Complex field expansion check:
+Address (object) expanded: true
+Hobbies (array) expanded: true
+Config (json) expanded: true
+Bio (markdown) expanded: true
+
+Additional info for salary field: Present
+=== Complete Detail Level Test ===
+Detail level: complete
+Expanded fields count: 9
+
+Complete detail for salary field:
+Format info: Present
+Validation info: Not present
+History info: Not present
+Source info: Not present
+Constraints info: Not present
+
+Code field expansion:
+Language: undefined
+Show line numbers: undefined
+=== Forced Field Expansion Test ===
+Detail level: minimal
+Total expanded fields: 9
+Expanded field IDs: [
+  {
+    id: 'name',
+    name: 'Full Name',
+    type: 'string',
+    value: 'Jane Smith',
+    expanded: { type: 'expanded-text', fullValue: 'Jane Smith' }
+  },
+  { id: 'age', name: 'Age', type: 'number', value: 32 },
+  {
+    id: 'email',
+    name: 'Email',
+    type: 'string',
+    value: 'jane@example.com'
+  },
+  {
+    id: 'address',
+    name: 'Address',
+    type: 'object',
+    value: {
+      street: '123 Main St',
+      city: 'Anytown',
+      state: 'CA',
+      zip: '12345'
+    }
+  },
+  {
+    id: 'hobbies',
+    name: 'Hobbies',
+    type: 'array',
+    value: [ 'Reading', 'Hiking', 'Photography', 'Coding' ]
+  },
+  {
+    id: 'config',
+    name: 'Configuration',
+    type: 'json',
+    value: { theme: 'dark', notifications: true, privacy: [Object] }
+  },
+  {
+    id: 'bio',
+    name: 'Biography',
+    type: 'markdown',
+    value: '# About Jane\n' +
+      '\n' +
+      'Jane is a **software engineer** with expertise in:\n' +
+      '\n' +
+      '- TypeScript\n' +
+      '- React\n' +
+      '- Node.js'
+  },
+  {
+    id: 'snippet',
+    name: 'Code Snippet',
+    type: 'code',
+    value: 'function greeting(name) {\n  return `Hello, ${name}!`;\n}',
+    format: 'javascript'
+  },
+  {
+    id: 'salary',
+    name: 'Salary',
+    type: 'number',
+    value: 85000,
+    format: 'currency',
+    expanded: { type: 'expanded-text', fullValue: 85000 }
+  }
+]
+
+Forced expansion verification:
+Name field expanded: true
+Salary field expanded: true
+Address field NOT expanded: true
+=== Expansion Rendering Test ===
+
+Object field rendering differences:
+Standard level rendered as: undefined
+Complete level rendered as: undefined
+
+Code field rendering differences:
+Standard level show line numbers: undefined
+Complete level show line numbers: undefined
+=== Full Expansion Structure ===
+Field ID: config
+Field Type: json
+
+Expanded structure:
+{
+  "type": "object-detail",
+  "value": {
+    "theme": "dark",
+    "notifications": true,
+    "privacy": {
+      "shareData": false,
+      "cookieConsent": true
+    }
+  },
+  "renderedAs": "tree"
+}
+
+Additional info:
+{}
+
+=== Unexpected properties check ===
+Unexpected keys: None

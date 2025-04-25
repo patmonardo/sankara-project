@@ -9,7 +9,7 @@ import {
   TextVerse,
   TextWord,
   TextComment,
-} from "@/data/schema/textdata.js";
+} from "@/form/data/schema/textdata.js";
 import { TextBaseRefModel } from "@/mvc/model/textbaserefmodel.js";
 
 export class TextDataRefModel

@@ -1,6 +1,6 @@
 import { FormRelation } from "@/form/relation/relation";
 import { FormEntity } from "@/form/entity/entity";
-import { FormMorph, BaseMorph } from "./morph"; // Assuming morph definitions are based on these
+import { FormMorph } from "../morph/core"; // Assuming morph definitions are based on these
 import { FormExecutionContext, Sandarbha } from "../schema/context"; // Need context types
 import { contextEngine } from "../context/engine"; // To get context instances
 

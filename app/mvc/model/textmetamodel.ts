@@ -1,4 +1,4 @@
-import { TextMetaRef } from '@/data/schema/textmeta';
+import { TextMetaRef } from '@/form/data/schema/textmeta';
 import { TextMetaRefModel } from '@/mvc/model/textmetarefmodel';
 import { TextBaseModel } from '@/mvc/model/textbase.model';
 

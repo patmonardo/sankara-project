@@ -142,29 +142,6 @@ export const FormFieldValidationSchema = z.object({
   message: z.string().optional(),
 });
 
-export const FormFieldSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  label: z.string().optional(),
-  placeholder: z.string().optional(),
-  defaultValue: z.any().optional(),
-  required: z.boolean().optional().default(false).optional(),
-  disabled: z.boolean().optional().default(false).optional(),
-  readOnly: z.boolean().optional().default(false).optional(),
-  visible: z.boolean().optional().default(true).optional(),
-  validation: FormFieldValidationSchema.optional(), // Using proper validation schema now
-  options: z.array(FormOptionSchema).optional(),
-  inputType: z.string().optional(),
-  createOnly: z.boolean().optional(),
-  editOnly: z.boolean().optional(),
-  excludeFromCreate: z.boolean().optional(),
-  excludeFromEdit: z.boolean().optional(),
-  excludeFromView: z.boolean().optional(),
-  description: z.string().optional(),
-  format: z.string().optional(),
-  meta: z.record(z.any()).optional(),
-});
-
 /**
  * Field metadata schema
  */
@@ -186,15 +163,38 @@ export const FormFieldMetaSchema = z.object({
   }).optional()
 });
 
+export const FormFieldSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  name: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  label: z.string().optional(),
+  placeholder: z.string().optional(),
+  defaultValue: z.any().optional(),
+  required: z.boolean().optional().default(false).optional(),
+  disabled: z.boolean().optional().default(false).optional(),
+  createOnly: z.boolean().optional(),
+  editOnly: z.boolean().optional(),
+  readOnly: z.boolean().optional().default(false).optional(),
+  visible: z.boolean().optional().default(true).optional(),
+  validation: FormFieldValidationSchema.optional(), // Using proper validation schema now
+  options: z.array(FormOptionSchema).optional(),
+  inputType: z.string().optional(),
+  format: z.string().optional(),
+  meta: FormFieldMetaSchema.optional(),
+});
+
 /**
  * Section schema for form layout
  * - A section groups fields together visually
  */
 export const FormSectionSchema = z.object({
   id: z.string(),
+  name: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
-  fields: z.array(z.string()), // Field IDs
+  fields: z.array(z.string()).optional(), // Field IDs
   columns: z.number().optional().default(1).optional(),
   priority: z.number().optional().default(1).optional(),
   collapsible: z.boolean().optional().default(false).optional(),

@@ -1,6 +1,6 @@
 //@/ui/view/form.ts
 import { ReactNode } from "react";
-import type { OperationResult } from "@/data/schema/base";
+import type { OperationResult } from "@/form/data/schema/base";
 import type {
   FormShape,
   FormMode,
