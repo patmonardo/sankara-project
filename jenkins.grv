@@ -1,0 +1,106 @@
+pipeline {
+    agent {
+        node {
+            label 'logos-agent'  // Execute on logos (where Jenkins agent runs)
+            customWorkspace '/home/jenkins-agent/logos-agent/workspace/git-sync'
+        }
+    }
+
+    triggers {
+        cron('H/30 * * * *')  // Run every 30 minutes
+    }
+
+    stages {
+        stage('Fetch from Buddhi') {
+            steps {
+                sh """
+                echo "=== GitSync: Fetching from buddhi at \$(date '+%Y-%m-%d %H:%M:%S') ==="
+                
+                # Ensure target directory exists
+                mkdir -p /home/pat/VSCode/sankara-backup
+           
+                # First sync: Get the repo from buddhi
+                cd /home/pat/VSCode/sankara-backup
+                
+                # Initialize if needed
+                if [ ! -d .git ]; then
+                    git init
+                fi
+                
+                # Setup remote for buddhi
+                git remote remove buddhi || true
+                git remote add buddhi ssh://pat@buddhi/home/pat/VSCode/sankara
+                
+                # Fetch everything from buddhi
+                git fetch buddhi --prune
+                
+                # Reset to match buddhi's main branch
+                git checkout -B main buddhi/main || git checkout -B main
+                
+                echo "\\nRepository status after sync from buddhi:"
+                git status --short --branch
+                git --no-pager log -1 --pretty=format:"%h - %s (%cr)" || echo "No commits yet"
+                """
+            }
+        }
+        
+        stage('Backup to Logos') {
+            steps {
+                sh """
+                echo "=== GitSync: Backing up to logos at \$(date '+%Y-%m-%d %H:%M:%S') ==="
+                
+                # Create backup directory in logos if it doesn't exist
+                # mkdir -p /home/pat/VSCode/sankara-project
+                
+                # Backup the entire repo including .git to the project directory on logos
+                rsync -av --delete /home/pat/VSCode/sankara-backup/ pat@logos:/home/pat/VSCode/sankara-project/
+                
+                echo "\\nBackup to logos completed"
+                cd /home/pat/VSCode/sankara-project
+                git status --short --branch
+                git --no-pager log -1 --pretty=format:"%h - %s (%cr)" || echo "No commits yet"
+                """
+            }
+        }
+        
+        stage('Backup to Mahat') {
+            steps {
+                sh """
+                echo "=== GitSync: Backing up to mahat at \$(date '+%Y-%m-%d %H:%M:%S') ==="
+                
+                # Backup the entire repo including .git to the project directory on logos
+                rsync -av --delete /home/pat/VSCode/sankara-backup/ pat@mahat:/home/pat/VSCode/sankara-project/
+                
+                echo "\\nBackup to mahat completed"
+                """
+            }
+        }
+        
+        stage('Set Permissions') {
+            steps {
+                sh """
+                echo "=== Setting correct ownership and permissions ==="
+                
+                # Ensure directories have correct ownership
+                ssh pat@logos sudo chown -R pat:pat /home/pat/VSCode/sankara-backup
+                ssh pat@mahat sudo chown -R pat:pat /home/pat/VSCode/sankara-backup
+                
+                # Set appropriate permissions
+                ssh pat@logos chmod -R u+rw /home/pat/VSCode/sankara-project
+                ssh pat@mahat chmod -R u+rw /home/pat/VSCode/sankara-project
+                
+                echo "Permissions updated successfully"
+                """
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "GitSync backup completed successfully"
+        }
+        failure {
+            echo "GitSync backup failed"
+        }
+    }
+}

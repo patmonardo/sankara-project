@@ -3,14 +3,14 @@ import { FormShape } from "../../schema/form";
 import {
   GraphShape,
   GraphEntity,
-  GraphRelationship,
+  GraphRelation,
 } from "./types";
 
 /**
  * GraphMorph - Transforms a FormShape into a GraphShape
  * 
  * This morph takes a standard FormShape and converts it into a graph representation,
- * with entity nodes and relationships based on the form structure.
+ * with entity nodes and relations based on the form structure.
  */
 export const GraphMorph = createMorph<FormShape, GraphShape>(
   "GraphMorph",
@@ -32,7 +32,7 @@ export const GraphMorph = createMorph<FormShape, GraphShape>(
       fields: [...form.fields],
       // Initialize graph-specific properties
       entities: [],
-      relationships: [],
+      relations: [],
       meta: {
         // Include any existing meta properties
         ...(form.meta || {}),
@@ -41,7 +41,7 @@ export const GraphMorph = createMorph<FormShape, GraphShape>(
         generatedAt: new Date().toISOString(),
         sourceMorph: "GraphMorph",
         entityCount: 0,
-        relationshipCount: 0,
+        relationCount: 0,
         
         // Apply configuration with precedence:
         // 1. Runtime config from pipeline
@@ -85,9 +85,9 @@ export const GraphMorph = createMorph<FormShape, GraphShape>(
     const formEntity = createFormEntity(form);
     addEntity(graph, formEntity);
 
-    // Process relationship definitions if available
+    // Process relation definitions if available
     const relationDefs = graph.meta.relationDefs || [];
-    processRelationshipDefinitions(graph, formEntity, relationDefs);
+    processRelationDefinitions(graph, formEntity, relationDefs);
 
     // Handle operation-specific behaviors
     const operation = config.operation || context?.data?.operation;
@@ -99,9 +99,9 @@ export const GraphMorph = createMorph<FormShape, GraphShape>(
       graph.meta.testDataTimestamp = new Date().toISOString();
     }
 
-    // Update entity and relationship counts
+    // Update entity and relation counts
     graph.meta.entityCount = graph.entities.length;
-    graph.meta.relationshipCount = graph.relationships.length;
+    graph.meta.relationCount = graph.relations.length;
 
     return graph;
   },
@@ -146,8 +146,8 @@ function extractPropertySchema(fields: any[], excluded: string[]): Record<string
   const schema: Record<string, any> = {};
   
   fields.forEach(field => {
-    // Skip excluded fields and relationship fields (handled separately)
-    if (!excluded.includes(field.id) && !isRelationshipField(field)) {
+    // Skip excluded fields and relation fields (handled separately)
+    if (!excluded.includes(field.id) && !isRelationField(field)) {
       schema[field.id] = {
         type: mapFieldTypeToGraphType(field.type),
         required: !!field.required,
@@ -189,12 +189,12 @@ function mapFieldTypeToGraphType(fieldType: string): string {
 }
 
 /**
- * Processes relationship definitions to create relationship types in the graph
+ * Processes relation definitions to create relation types in the graph
  */
-function processRelationshipDefinitions(
+function processRelationDefinitions(
   graph: GraphShape,
   sourceEntityType: GraphEntity,
-  relationDefs: FormRelationship[]
+  relationDefs: FormRelation[]
 ): void {
   relationDefs.forEach(rel => {
     // Create target entity if it doesn't exist
@@ -210,7 +210,7 @@ function processRelationshipDefinitions(
           name: targetEntityId
         },
         meta: {
-          source: "RelationshipDefinition",
+          source: "RelationDefinition",
           createdAt: new Date().toISOString(),
           isNodeType: true,
           isPlaceholder: true
@@ -223,16 +223,16 @@ function processRelationshipDefinitions(
     const fromId = rel.direction === 'INCOMING' ? targetEntityId : sourceEntityType.id;
     const toId = rel.direction === 'INCOMING' ? sourceEntityType.id : targetEntityId;
     
-    // Create relationship
-    const relationshipId = `rel-${fromId}-${rel.type}-${toId}`;
-    addRelationship(graph, {
-      id: relationshipId,
+    // Create relation
+    const relationId = `rel-${fromId}-${rel.type}-${toId}`;
+    addRelation(graph, {
+      id: relationId,
       fromId: fromId,
       toId: toId,
       type: rel.type.toUpperCase(),
       properties: rel.properties || {},
       meta: {
-        source: "FormRelationship",
+        source: "FormRelation",
         createdAt: new Date().toISOString(),
         field: rel.field,
         targetProperty: rel.targetProperty || 'id',
@@ -243,7 +243,7 @@ function processRelationshipDefinitions(
 }
 
 /**
- * Adds test data entities and relationships to the graph
+ * Adds test data entities and relations to the graph
  */
 function addTestData(graph: GraphShape): void {
   // Track test data entity count
@@ -280,16 +280,16 @@ function addTestData(graph: GraphShape): void {
     }
   });
   
-  // Create relationships between instances
+  // Create relations between instances
   const instances = graph.entities.filter(
     entity => entity.meta?.source === "TestData"
   );
   
-  // Create some random relationships
-  const relationshipTypes = getUniqueRelationshipTypes(graph);
+  // Create some random relations
+  const relationTypes = getUniqueRelationTypes(graph);
   
   instances.forEach(instance => {
-    // Add 1-3 relationships per instance
+    // Add 1-3 relations per instance
     const relationCount = Math.floor(Math.random() * 3) + 1;
     
     for (let i = 0; i < relationCount; i++) {
@@ -299,18 +299,18 @@ function addTestData(graph: GraphShape): void {
         targetInstance = instances[Math.floor(Math.random() * instances.length)];
       }
       
-      // Pick a random relationship type
-      const relType = relationshipTypes[Math.floor(Math.random() * relationshipTypes.length)];
+      // Pick a random relation type
+      const relType = relationTypes[Math.floor(Math.random() * relationTypes.length)];
       
-      // Create relationship
-      addRelationship(graph, {
+      // Create relation
+      addRelation(graph, {
         id: `testrel-${instance.id}-${relType}-${targetInstance.id}`,
         fromId: instance.id,
         toId: targetInstance.id,
         type: relType,
         properties: {
           weight: Math.floor(Math.random() * 10) + 1,
-          testRelationship: true
+          testRelation: true
         },
         meta: {
           source: "TestData",
@@ -374,29 +374,29 @@ function addEntity(graph: GraphShape, entity: GraphEntity): void {
 }
 
 /**
- * Helper function to add a relationship to the graph
+ * Helper function to add a relation to the graph
  */
-function addRelationship(graph: GraphShape, relationship: GraphRelationship): void {
-  // Check if relationship already exists
-  const exists = graph.relationships.some(
-    r => r.id === relationship.id || 
-    (r.fromId === relationship.fromId && 
-     r.toId === relationship.toId && 
-     r.type === relationship.type)
+function addRelation(graph: GraphShape, relation: GraphRelation): void {
+  // Check if relation already exists
+  const exists = graph.relations.some(
+    r => r.id === relation.id || 
+    (r.fromId === relation.fromId && 
+     r.toId === relation.toId && 
+     r.type === relation.type)
   );
   
   if (!exists) {
-    graph.relationships.push(relationship);
+    graph.relations.push(relation);
   }
 }
 
 /**
- * Determine if a field represents a relationship
+ * Determine if a field represents a relation
  */
-function isRelationshipField(field: any): boolean {
-  // Fields that typically represent relationships
-  const relationshipTypes = ['reference', 'relation', 'entity', 'foreignKey'];
-  return relationshipTypes.includes(field.type) || field.meta?.isRelationship;
+function isRelationField(field: any): boolean {
+  // Fields that typically represent relations
+  const relationTypes = ['reference', 'relation', 'entity', 'foreignKey'];
+  return relationTypes.includes(field.type) || field.meta?.isRelation;
 }
 
 /**
@@ -411,18 +411,18 @@ function getEntityTypeId(formId: string): string {
 }
 
 /**
- * Get unique relationship types defined in the graph
+ * Get unique relation types defined in the graph
  */
-function getUniqueRelationshipTypes(graph: GraphShape): string[] {
+function getUniqueRelationTypes(graph: GraphShape): string[] {
   const types = new Set<string>();
   
-  graph.relationships.forEach(rel => {
-    if (rel.meta?.isRelationshipType) {
+  graph.relations.forEach(rel => {
+    if (rel.meta?.isRelationType) {
       types.add(rel.type);
     }
   });
   
-  // If no relationship types defined, provide some defaults
+  // If no relation types defined, provide some defaults
   if (types.size === 0) {
     return ['RELATED_TO', 'CONNECTED_TO', 'BELONGS_TO'];
   }

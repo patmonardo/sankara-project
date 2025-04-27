@@ -3,18 +3,6 @@ import { FormContext } from "./types";
 import { FilterShape, FilterField } from "./filter";
 
 /**
- * Configuration for truncation
- */
-export interface TruncationConfig {
-  enabled?: boolean;
-  maxLength?: number;
-  maxLines?: number;
-  preserveWords?: boolean;
-  ellipsis?: string;
-  byFieldType?: Record<string, number>;
-}
-
-/**
  * Truncated view output that extends FilterShape
  */
 export interface TruncatedShape extends FilterShape {
@@ -34,6 +22,18 @@ export interface TruncatedField extends FilterField {
   hasMore?: boolean;
   fullContent?: string;
   readMoreAction?: string;
+}
+
+/**
+ * Configuration for truncation
+ */
+export interface TruncationConfig {
+  enabled?: boolean;
+  maxLength?: number;
+  maxLines?: number;
+  preserveWords?: boolean;
+  ellipsis?: string;
+  byFieldType?: Record<string, number>;
 }
 
 /**

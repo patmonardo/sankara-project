@@ -1,6 +1,6 @@
 import { FormRelation } from "@/form/relation/relation";
 import { FormEntity } from "@/form/entity/entity";
-import { FormMorph } from "../morph/core"; // Assuming morph definitions are based on these
+import { Morph } from "./core";
 import { FormExecutionContext, Sandarbha } from "../schema/context"; // Need context types
 import { contextEngine } from "../context/engine"; // To get context instances
 
@@ -170,7 +170,7 @@ export class MorphEngine {
   }
 
   // Placeholder for morph reconstruction - needs actual implementation
-  private reconstructMorph(name: string, definition: any): FormMorph<any, any> {
+  private reconstructMorph(name: string, definition: any): Morph<any, any> {
     console.warn(
       `MorphEngine: reconstructMorph is a placeholder. Assuming definition is usable.`
     );

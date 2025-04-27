@@ -1,14 +1,12 @@
 // Add these imports if needed
 import { FormShape, FormMeta } from "../../schema/form";
 
-
-// Complete GraphShape interface with ALL meta properties
 export interface GraphShape extends FormShape {
   /** Entities in the graph */
   entities: GraphEntity[];
 
-  /** Relationships in the graph */
-  relationships: GraphRelationship[];
+  /** Relations in the graph */
+  relations: GraphRelation[];
 
   /** Optional graph analysis results */
   analysis?: GraphAnalysis;
@@ -28,8 +26,8 @@ export interface GraphShape extends FormShape {
     /** Count of entities in the graph */
     entityCount?: number;
     
-    /** Count of relationships in the graph */
-    relationshipCount?: number;
+    /** Count of relations in the graph */
+    relationCount?: number;
     
     /** Label prefix for graph entities */
     labelPrefix?: string;
@@ -99,26 +97,26 @@ export interface GraphEntity {
 }
 
 /**
- * A relationship between entities
+ * A relation between entities
  */
-export interface GraphRelationship {
-  /** Unique identifier for this relationship */
+export interface GraphRelation {
+  /** Unique identifier for this relation */
   id: string;
   /** Source entity ID */
   fromId: string;
   /** Target entity ID */
   toId: string;
-  /** Relationship type */
+  /** Relation type */
   type: string;
-  /** Relationship properties */
+  /** Relation properties */
   properties: Record<string, any>;
-  /** Metadata about this relationship */
+  /** Metadata about this relation */
   meta?: {
-    /** Source of this relationship */
+    /** Source of this relation */
     source?: string;
-    /** When this relationship was created */
+    /** When this relation was created */
     createdAt?: string;
-    /** Strength of relationship (0-100) */
+    /** Strength of relation (0-100) */
     strength?: number;
     /** Custom metadata */
     [key: string]: any;
@@ -172,7 +170,7 @@ export interface GraphConfig {
 export interface GraphAnalysis {
   metrics: {
     entityCounts: Record<string, number>;
-    relationshipCounts: Record<string, number>;
+    relationCounts: Record<string, number>;
     averageConnectivity: number;
     mostConnectedEntities: Array<{
       id: string;
@@ -197,7 +195,7 @@ export interface GraphAnalysis {
       toId: string;
       length: number;
       pathEntityIds: string[];
-      pathRelationshipIds: string[];
+      pathRelationIds: string[];
     }>;
   };
 }
@@ -213,7 +211,7 @@ export interface GraphVisualization {
       string,
       { color: string; size: number; icon?: string; shape?: string }
     >;
-    relationshipStyles: Record<
+    relationStyles: Record<
       string,
       { color: string; width: number; dashed?: boolean; arrow?: string }
     >;

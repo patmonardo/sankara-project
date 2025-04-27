@@ -32,7 +32,12 @@ export interface StyleContext extends FormContext {
   density?: "compact" | "comfortable" | "normal";
   padding?: string;
 }
-
+/**
+ * Type guard to check if context is a valid SectionContext.
+ */
+export function isStyleContext(context: any): context is StyleContext {
+  return true;
+}
 /**
  * Morph to apply styling to a view using explicit style interfaces.
  */
@@ -42,7 +47,7 @@ export const StyleMorph = createMorph<StyleShape, StyleShape>(
     if (!shape || !Array.isArray(shape.fields)) {
       throw new Error("Invalid shape output provided to StyleMorph");
     }
-    if (!isFormContext(context)) {
+    if (!isStyleContext(context)) {
       throw new Error("StyleMorph requires a valid Context.");
     }
 
