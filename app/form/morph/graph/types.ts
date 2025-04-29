@@ -1,5 +1,7 @@
 // Add these imports if needed
-import { FormShape, FormMeta } from "../../schema/form";
+import { FormShape } from "../../schema/form";
+import { FormRelation } from "../../schema/relation";
+import { FormEntity } from "../../schema/entity";
 
 export interface GraphShape extends FormShape {
   /** Entities in the graph */
@@ -7,74 +9,66 @@ export interface GraphShape extends FormShape {
 
   /** Relations in the graph */
   relations: GraphRelation[];
-
-  /** Optional graph analysis results */
-  analysis?: GraphAnalysis;
   
-  /** Optional graph visualization data */
-  visualization?: GraphVisualization;
+  // Required properties
+  id: string;
+  name: string;
+  
+  /** Generation timestamp */
+  generatedAt: string;
 
-  /** Metadata specific to the graph - COMPLETE with NO omissions */
-  meta: FormMeta & {
-    
-    /** Generation timestamp */
-    generatedAt?: string;
-    
-    /** Source morph that created this graph */
-    sourceMorph?: string;
-    
-    /** Count of entities in the graph */
-    entityCount?: number;
-    
-    /** Count of relations in the graph */
-    relationCount?: number;
-    
-    /** Label prefix for graph entities */
-    labelPrefix?: string;
-    
-    /** Whether to include metadata in graph entities */
-    includeMetadata?: boolean;
-    
-    /** Fields to exclude from graph representation */
-    excludeFromGraph?: string[];
-    
-    /** When analysis was performed */
-    analysisPerformed?: boolean;
-    analysisTimestamp?: string;
-    
-    /** When visualization was generated */
-    visualizationGenerated?: boolean;
-    visualizationTimestamp?: string;
-    
-    /** Analysis configuration */
-    analysisConfig?: {
-      includeCommunities?: boolean;
-      includeCentrality?: boolean;
-      includePaths?: boolean;
-    };
-    
-    /** Visualization configuration */
-    visualizationConfig?: {
-      layout?: string;
-      highlightCommunities?: boolean;
-      theme?: string;
-    };
+  /** Source morph that created this graph */
+  sourceMorph: string;
 
-    /** Whether test data was generated */
-    testDataGenerated?: boolean;
-    
-    /** When test data was generated */
-    testDataTimestamp?: string;
-    
-    /** Count of test data entities */
-    testDataEntityCount?: number;
+  /** Count of entities in the graph */
+  entityCount: number;
+
+  /** Count of relations in the graph */
+  relationCount: number;
+
+  /** Whether to include metadata in graph entities */
+  includeMetadata: boolean;
+
+  /** Fields to exclude from graph representation */
+  excludeFromGraph: string[];
+
+  /** Whether analysis was performed */
+  analysisPerformed: boolean;
+
+  /** Whether visualization was generated */
+  visualizationGenerated: boolean;
+  
+  /** When visualization was generated */
+  visualizationTimestamp?: string;
+
+  /** Analysis configuration */
+  analysisConfig?: {
+    includeCommunities?: boolean;
+    includeCentrality?: boolean;
+    includePaths?: boolean;
   };
+
+  /** Visualization configuration */
+  visualizationConfig?: {
+    layout?: string;
+    highlightCommunities?: boolean;
+    theme?: string;
+  };
+
+  /** Whether test data was generated */
+  testDataGenerated?: boolean;
+
+  /** When test data was generated */
+  testDataTimestamp?: string;
+
+  /** Count of test data entities */
+  testDataEntityCount?: number;
 }
 
 /**
  * A graph entity (node)
  */
-export interface GraphEntity {
+export interface GraphEntity extends FormEntity {
   /** Unique identifier for this entity */
   id: string;
   /** Entity labels (types) */
@@ -82,24 +76,22 @@ export interface GraphEntity {
   /** Entity properties */
   properties: Record<string, any>;
   /** Metadata about this entity */
-  meta?: {
-    /** Source of this entity */
-    source?: string;
-    /** When this entity was created */
-    createdAt?: string;
-    /** Original ID from source system */
-    originalId?: string;
-    /** Importance score (0-100) */
-    importance?: number;
-    /** Custom metadata */
-    [key: string]: any;
-  };
+  /** Source of this entity */
+  source?: string;
+  isNodeType?: boolean;
+  /** When this entity was created */
+  createdAt?: string;
+  /** Original ID from source system */
+  originalId?: string;
+  isPlaceholder?: boolean;
+  /** Importance score (0-100) */
+  importance?: number;
 }
 
 /**
  * A relation between entities
  */
-export interface GraphRelation {
+export interface GraphRelation extends FormRelation {
   /** Unique identifier for this relation */
   id: string;
   /** Source entity ID */
@@ -111,16 +103,11 @@ export interface GraphRelation {
   /** Relation properties */
   properties: Record<string, any>;
   /** Metadata about this relation */
-  meta?: {
-    /** Source of this relation */
-    source?: string;
-    /** When this relation was created */
-    createdAt?: string;
-    /** Strength of relation (0-100) */
-    strength?: number;
-    /** Custom metadata */
-    [key: string]: any;
-  };
+  /** When this relation was created */
+  createdAt?: string;
+  /** Strength of relation (0-100) */
+  strength?: number;
+  /** Custom metadata */
 }
 
 /**
@@ -129,16 +116,16 @@ export interface GraphRelation {
 export interface GraphConfig {
   /** Include test data in the graph */
   includeTestData?: boolean;
-  
+
   /** Label prefix for graph entities */
   labelPrefix?: string;
-  
+
   /** Whether to include metadata in graph entities */
   includeMetadata?: boolean;
-  
+
   /** Fields to exclude from graph representation */
   excludeFromGraph?: string[];
-  
+
   /** Analysis configuration */
   analysis?: {
     /** Whether to perform analysis */
@@ -150,13 +137,13 @@ export interface GraphConfig {
     /** Include path analysis */
     includePaths?: boolean;
   };
-  
+
   /** Visualization configuration */
   visualization?: {
     /** Whether to generate visualization */
     perform?: boolean;
     /** Layout algorithm to use */
-    layout?: 'force' | 'circular' | 'hierarchical';
+    layout?: "force" | "circular" | "hierarchical";
     /** Highlight communities in visualization */
     highlightCommunities?: boolean;
     /** Visual theme */

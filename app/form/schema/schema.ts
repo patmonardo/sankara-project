@@ -39,13 +39,13 @@ export const FormDefinitionSchema = z.object({
   schema: z.record(z.any()).optional(),
 
   // Definitional aspects
-  template: z.boolean().optional().default(false),
-  abstract: z.boolean().optional().default(false),
+  template: z.boolean().optional().default(false).optional(),
+  abstract: z.boolean().optional().default(false).optional(),
   extensions: z.array(z.string()).optional(),
 
   // Meta-information
-  created: z.date().default(() => new Date()),
-  updated: z.date().default(() => new Date()),
+  createdAt: z.number().default(Date.now()),
+  updatedAt: z.number().default(Date.now()),
   version: z.string().default("1.0.0"),
   author: z.string().optional(),
 });

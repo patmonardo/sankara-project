@@ -23,7 +23,7 @@ export const GraphAnalysisMorph = createMorph<GraphShape, GraphShape & { analysi
     const analysis: GraphAnalysis = {
       metrics: {
         entityCounts: countEntitiesByLabel(graph),
-        relationshipCounts: countRelationshipsByType(graph),
+        relationCounts: countRelationsByType(graph),
         averageConnectivity: calculateAverageConnectivity(graph),
         mostConnectedEntities: findMostConnectedEntities(graph, 5)
       }
@@ -76,10 +76,10 @@ function countEntitiesByLabel(graph: GraphShape): Record<string, number> {
   return counts;
 }
 
-function countRelationshipsByType(graph: GraphShape): Record<string, number> {
+function countRelationsByType(graph: GraphShape): Record<string, number> {
   const counts: Record<string, number> = {};
   
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     counts[rel.type] = (counts[rel.type] || 0) + 1;
   });
   
@@ -92,7 +92,7 @@ function calculateAverageConnectivity(graph: GraphShape): number {
   const connectionCounts = new Map<string, number>();
   
   // Count connections for each entity
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     connectionCounts.set(rel.fromId, (connectionCounts.get(rel.fromId) || 0) + 1);
     connectionCounts.set(rel.toId, (connectionCounts.get(rel.toId) || 0) + 1);
   });
@@ -114,7 +114,7 @@ function findMostConnectedEntities(graph: GraphShape, limit: number): Array<{
   const connectionCounts = new Map<string, number>();
   
   // Count connections for each entity
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     connectionCounts.set(rel.fromId, (connectionCounts.get(rel.fromId) || 0) + 1);
     connectionCounts.set(rel.toId, (connectionCounts.get(rel.toId) || 0) + 1);
   });
@@ -160,7 +160,7 @@ function detectCommunities(graph: GraphShape): Array<{
   });
   
   // Fill adjacency list
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     adjacencyList.get(rel.fromId)?.add(rel.toId);
     adjacencyList.get(rel.toId)?.add(rel.fromId);
   });
@@ -214,7 +214,7 @@ function calculateCohesion(entityIds: string[], graph: GraphShape): number {
   // Count actual connections within community
   let actualConnections = 0;
   
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     if (entityIds.includes(rel.fromId) && entityIds.includes(rel.toId)) {
       actualConnections++;
     }
@@ -273,7 +273,7 @@ function calculateDistances(startId: string, graph: GraphShape): Record<string, 
     adjacencyList.set(entity.id, []);
   });
   
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     adjacencyList.get(rel.fromId)?.push(rel.toId);
     adjacencyList.get(rel.toId)?.push(rel.fromId);
   });
@@ -303,7 +303,7 @@ function findInterestingPaths(graph: GraphShape): {
     toId: string;
     length: number;
     pathEntityIds: string[];
-    pathRelationshipIds: string[];
+    pathRelationIds: string[];
   }>;
 } {
   // Find some interesting paths in the graph - for this example just a few shortest paths
@@ -312,7 +312,7 @@ function findInterestingPaths(graph: GraphShape): {
     toId: string;
     length: number;
     pathEntityIds: string[];
-    pathRelationshipIds: string[];
+    pathRelationIds: string[];
   }> = [];
   
   // Find most connected entities to use as path endpoints
@@ -339,16 +339,16 @@ function findShortestPath(
   toId: string;
   length: number;
   pathEntityIds: string[];
-  pathRelationshipIds: string[];
+  pathRelationIds: string[];
 } | null {
-  // Create adjacency list with relationships
+  // Create adjacency list with relations
   const adjacencyList = new Map<string, Array<{ id: string, relationshipId: string }>>();
   
   graph.entities.forEach(entity => {
     adjacencyList.set(entity.id, []);
   });
   
-  graph.relationships.forEach(rel => {
+  graph.relations.forEach(rel => {
     adjacencyList.get(rel.fromId)?.push({ id: rel.toId, relationshipId: rel.id });
     adjacencyList.get(rel.toId)?.push({ id: rel.fromId, relationshipId: rel.id });
   });
@@ -357,13 +357,13 @@ function findShortestPath(
   const queue: Array<{
     id: string;
     path: string[];
-    relationships: string[];
-  }> = [{ id: startId, path: [startId], relationships: [] }];
+    relations: string[];
+  }> = [{ id: startId, path: [startId], relations: [] }];
   
   const visited = new Set<string>([startId]);
   
   while (queue.length > 0) {
-    const { id, path, relationships } = queue.shift()!;
+    const { id, path, relations } = queue.shift()!;
     
     if (id === endId) {
       return {
@@ -371,7 +371,7 @@ function findShortestPath(
         toId: endId,
         length: path.length - 1,
         pathEntityIds: path,
-        pathRelationshipIds: relationships
+        pathRelationIds: relations
       };
     }
     
@@ -381,7 +381,7 @@ function findShortestPath(
         queue.push({
           id: neighbor.id,
           path: [...path, neighbor.id],
-          relationships: [...relationships, neighbor.relationshipId]
+          relations: [...relations, neighbor.relationshipId]
         });
       }
     });

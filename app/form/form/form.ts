@@ -42,5 +42,4 @@ export class Form {
       state: this.state,
     };
   }
-
 }

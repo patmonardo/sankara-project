@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 /**
- * PropertyType - Defines the fundamental types of properties
+ * FormPropertyType - Defines the fundamental types of properties
  * 
  * Properties are contextual determinations of what entities ARE
  * within a bounded context.
  */
-export const PropertyTypeSchema = z.enum([
+export const FormPropertyTypeSchema = z.enum([
   "intrinsic",    // Essential qualities that define what the entity is
   "extrinsic",    // Accidental qualities that describe but don't define
   "relational",   // Qualities that emerge from relations to other entities
@@ -15,19 +15,19 @@ export const PropertyTypeSchema = z.enum([
 ]);
 
 /**
- * Property - A contextual determination of what an entity is
+ * FormProperty - A contextual determination of what an entity is
  * 
  * Properties operate as the Essential Being of Thingness - they
  * represent what an entity IS within a specific context.
  */
-export const PropertySchema = z.object({
+export const FormPropertySchema = z.object({
   // Identity
   id: z.string(),
   name: z.string(),
   description: z.string().optional(),
   
   // Classification
-  propertyType: PropertyTypeSchema,
+  propertyType: FormPropertyTypeSchema,
   
   // Context dependency - Properties MUST have a context
   contextId: z.string(),
@@ -65,13 +65,12 @@ export const PropertySchema = z.object({
   updated: z.date().default(() => new Date()),
 });
 
-
 /**
- * PropertyScriptType - Defines types of scripts that determine properties
+ * FormPropertyDefinitionType - Defines types of scripts that determine properties
  * 
  * These describe HOW properties manifest, not what they are.
  */
-export const PropertyScriptTypeSchema = z.enum([
+export const FormPropertyDefinitionTypeSchema = z.enum([
   "validator",   // Validates data against constraints
   "calculator",  // Computes a value based on other properties
   "predicate",   // Tests a condition about properties
@@ -79,25 +78,25 @@ export const PropertyScriptTypeSchema = z.enum([
 ]);
 
 /**
- * PropertyScript - A script that determines a property
+ * FormPropertyDefinition - A script that determines a property
  * 
- * PropertyScripts are mechanisms by which properties manifest -
+ * FormPropertyDefinitions are mechanisms by which properties manifest -
  * they implement the realization of properties within contexts.
  */
-export const PropertyScriptSchema = z.object({
+export const FormPropertyDefinitionSchema = z.object({
   // Identity
   id: z.string(),
   name: z.string(),
   description: z.string().optional(),
   
   // Classification
-  scriptType: PropertyScriptTypeSchema,
+  scriptType: FormPropertyDefinitionTypeSchema,
   
   // Execution
   contextId: z.string(),
   code: z.any(), // The script function
   
-  // Property this script computes
+  // FormProperty this script computes
   propertyId: z.string(),
   
   // Input/Output
@@ -123,7 +122,7 @@ export const PropertyScriptSchema = z.object({
   updated: z.date().default(() => new Date()),
 });
 
-export type PropertyType = z.infer<typeof PropertyTypeSchema>;
-export type Property = z.infer<typeof PropertySchema>;
-export type PropertyScript = z.infer<typeof PropertyScriptSchema>;
-export type PropertyScriptType = z.infer<typeof PropertyScriptTypeSchema>;
+export type FormPropertyType = z.infer<typeof FormPropertyTypeSchema>;
+export type FormProperty = z.infer<typeof FormPropertySchema>;
+export type FormPropertyDefinitionType = z.infer<typeof FormPropertyDefinitionTypeSchema>;
+export type FormPropertyDefinition = z.infer<typeof FormPropertyDefinitionSchema>;

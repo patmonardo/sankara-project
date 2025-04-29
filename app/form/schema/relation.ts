@@ -99,6 +99,16 @@ export const FormRelationValidationSchema = z.object({
 });
 
 /**
+ * RelationValidationRule schema
+ * Defines validation rules that apply to relations
+ */
+export const FormRelationConstraintSchema = z.object({
+  property: z.string().optional(),
+  value: z.any().optional(),
+  message: z.string().optional(),
+  custom: z.function().optional(),
+});
+/**
  * RelationBehavior schema
  * Defines behaviors that can be attached to relations
  */
@@ -115,16 +125,29 @@ export const FormRelationBehaviorSchema = z.object({
  * A comprehensive definition of a relation with validation, behaviors, and properties
  */
 export const FormRelationDefinitionSchema = z.object({
+  // Identity
+  id: z.string(), // Add this
+  name: z.string(), // Add this
+  description: z.string().optional(), // Add this
+
+  // Current fields
   cardinality: FormRelationCardinalitySchema.optional().default("many-to-many"),
   validation: z.array(FormRelationValidationSchema).optional(),
+  constraints: z.array(FormRelationConstraintSchema).optional(),
   behaviors: z.array(FormRelationBehaviorSchema).optional(),
-  traversalCost: z.number().optional().default(1),
+  tags: z.array(z.string()).optional(),
+  traversalCost: z.number().optional().default(1).optional(),
   inverse: z
     .object({
       type: z.string(),
       name: z.string().optional(),
     })
     .optional(),
+
+  // Add metadata
+  createdAt: z.number().default(() => Date.now()),
+  updatedAt: z.number().default(() => Date.now()),
+  createdBy: z.string().optional(),
 });
 
 /**
@@ -139,6 +162,7 @@ export const FormRelationSchema = z.object({
   description: z.string().optional(),
 
   // Classification
+  definitionId: z.string(),
   type: z.string(),
 
   // Connection endpoints
@@ -151,22 +175,18 @@ export const FormRelationSchema = z.object({
   // Storage mapping
   mapping: FormRelationStorageSchema.optional(),
 
-  // Metadata
-  created: z
-    .date()
-    .optional()
-    .default(() => new Date()),
-  updated: z
-    .date()
-    .optional()
-    .default(() => new Date()),
-  createdBy: z.string().optional(),
-  contextId: z.string().optional(),
-
-  // Relation-specific attributes
+  // Rest unchanged
   directional: z.boolean().optional().default(true),
+  direction: z.string().optional(),
+  inverseName: z.string().optional(),
   weight: z.number().optional(),
   active: z.boolean().optional().default(true),
+
+  // Metadata
+  createdAt: z.number().default(() => Date.now()), // Changed from created: z.date()
+  updatedAt: z.number().default(() => Date.now()), // Changed from updated: z.date()
+  createdBy: z.string().optional(),
+  contextId: z.string().optional(),
 });
 
 /**
@@ -197,13 +217,22 @@ export const MessageRelationSchema = FormRelationSchema.extend({
 });
 
 export type FormRelationType = z.infer<typeof FormRelationTypeSchema>;
-export type FormRelationValidation = z.infer<typeof FormRelationValidationSchema>;
-export type FormRelationalCardinality = z.infer<typeof FormRelationCardinalitySchema>;
-export type FormRelationBehavior = z.infer<typeof FormRelationBehaviorSchema>;
 export type FormRelationStorage = z.infer<typeof FormRelationStorageSchema>;
+export type FormRelationCardinality = z.infer<
+  typeof FormRelationCardinalitySchema
+>;
+export type FormRelationValidation = z.infer<
+  typeof FormRelationValidationSchema
+>;
+export type FormRelationConstraint = z.infer<
+  typeof FormRelationConstraintSchema
+>;
+export type FormRelationBehavior = z.infer<typeof FormRelationBehaviorSchema>;
 export type FormRelationQuery = z.infer<typeof FormRelationQuerySchema>;
 export type FormRelationPathQuery = z.infer<typeof FormPathQuerySchema>;
-export type FormRelationDefinition = z.infer<typeof FormRelationDefinitionSchema>;
+export type FormRelationDefinition = z.infer<
+  typeof FormRelationDefinitionSchema
+>;
 export type FormRelation = z.infer<typeof FormRelationSchema>;
 export type EventRelation = z.infer<typeof EventRelationSchema>;
 export type MessageRelation = z.infer<typeof MessageRelationSchema>;

@@ -51,9 +51,7 @@ export function isFilterContext(context: any): context is FilterContext {
 export const FilterWhereMorph = createMorph<FilterShape, FilterShape>(
   "FilterWhereMorph",
   (shape, context) => {
-    if (!isFilterContext(context)) {
-      throw new Error("FilterWhereMorph requires a valid FilterContext");
-    }
+    if (!isFilterContext(context)) return shape;
 
     // Get filter conditions from context
     const {

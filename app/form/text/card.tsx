@@ -1,6 +1,6 @@
 import React from "react";
 import { LightBulbIcon } from "@heroicons/react/24/outline";
-import { Card } from "@/form/card/card";
+import { Card } from "@/form/card/card.morph";
 import type { CardShape } from "@/form/schema/card";
 import { kb } from "@/ui/theme/kb";
 import { md } from "@/ui/theme/token";

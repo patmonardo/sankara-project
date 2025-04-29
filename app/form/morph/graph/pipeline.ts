@@ -12,18 +12,62 @@ import { GraphMorph } from "./graph";
  * and generating visualizations.
  */
 export class GraphPipeline extends FormPipeline<GraphShape> {
+  // Keep track of configured operations and options
+  private pipelineConfig: {
+    operation: "create" | "analyze" | "visualize" | "full";
+    analysisOptions?: {
+      includeCommunities?: boolean;
+      includeCentrality?: boolean;
+      includePaths?: boolean;
+    };
+    visualizationOptions?: {
+      layout?: string;
+      highlightCommunities?: boolean;
+    };
+  };
+  
+  /**
+   * Constructor for GraphPipeline
+   */
+  constructor(config?: {
+    operation?: "create" | "analyze" | "visualize" | "full";
+    analysisOptions?: {
+      includeCommunities?: boolean;
+      includeCentrality?: boolean;
+      includePaths?: boolean;
+    };
+    visualizationOptions?: {
+      layout?: string;
+      highlightCommunities?: boolean;
+    };
+  }) {
+    super("GraphPipeline", {
+      description: "Pipeline for graph operations",
+      metadata: {
+        operation: config?.operation || "full",
+        analysisOptions: config?.analysisOptions,
+        visualizationOptions: config?.visualizationOptions
+      }
+    });
+    this.pipelineConfig = {
+      operation: config?.operation || "full",
+      analysisOptions: config?.analysisOptions,
+      visualizationOptions: config?.visualizationOptions
+    };
+  }
+
   /**
    * Create a new graph from a form
    */
   createGraph(shape: FormShape): GraphShape {
-    return this.runWithConfig(shape, { operation: "create" });
+    return this.run(shape);
   }
   
   /**
    * Analyze an existing graph
    */
-  analyzeGraph(graph: GraphShape): GraphShape & { analysis: GraphAnalysis } {
-    return this.runWithConfig(graph, { operation: "analyze" });
+  analyzeGraph(graph: GraphShape): GraphShape {
+    return this.run(graph);
   }
   
   /**
@@ -36,39 +80,40 @@ export class GraphPipeline extends FormPipeline<GraphShape> {
   /**
    * Full pipeline: Create + Analyze + Visualize
    */
-  processGraph(shape: FormShape): GraphShape & { 
-    analysis: GraphAnalysis,
-    visualization: GraphVisualization 
-  } {
-    return this.runWithConfig(shape, { 
-      operation: "full",
-      analysisOptions: {
-        includeCommunities: true,
-        includeCentrality: true,
-        includePaths: true
-      },
-      visualizationOptions: {
-        layout: "force",
-        highlightCommunities: true
-      }
-    });
+  processGraph(shape: FormShape): GraphShape {
+    return this.run(shape, this.pipelineConfig);
   }
 }
 
 /**
  * Create a standard graph pipeline with default morphs
  */
-export function createGraphPipeline(config: Record<string, any> = {}): GraphPipeline {
+export function createGraphPipeline(config?: {
+  operation?: "create" | "analyze" | "visualize" | "full";
+  analysisOptions?: {
+    includeCommunities?: boolean;
+    includeCentrality?: boolean;
+    includePaths?: boolean;
+  };
+  visualizationOptions?: {
+    layout?: string;
+    highlightCommunities?: boolean;
+  };
+}): GraphPipeline {
   const pipeline = new GraphPipeline(config);
   
   // Add basic graph generation
-  pipeline.add(GraphMorph);
+  pipeline.pipe(GraphMorph);
   
-  // Add analysis capabilities
-  pipeline.add(GraphAnalysisMorph);
+  // Add analysis capabilities if needed
+  if (config?.operation === "analyze" || config?.operation === "full" || !config?.operation) {
+    pipeline.pipe(GraphAnalysisMorph);
+  }
   
-  // Add visualization capabilities
-  pipeline.add(GraphVisualizationMorph);
+  // Add visualization capabilities if needed
+  if (config?.operation === "visualize" || config?.operation === "full" || !config?.operation) {
+    pipeline.pipe(GraphVisualizationMorph);
+  }
   
   return pipeline;
 }
