@@ -1,5 +1,5 @@
 import { Neo4jConnection } from '../connection';
-import { FormShape, FormField, FormSection, FormLayout, FormOption } from '@/form/schema/form';
+import { FormShape, FormField, FormSection, FormLayout, FormOption } from '@/form/schema/shape';
 
 /**
  * FormRepository
@@ -32,15 +32,15 @@ export class FormRepository {
         SET f.name = $name,
             f.title = $title,
             f.description = $description,
-            f.created = datetime($created),
-            f.updated = datetime()
+            f.createdAt = $createdAt,
+            f.updatedAt = $updatedAt
         
         // If the form references a schema, connect it
-        WITH f
-        FOREACH (__ IN CASE WHEN $schemaId IS NOT NULL THEN [1] ELSE [] END | 
-          MERGE (s:FormDefinition {id: $schemaId})
-          MERGE (f)-[:IMPLEMENTS_SCHEMA]->(s)
-        )
+        // WITH f
+        // FOREACH (__ IN CASE WHEN $schemaId IS NOT NULL THEN [1] ELSE [] END | 
+        //   MERGE (s:FormDefinition {id: $schemaId})
+        //   MERGE (f)-[:IMPLEMENTS_SCHEMA]->(s)
+        // )
         
         RETURN f
       `, {
@@ -48,9 +48,8 @@ export class FormRepository {
         name: form.name,
         title: form.title || form.name,
         description: form.description || '',
-        created: form.meta?.layout?.timestamp ? 
-          new Date(form.meta.layout.timestamp).toISOString() : 
-          new Date().toISOString(),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
         schemaId: form.matter?.source?.entityRef?.entity
       });
       
@@ -122,9 +121,6 @@ export class FormRepository {
           FOREACH (__ IN CASE WHEN $validation IS NOT NULL THEN [1] ELSE [] END | 
             SET field.validation = $validation)
             
-          FOREACH (__ IN CASE WHEN $meta IS NOT NULL THEN [1] ELSE [] END | 
-            SET field.meta = $meta)
-          
           // Link to form
           CREATE (f)-[:HAS_FIELD {order: $index}]->(field)
           
@@ -150,7 +146,6 @@ export class FormRepository {
           inputType: field.inputType || null,
           format: field.format || null,
           validation: field.validation ? JSON.stringify(field.validation) : null,
-          meta: field.meta ? JSON.stringify(field.meta) : null,
           index: form.fields.indexOf(field)
         });
         
@@ -228,9 +223,6 @@ export class FormRepository {
                 className: $className
               })
               
-              FOREACH (__ IN CASE WHEN $meta IS NOT NULL THEN [1] ELSE [] END | 
-                SET s.meta = $meta)
-              
               CREATE (layout)-[:HAS_SECTION {order: $index}]->(s)
               
               RETURN s
@@ -245,7 +237,6 @@ export class FormRepository {
               collapsible: section.collapsible || false,
               collapsed: section.collapsed || false,
               className: section.className || '',
-              meta: section.meta ? JSON.stringify(section.meta) : null,
               index: i
             });
             
@@ -320,30 +311,13 @@ export class FormRepository {
         });
       }
       
-      // Store metadata if present
-      if (form.meta) {
-        await txc.run(`
-          MATCH (f:Form {id: $id})
-          SET f.meta = $meta
-          RETURN f
-        `, {
-          id: form.id,
-          meta: JSON.stringify(form.meta)
-        });
-      }
       
       await txc.commit();
       
       // Return updated form with current timestamp
       return {
         ...form,
-        meta: {
-          ...(form.meta || {}),
-          layout: {
-            ...(form.meta?.layout || {}),
-            timestamp: Date.now()
-          }
-        }
+       
       };
     } catch (error) {
       console.error(`Error saving form to Neo4j: ${error}`);
@@ -404,19 +378,10 @@ export class FormRepository {
         }
       }
       
-      let meta = undefined;
-      if (formNode.meta) {
-        try {
-          meta = JSON.parse(formNode.meta);
-        } catch (e) {
-          console.error('Error parsing form meta:', e);
-        }
-      }
-      
       // If schema ID is present and matter is undefined, create it
       if (schemaId && !matter) {
         matter = {
-          source: {
+          sourceId: {
             type: 'entity',
             entityRef: {
               entity: schemaId,
@@ -443,7 +408,6 @@ export class FormRepository {
         matter,
         layout,
         state,
-        meta
       };
       
       return form;
@@ -483,16 +447,6 @@ export class FormRepository {
           validation = JSON.parse(field.validation);
         } catch (e) {
           console.error('Error parsing field validation:', e);
-        }
-      }
-      
-      // Parse meta if exists
-      let meta = undefined;
-      if (field.meta) {
-        try {
-          meta = JSON.parse(field.meta);
-        } catch (e) {
-          console.error('Error parsing field meta:', e);
         }
       }
       
@@ -554,7 +508,6 @@ export class FormRepository {
         options: fieldOptions.length > 0 ? fieldOptions : undefined,
         inputType: field.inputType,
         format: field.format,
-        meta
       });
     }
     
@@ -594,16 +547,6 @@ export class FormRepository {
       const section = record.get('section').properties;
       const sectionFields = record.get('sectionFields');
       
-      // Parse meta if exists
-      let meta = undefined;
-      if (section.meta) {
-        try {
-          meta = JSON.parse(section.meta);
-        } catch (e) {
-          console.error('Error parsing section meta:', e);
-        }
-      }
-      
       // Process fields
       const fields: string[] = [];
       if (sectionFields && sectionFields.length > 0) {
@@ -627,7 +570,6 @@ export class FormRepository {
         collapsible: section.collapsible,
         collapsed: section.collapsed,
         className: section.className,
-        meta
       });
     }
     
@@ -771,14 +713,6 @@ export class FormRepository {
       ...sourceForm,
       id: newId,
       name: newName || `Copy of ${sourceForm.name}`,
-      meta: {
-        ...(sourceForm.meta || {}),
-        layout: {
-          ...(sourceForm.meta?.layout || {}),
-          source: sourceId,
-          timestamp: Date.now()
-        }
-      }
     };
     
     // Save the new form

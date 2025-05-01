@@ -1,6 +1,6 @@
 //@/form/schema/chart.ts
 import { z } from 'zod'
-import { FormShapeSchema } from './form'
+import { FormShapeSchema } from './shape'
 import { DataSchema, VisualSchema } from './visualization'
 
 export const ChartShapeSchema = FormShapeSchema.extend({

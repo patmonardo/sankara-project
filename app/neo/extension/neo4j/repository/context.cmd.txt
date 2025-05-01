@@ -1,0 +1,77 @@
+Testing ContextRepository operations...
+Initializing connection...
+Connected to Neo4j successfully
+✅ Connected to Neo4j
+
+==== CONTEXT OPERATIONS ====
+
+📝 CREATING CONTEXT:
+FormContext to save: {
+  "id": "aa24d28b-7a4a-4eab-9d36-d5ff1bfa1aaa",
+  "name": "User Session FormContext",
+  "description": "FormContext for user user-1746061327670",
+  "type": "workflow",
+  "scope": "session",
+  "priority": 1,
+  "active": true,
+  "timestamp": 1746061327670,
+  "transactionState": "none",
+  "properties": {
+    "userId": "user-1746061327670",
+    "loginTime": "2025-05-01T01:02:07.670Z",
+    "ipAddress": "192.168.1.100",
+    "permissions": [
+      "read",
+      "write"
+    ]
+  },
+  "createdAt": 1746061327670,
+  "updatedAt": 1746061327670
+}
+✅ Saved context: aa24d28b-7a4a-4eab-9d36-d5ff1bfa1aaa
+
+🔍 GETTING CONTEXT BY ID:
+Fetched context: {
+  "id": "aa24d28b-7a4a-4eab-9d36-d5ff1bfa1aaa",
+  "name": "User Session FormContext",
+  "description": "FormContext for user user-1746061327670",
+  "type": "workflow",
+  "scope": "session",
+  "priority": 1,
+  "active": true,
+  "properties": {
+    "userId": "user-1746061327670",
+    "loginTime": "2025-05-01T01:02:07.670Z",
+    "ipAddress": "192.168.1.100",
+    "permissions": [
+      "read",
+      "write"
+    ]
+  },
+  "rules": [],
+  "timestamp": 1746061327830,
+  "createdAt": 1746061327670,
+  "updatedAt": 1746061327674
+}
+  - Retrieved properties type: object {
+  userId: 'user-1746061327670',
+  loginTime: '2025-05-01T01:02:07.670Z',
+  ipAddress: '192.168.1.100',
+  permissions: [ 'read', 'write' ]
+}
+  - Retrieved createdAt: 1746061327670
+  - Retrieved updatedAt: 1746061327674
+
+🔍 FINDING CONTEXTS:
+Found 1 contexts of type 'UserSession':
+  - ID: aa24d28b-7a4a-4eab-9d36-d5ff1bfa1aaa, Name: User Session FormContext
+
+==== DELETE OPERATION ====
+
+🗑️ DELETING CONTEXT:
+FormContext aa24d28b-7a4a-4eab-9d36-d5ff1bfa1aaa deleted: true
+Verification - FormContext aa24d28b-7a4a-4eab-9d36-d5ff1bfa1aaa found: false
+
+Connection closed
+
+Context repository test completed

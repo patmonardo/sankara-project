@@ -2,7 +2,7 @@ import { SimpleMorph } from "../morph";
 import { PropertyGraph, GraphEntity, GraphRelationship } from "./graph";
 import { NeoContext } from "./mode";
 import { StateOfConsciousness, ConsciousTransition, ConsciousContext } from "./tara";
-import { FormShape, FieldShape } from "../../schema/form";
+import { FormShape, FieldShape } from "../../schema/shape";
 
 /**
  * Enhanced cognitive task to support Sara-Tara integration

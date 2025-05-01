@@ -1,5 +1,5 @@
 import { FormPipeline } from "../core/pipeline";
-import { FormShape } from "../../schema/form";
+import { FormShape } from "../../schema/shape";
 import { GraphShape, GraphAnalysis, GraphVisualization } from "./types";
 import { GraphAnalysisMorph } from "./analysis";
 import { GraphVisualizationMorph } from "./visualization";

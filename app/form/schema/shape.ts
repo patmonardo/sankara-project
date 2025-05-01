@@ -305,6 +305,7 @@ export const FormShapeSchema = z.object({
 
 // Type exports
 export type FormMatter = z.infer<typeof FormMatterSchema>;
+export type FormData = z.infer<typeof FormDataSchema>;
 export type FormMode = z.infer<typeof FormModeSchema>;
 export type FormContent = z.infer<typeof FormContentSchema>;
 export type FormFieldValidation = z.infer<typeof FormFieldValidationSchema>;
@@ -316,6 +317,5 @@ export type FormFieldMeta = z.infer<typeof FormFieldMetaSchema>;
 export type FormSection = z.infer<typeof FormSectionSchema>;
 export type FormLayout = z.infer<typeof FormLayoutSchema>;
 export type FormState = z.infer<typeof FormStateSchema>;
-export type FormShape = z.infer<typeof FormShapeSchema>;
 export type FormMeta = z.infer<typeof FormMetaSchema>;
-export type FormData = z.infer<typeof FormDataSchema>;
+export type FormShape = z.infer<typeof FormShapeSchema>;

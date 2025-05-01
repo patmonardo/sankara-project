@@ -194,7 +194,7 @@ export class BECExtension implements NeoExtension {
   private processRelationAsEssence(relation: any): any {
     return {
       source: relation.sourceId,
-      target: relation.targetId,
+      targetId: relation.targetId,
       type: relation.type,
       mediation: true,
       reflection: this.extractReflection(relation),
@@ -357,7 +357,7 @@ export class BECExtension implements NeoExtension {
     this.core.dialectic.emit({
       type: event.type,
       subtype: 'response',
-      target: event.source,
+      targetId: event.source,
       content,
       relations: {
         requestId: event.id
@@ -374,7 +374,7 @@ export class BECExtension implements NeoExtension {
     this.core.dialectic.emit({
       type: event.type,
       subtype: 'error',
-      target: event.source,
+      targetId: event.source,
       content: {
         error: message,
         requestId: event.id

@@ -1,0 +1,146 @@
+Testing MorphRepository operations...
+Initializing connection...
+Connected to Neo4j successfully
+✅ Connected to Neo4j
+
+==== BASIC MORPH OPERATIONS ====
+
+📝 CREATING SIMPLE MORPH:
+Simple morph to save: {
+  "id": "18ff4e5f-c43b-4512-a65e-a7a45f53f960",
+  "name": "Test Uppercase Morph",
+  "description": "Converts text to uppercase",
+  "inputType": "string",
+  "outputType": "string",
+  "transformFn": "function transform(input) { return input.toUpperCase(); }",
+  "config": {
+    "preserveWhitespace": true
+  }
+}
+✅ Saved simple morph: 18ff4e5f-c43b-4512-a65e-a7a45f53f960
+
+🔍 GETTING MORPH BY ID:
+Fetched simple morph: {
+  "id": "18ff4e5f-c43b-4512-a65e-a7a45f53f960",
+  "name": "Test Uppercase Morph",
+  "description": "Converts text to uppercase",
+  "inputType": "string",
+  "outputType": "string",
+  "transformFn": "function transform(input) { return input.toUpperCase(); }",
+  "config": {
+    "preserveWhitespace": true
+  }
+}
+
+📝 CREATING COMPOSITE MORPH:
+Composite morph to save: {
+  "id": "79a5ece7-062a-4f0f-a7a8-45bd50d1fe40",
+  "name": "Test String Processing Morph",
+  "description": "Processes strings with multiple steps",
+  "inputType": "string",
+  "outputType": "string",
+  "transformFn": "function transform(input) { return input.toUpperCase(); }",
+  "composition": {
+    "type": "composite",
+    "compositionType": "sequential",
+    "morphs": [
+      "18ff4e5f-c43b-4512-a65e-a7a45f53f960",
+      "32347a85-0133-45fc-8c2c-7c99aebbfbac"
+    ]
+  }
+}
+✅ Saved composite morph: 79a5ece7-062a-4f0f-a7a8-45bd50d1fe40
+
+🔍 FINDING MORPHS BY CRITERIA:
+Found morphs: [
+  {
+    "id": "18ff4e5f-c43b-4512-a65e-a7a45f53f960",
+    "name": "Test Uppercase Morph",
+    "description": "Converts text to uppercase",
+    "inputType": "string",
+    "outputType": "string",
+    "transformFn": "function transform(input) { return input.toUpperCase(); }",
+    "config": {
+      "preserveWhitespace": true
+    }
+  },
+  {
+    "id": "79a5ece7-062a-4f0f-a7a8-45bd50d1fe40",
+    "name": "Test String Processing Morph",
+    "description": "Processes strings with multiple steps",
+    "inputType": "string",
+    "outputType": "string",
+    "transformFn": "function transform(input) { return input.toUpperCase(); }",
+    "composition": {
+      "type": "composite",
+      "compositionType": "sequential",
+      "morphs": [
+        "18ff4e5f-c43b-4512-a65e-a7a45f53f960"
+      ]
+    }
+  }
+]
+
+==== MORPH PIPELINE OPERATIONS ====
+
+📝 CREATING MORPH PIPELINE:
+Pipeline to save: {
+  "id": "8a86d09e-13a3-4a9f-be93-ae1a1f216062",
+  "name": "Test Text Processing Pipeline",
+  "description": "A pipeline for processing text data",
+  "morphs": [
+    "18ff4e5f-c43b-4512-a65e-a7a45f53f960"
+  ],
+  "inputType": "string",
+  "outputType": "string",
+  "optimized": false,
+  "config": {
+    "validationMode": "strict"
+  }
+}
+✅ Saved pipeline: 8a86d09e-13a3-4a9f-be93-ae1a1f216062
+
+🔍 GETTING PIPELINE BY ID:
+Fetched pipeline: {
+  "id": "8a86d09e-13a3-4a9f-be93-ae1a1f216062",
+  "name": "Test Text Processing Pipeline",
+  "description": "A pipeline for processing text data",
+  "morphs": [
+    "18ff4e5f-c43b-4512-a65e-a7a45f53f960"
+  ],
+  "inputType": "string",
+  "outputType": "string",
+  "optimized": false,
+  "config": {
+    "validationMode": "strict"
+  }
+}
+
+==== DEBUGGING OPERATIONS ====
+
+🔍 DIRECT QUERY FOR MORPH:
+Direct query result:
+- Properties: {
+  "transformFn": "function transform(input) { return input.toUpperCase(); }",
+  "name": "Test Uppercase Morph",
+  "outputType": "string",
+  "description": "Converts text to uppercase",
+  "inputType": "string",
+  "id": "18ff4e5f-c43b-4512-a65e-a7a45f53f960",
+  "config": "{\"preserveWhitespace\":true}",
+  "updated": {
+    "year": 2025,
+    "month": 5,
+    "day": 1,
+    "hour": 1,
+    "minute": 2,
+    "second": 17,
+    "nanosecond": 462000000,
+    "timeZoneOffsetSeconds": 0
+  }
+}
+- Config stored as: string {"preserveWhitespace":true}
+- Parsed config: { preserveWhitespace: true }
+
+Connection closed
+Morph repository test completed

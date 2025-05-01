@@ -1,4 +1,4 @@
-import { FormMeta } from "../../schema/form";
+import { FormMeta } from "../../schema/shape";
 import { GraphShape } from "../graph/types";
 
 /**

@@ -2,7 +2,7 @@ import { FormRelation, FormRelationId } from "@/form/relation/relation";
 import { FormEntity, FormEntityId } from "@/form/entity/entity"; // Import FormEntityId
 import { Form } from "./form";
 import { FormDefinition } from "../schema/schema";
-import { FormMatter } from "../schema/form";
+import { FormMatter } from "../schema/shape";
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating entity IDs
 
 // --- Define Form Engine Verb Subtypes ---

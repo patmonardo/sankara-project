@@ -161,12 +161,12 @@ export class TaraExtension implements NeoExtension {
               relations: [
                 {
                   name: 'hasNode',
-                  target: 'TaskNode',
+                  targetId: 'TaskNode',
                   cardinality: 'many'
                 },
                 {
                   name: 'hasEdge',
-                  target: 'TaskEdge',
+                  targetId: 'TaskEdge',
                   cardinality: 'many'
                 }
               ]
@@ -847,13 +847,13 @@ export class TaraExtension implements NeoExtension {
           relations: [
             {
               name: 'source',
-              target: 'Entity',
+              targetId: 'Entity',
               cardinality: 'one',
               description: 'Source entity of the relation'
             },
             {
               name: 'target',
-              target: 'Entity',
+              targetId: 'Entity',
               cardinality: 'one',
               description: 'Target entity of the relation'
             }
@@ -871,7 +871,7 @@ export class TaraExtension implements NeoExtension {
           relations: [
             {
               name: 'contains',
-              target: 'Entity',
+              targetId: 'Entity',
               cardinality: 'many',
               description: 'Entities contained in this context'
             }
@@ -979,12 +979,12 @@ export class TaraExtension implements NeoExtension {
       schema.relations = [
         {
           name: 'source',
-          target: 'Entity',
+          targetId: 'Entity',
           cardinality: 'one'
         },
         {
           name: 'target',
-          target: 'Entity',
+          targetId: 'Entity',
           cardinality: 'one'
         }
       ];
@@ -1043,12 +1043,12 @@ export class TaraExtension implements NeoExtension {
       schema.relations = [
         {
           name: 'source',
-          target: 'Entity',
+          targetId: 'Entity',
           cardinality: 'one'
         },
         {
           name: 'target',
-          target: 'Entity',
+          targetId: 'Entity',
           cardinality: 'one'
         }
       ];
@@ -1119,7 +1119,7 @@ export class TaraExtension implements NeoExtension {
             // Add to relations
             schema.relations.push({
               name,
-              target: type.replace('[]', ''),
+              targetId: type.replace('[]', ''),
               cardinality: type.includes('[]') ? 'many' : 'one'
             });
             continue;
@@ -1139,12 +1139,12 @@ export class TaraExtension implements NeoExtension {
       schema.relations.push(
         {
           name: 'source',
-          target: 'Entity',
+          targetId: 'Entity',
           cardinality: 'one'
         },
         {
           name: 'target',
-          target: 'Entity',
+          targetId: 'Entity',
           cardinality: 'one'
         }
       );

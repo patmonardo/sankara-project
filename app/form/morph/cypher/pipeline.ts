@@ -1,5 +1,5 @@
 import { FormPipeline } from "../core";
-import { FormShape } from "../../schema/form";
+import { FormShape } from "../../schema/shape";
 import { CypherShape, CypherConfig } from "./types";
 import { CypherQueryMorph } from "./query";
 

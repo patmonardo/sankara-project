@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { FormExecutionContextSchema } from "./context";
+import { FormContextSchema } from "./context";
 
 /**
  * Implementation schema - defines how a morph is implemented at runtime
@@ -7,7 +7,7 @@ import { FormExecutionContextSchema } from "./context";
 export const ImplementationSchema = z.object({
   module: z.string().optional(),
   class: z.string().optional(),
-  factory: z.string().optional()
+  factory: z.string().optional(),
 });
 
 export type Implementation = z.infer<typeof ImplementationSchema>;
@@ -18,7 +18,7 @@ export type Implementation = z.infer<typeof ImplementationSchema>;
 export const FormMorphSchema = z.object({
   // Basic information
   id: z.string(),
-  name: z.string().optional(),
+  name: z.string(),
   description: z.string().optional(),
 
   // Type information
@@ -26,23 +26,27 @@ export const FormMorphSchema = z.object({
   outputType: z.string().default("FormShape"),
 
   // Transform function reference
-  transformFn: z.string(),
+  transformFn: z.string().optional(),
 
   // Additional configuration
   config: z.record(z.any()).optional(),
 
   // Composition structure
-  composition: z.object({
-    type: z.enum(["single", "composite", "pipeline"]).default("single"),
-    morphs: z.array(z.string()).optional(),
-    compositionType: z.enum(["sequential", "parallel", "conditional"]).optional()
-  }).optional(),
+  composition: z
+    .object({
+      type: z.enum(["single", "composite", "pipeline"]).default("single"),
+      compositionType: z
+      .enum(["sequential", "parallel", "conditional"])
+      .optional(),
+      morphs: z.array(z.string()).optional(),
+    })
+    .optional(),
 
   // Metadata
   meta: z.record(z.any()).optional(),
 
   // Runtime implementation details (directly in base schema)
-  implementation: ImplementationSchema.optional()
+  implementation: ImplementationSchema.optional(),
 });
 
 /**
@@ -50,7 +54,7 @@ export const FormMorphSchema = z.object({
  */
 export const FormMorphPipelineSchema = z.object({
   id: z.string(),
-  name: z.string().optional(),
+  name: z.string(),
   description: z.string().optional(),
   morphs: z.array(z.string()), // Array of morph IDs
   inputType: z.string().default("FormShape"),
@@ -58,7 +62,7 @@ export const FormMorphPipelineSchema = z.object({
   config: z.record(z.any()).optional(),
   meta: z.record(z.any()).optional(),
   // Add optimization flag to the base schema
-  optimized: z.boolean().optional()
+  optimized: z.boolean().optional(),
 });
 
 /**
@@ -69,13 +73,15 @@ export const FormMorphResultSchema = z.object({
   outputType: z.string(),
   output: z.any(),
   morphId: z.string(),
-  context: FormExecutionContextSchema,
+  context: FormContextSchema,
   meta: z.record(z.any()).optional(),
-  error: z.object({
-    message: z.string(),
-    code: z.string().optional(),
-    details: z.any().optional()
-  }).optional()
+  error: z
+    .object({
+      message: z.string(),
+      code: z.string().optional(),
+      details: z.any().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -100,8 +106,8 @@ export function defineMorph(config: {
   // Composition (for complex morphs)
   composition?: {
     type: "single" | "composite" | "pipeline";
-    morphs?: string[];
     compositionType?: "sequential" | "parallel" | "conditional";
+    morphs?: string[];
   };
 
   // Implementation details (for runtime resolution)
@@ -115,7 +121,7 @@ export function defineMorph(config: {
   return FormMorphSchema.parse({
     ...config,
     inputType: config.inputType || "FormShape",
-    outputType: config.outputType || "FormShape"
+    outputType: config.outputType || "FormShape",
   });
 }
 
@@ -129,9 +135,9 @@ export function defineMorph(config: {
  */
 export function defineMorphPipeline(
   id: string,
+  name: string,
   morphIds: string[],
   options: {
-    name?: string;
     description?: string;
     inputType?: string;
     outputType?: string;
@@ -143,7 +149,7 @@ export function defineMorphPipeline(
   return FormMorphPipelineSchema.parse({
     id,
     morphs: morphIds,
-    ...options
+    ...options,
   });
 }
 

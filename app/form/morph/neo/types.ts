@@ -1,4 +1,4 @@
-import { FormShape, FormMeta } from "../../schema/form";
+import { FormShape, FormMeta } from "../../schema/shape";
 
 /**
  * Defines a relationship originating from this form's node,

@@ -2,7 +2,7 @@ import {
   // FormDefinition, // Still removed
   FormMatter,
   FormState, // Import the correct type inferred from FormStateSchema
-} from "../schema/form";
+} from "../schema/shape";
 import { v4 as uuidv4 } from 'uuid';
 
 /**

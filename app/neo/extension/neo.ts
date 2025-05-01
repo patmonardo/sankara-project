@@ -1,11 +1,11 @@
 import { NeoExtension, NeoComponentId } from "../extension";
 import { Neo4jConnection } from "./neo4j/connection";
-import { FormDefinitionRepository } from "./neo4j/repositories/schema";
-import { FormRepository } from "./neo4j/repositories/form";
-import { ContextRepository } from "./neo4j/repositories/context";
-import { MorphRepository } from "./neo4j/repositories/morph";
-import { EntityRepository } from "./neo4j/repositories/entity";
-import { RelationRepository } from "./neo4j/repositories/relation";
+import { FormDefinitionRepository } from "./neo4j/repository/schema";
+import { FormRepository } from "./neo4j/repository/form.shape";
+import { ContextRepository } from "./neo4j/repository/context.shape";
+import { MorphRepository } from "./neo4j/repository/morph.shape";
+import { EntityRepository } from "./neo4j/repository/entity";
+import { RelationRepository } from "./neo4j/repository/relation";
 import { NeoEvent } from "../event";
 
 export class Neo4jExtension implements NeoExtension {

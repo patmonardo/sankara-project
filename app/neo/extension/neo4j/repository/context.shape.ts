@@ -41,10 +41,10 @@ export class ContextRepository {
             c.scope = $scope,
             c.priority = $priority,
             c.active = $active,
-            c.updatedAt = datetime()
+            c.updatedAt = datetime().epochMillis
             
         FOREACH (__ IN CASE WHEN $createdAt IS NOT NULL THEN [1] ELSE [] END | 
-          SET c.createdAt = datetime($createdAt))
+          SET c.createdAt = $createdAt)
         
         RETURN c
       `,
@@ -112,7 +112,7 @@ export class ContextRepository {
 
       await txc.run(
         `
-          MATCH (c:FormContext {id: $id})-[:HAS_RULE]->(:FormContextRule)
+          MATCH (c:FormContext {id: $id})-[r:HAS_RULE]->(:FormContextRule)
           DETACH DELETE r
           RETURN c
         `,
@@ -706,7 +706,7 @@ export class ContextRepository {
         { contextId, parentId }
       );
 
-      const pathCount = circularCheck.records[0].get("pathCount").toNumber();
+      const pathCount = circularCheck.records[0].get("pathCount");
       if (pathCount > 0) {
         throw new Error(
           `Cannot set context parent: circular dependency detected`
@@ -814,7 +814,7 @@ export class ContextRepository {
         { id }
       );
 
-      const childCount = childCheck.records[0].get("childCount").toNumber();
+      const childCount = childCheck.records[0].get("childCount");
       if (childCount > 0) {
         throw new Error(
           `Cannot delete context: it has ${childCount} child contexts`

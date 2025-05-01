@@ -6,7 +6,7 @@ import type {
   FormMode,
   FormContent,
   FormHandler,
-} from "@/form/schema/form";
+} from "@/form/schema/shape";
 import { Form } from "@/form/form/form";
 
 export class FormView<T extends FormShape> {

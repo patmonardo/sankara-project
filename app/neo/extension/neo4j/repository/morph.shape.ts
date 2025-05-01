@@ -4,8 +4,6 @@ import {
   FormMorphPipeline,
   FormMorphSchema,
 } from "@/form/schema/morph";
-import { Record as Neo4jRecord } from "neo4j-driver";
-import { Session } from "neo4j-driver";
 import { v4 as uuidv4 } from "uuid";
 
 /**
@@ -47,9 +45,6 @@ export class MorphRepository {
         FOREACH (__ IN CASE WHEN $config IS NOT NULL THEN [1] ELSE [] END | 
           SET m.config = $config)
           
-        FOREACH (__ IN CASE WHEN $meta IS NOT NULL THEN [1] ELSE [] END | 
-          SET m.meta = $meta)
-          
         RETURN m
       `,
         {
@@ -60,7 +55,6 @@ export class MorphRepository {
           outputType: morph.outputType,
           transformFn: morph.transformFn,
           config: morph.config ? JSON.stringify(morph.config) : null,
-          meta: morph.meta ? JSON.stringify(morph.meta) : null,
         }
       );
 
@@ -166,10 +160,7 @@ export class MorphRepository {
             
         FOREACH (__ IN CASE WHEN $config IS NOT NULL THEN [1] ELSE [] END | 
           SET p.config = $config)
-          
-        FOREACH (__ IN CASE WHEN $meta IS NOT NULL THEN [1] ELSE [] END | 
-          SET p.meta = $meta)
-          
+        
         RETURN p
       `,
         {
@@ -180,7 +171,6 @@ export class MorphRepository {
           outputType: pipeline.outputType,
           optimized: pipeline.optimized || false,
           config: pipeline.config ? JSON.stringify(pipeline.config) : null,
-          meta: pipeline.meta ? JSON.stringify(pipeline.meta) : null,
         }
       );
 
@@ -257,16 +247,6 @@ export class MorphRepository {
         }
       }
 
-      // Parse metadata if it exists
-      let meta = undefined;
-      if (morphNode.meta) {
-        try {
-          meta = JSON.parse(morphNode.meta);
-        } catch (e) {
-          console.error(`Error parsing morph meta: ${e}`);
-        }
-      }
-
       // Parse implementation if it exists
       let implementation = undefined;
       if (morphNode.implementation) {
@@ -311,7 +291,6 @@ export class MorphRepository {
         outputType: morphNode.outputType,
         transformFn: morphNode.transformFn,
         config,
-        meta,
         implementation,
         composition,
       };
@@ -359,16 +338,6 @@ export class MorphRepository {
         }
       }
 
-      // Parse metadata if it exists
-      let meta = undefined;
-      if (pipelineNode.meta) {
-        try {
-          meta = JSON.parse(pipelineNode.meta);
-        } catch (e) {
-          console.error(`Error parsing pipeline meta: ${e}`);
-        }
-      }
-
       // Get morph steps in the pipeline
       const stepsResult = await session.run(
         `
@@ -392,7 +361,6 @@ export class MorphRepository {
         outputType: pipelineNode.outputType,
         optimized: pipelineNode.optimized,
         config,
-        meta,
       };
 
       return pipeline;

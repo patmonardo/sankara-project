@@ -1,4 +1,4 @@
-import { FormSection } from "@/form/schema/form";
+import { FormSection } from "@/form/schema/shape";
 import { createMorph } from "../core";
 import { FormShape } from "./types";
 import { FormContext, isFormContext } from "./types";

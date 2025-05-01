@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from '@/form/form/form';
-import type { FormMode, FormContent, FormHandler } from '@/form/schema/form';
+import type { FormMode, FormContent, FormHandler } from '@/form/schema/shape';
 import { LinkShape } from '@/form/schema/link';
 import { LinkMorphPipeline } from '@/ui/link/link.morph';
 

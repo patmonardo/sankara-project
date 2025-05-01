@@ -1,5 +1,5 @@
 import { GraphShape } from "../graph/types";
-import { FormMeta } from "../../schema/form";
+import { FormMeta } from "../../schema/shape";
 
 /**
  * PrismaShape extends GraphShape to include Prisma-specific query definitions.

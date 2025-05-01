@@ -1,4 +1,4 @@
-import { FormShape } from "../../schema/form";
+import { FormShape } from "../../schema/shape";
 import { createMorph } from "../core";
 import { CypherShape, CypherQuery } from "./types";
 

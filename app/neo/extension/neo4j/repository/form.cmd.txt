@@ -1,0 +1,187 @@
+Testing FormRepository operations...
+Initializing connection...
+Connected to Neo4j successfully
+✅ Connected to Neo4j
+
+==== FORM OPERATIONS ====
+
+📝 CREATING FORM:
+Form to save: {
+  "id": "4c0f464f-21ca-41f0-be72-b8b12c7df497",
+  "name": "UserProfileForm",
+  "title": "User Profile",
+  "description": "Form to collect user profile information.",
+  "fields": [
+    {
+      "id": "6ad4529e-4e24-4712-8fcd-c880055cca2c",
+      "type": "text",
+      "name": "username",
+      "label": "Username",
+      "required": true,
+      "placeholder": "Enter your username",
+      "validation": {
+        "minLength": 3
+      },
+      "defaultValue": "user_1746061334135"
+    },
+    {
+      "id": "36365f10-99cd-49c1-b68a-f9675759eab3",
+      "type": "select",
+      "name": "role",
+      "label": "Role",
+      "options": [
+        {
+          "label": "Admin",
+          "value": "admin"
+        },
+        {
+          "label": "Editor",
+          "value": "editor"
+        },
+        {
+          "label": "Viewer",
+          "value": "viewer"
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "title": "Profile Layout",
+    "columns": "single",
+    "sections": [
+      {
+        "id": "816d954b-e84e-42d4-9aaa-dea6be0d318e",
+        "name": "basicInfo",
+        "title": "Basic Information",
+        "fields": [
+          "6ad4529e-4e24-4712-8fcd-c880055cca2c",
+          "36365f10-99cd-49c1-b68a-f9675759eab3"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "479118c3-dfcb-4259-9ae0-f964f78ee1bb",
+        "type": "submit",
+        "label": "Save Profile",
+        "primary": true
+      }
+    ]
+  },
+  "data": {
+    "initialUsername": "prefilled_user"
+  },
+  "state": {
+    "status": "idle"
+  }
+}
+✅ Saved form: 4c0f464f-21ca-41f0-be72-b8b12c7df497
+
+🔍 GETTING FORM BY ID:
+Fetched form: {
+  "id": "4c0f464f-21ca-41f0-be72-b8b12c7df497",
+  "name": "UserProfileForm",
+  "title": "User Profile",
+  "description": "Form to collect user profile information.",
+  "fields": [
+    {
+      "id": "6ad4529e-4e24-4712-8fcd-c880055cca2c",
+      "type": "text",
+      "name": "username",
+      "description": "",
+      "label": "Username",
+      "placeholder": "Enter your username",
+      "defaultValue": "user_1746061334135",
+      "required": true,
+      "disabled": false,
+      "readOnly": false,
+      "visible": true,
+      "validation": {
+        "minLength": 3
+      }
+    },
+    {
+      "id": "36365f10-99cd-49c1-b68a-f9675759eab3",
+      "type": "select",
+      "name": "role",
+      "description": "",
+      "label": "Role",
+      "placeholder": "",
+      "required": false,
+      "disabled": false,
+      "readOnly": false,
+      "visible": true,
+      "options": [
+        {
+          "value": "admin",
+          "label": "Admin"
+        },
+        {
+          "value": "editor",
+          "label": "Editor"
+        },
+        {
+          "value": "viewer",
+          "label": "Viewer"
+        }
+      ]
+    }
+  ],
+  "data": {
+    "initialUsername": "prefilled_user"
+  },
+  "layout": {
+    "title": "Profile Layout",
+    "columns": "single",
+    "sections": [
+      {
+        "id": "816d954b-e84e-42d4-9aaa-dea6be0d318e",
+        "name": "basicInfo",
+        "title": "Basic Information",
+        "description": "",
+        "fields": [
+          "6ad4529e-4e24-4712-8fcd-c880055cca2c",
+          "36365f10-99cd-49c1-b68a-f9675759eab3"
+        ],
+        "columns": 1,
+        "priority": 1,
+        "collapsible": false,
+        "collapsed": false,
+        "className": ""
+      }
+    ],
+    "actions": [
+      {
+        "id": "479118c3-dfcb-4259-9ae0-f964f78ee1bb",
+        "type": "submit",
+        "label": "Save Profile",
+        "primary": true,
+        "disabled": false,
+        "position": "bottom"
+      }
+    ]
+  },
+  "state": {
+    "status": "idle"
+  }
+}
+  - Parsed data type: object { initialUsername: 'prefilled_user' }
+  - Parsed state type: object { status: 'idle' }
+  - Fetched fields count: 2
+  - Fetched layout sections count: 1
+  - Fetched layout actions count: 1
+  - Fetched field options count (field 2): 3
+
+🔍 FINDING FORMS:
+Found 1 forms matching name 'UserProfileForm':
+  - ID: 4c0f464f-21ca-41f0-be72-b8b12c7df497, Name: UserProfileForm
+
+==== DELETE OPERATION ====
+
+🗑️ DELETING FORM:
+Form 4c0f464f-21ca-41f0-be72-b8b12c7df497 deleted: true
+Verification - Form 4c0f464f-21ca-41f0-be72-b8b12c7df497 found: false
+
+Connection closed
+
+Form repository test completed

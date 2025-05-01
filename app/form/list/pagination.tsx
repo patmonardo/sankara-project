@@ -286,5 +286,5 @@ const PaginationPipeline = createPipeline<PaginationMorphInput, React.ReactEleme
 // --- EXPORTED COMPONENT ---
 
 export default function Pagination(props: PaginationProps) {
-  return PaginationPipeline.transform({ props }, { props });
+  return PaginationPipeline.run({ props }, { props });
 }

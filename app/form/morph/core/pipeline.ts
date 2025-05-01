@@ -1,4 +1,4 @@
-import { FormShape } from "../../schema/form";
+import { FormShape } from "../../schema/shape";
 import { Morph } from "./types";
 import { createMorph } from "./morph";
 

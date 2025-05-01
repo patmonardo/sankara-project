@@ -4,7 +4,7 @@ import React from 'react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Form } from '@/form/form/form';
-import { FormMode, FormContent, FormHandler } from '@/form/schema/form';
+import { FormMode, FormContent, FormHandler } from '@/form/schema/shape';
 import { ButtonShape } from '@/form/schema/button';
 import { createMorph, createPipeline } from '@/form/morph/core';
 import { cn } from "@/form/lib/utils";

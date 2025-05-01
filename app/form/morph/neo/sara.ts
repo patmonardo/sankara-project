@@ -1,5 +1,5 @@
 import { SimpleMorph } from "../morph";
-import { FormShape, FieldShape, FieldValidation } from "../../schema/form";
+import { FormShape, FieldShape, FieldValidation } from "../../schema/shape";
 import { PropertyGraph, GraphEntity, GraphRelationship } from "./graph";
 import { CognitiveWorkflow, CognitiveTask, TaskInput, TaskOutput } from "./task";
 import { StateOfConsciousness, ConsciousWorkflow } from "./tara";

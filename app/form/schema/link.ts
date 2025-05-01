@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FormLayoutSchema, FormShapeSchema } from './form';
+import { FormLayoutSchema, FormShapeSchema } from './shape';
 
 // Link types
 export const LinkTypeSchema = z.enum([

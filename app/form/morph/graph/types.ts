@@ -1,5 +1,5 @@
 // Add these imports if needed
-import { FormShape } from "../../schema/form";
+import { FormShape } from "../../schema/shape";
 import { FormRelation } from "../../schema/relation";
 import { FormEntity } from "../../schema/entity";
 

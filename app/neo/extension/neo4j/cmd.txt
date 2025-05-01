@@ -1,0 +1,49 @@
+Testing Neo4j schema initialization...
+Initializing connection...
+Connected to Neo4j successfully
+✅ Connected to Neo4j
+
+📊 CHECKING CURRENT SCHEMA STATE:
+Checking constraints...
+Found 5 constraints:
+- context_id_unique: hi
+- entity_id_unique: hi
+- form_id_unique: hi
+- property_id_unique: hi
+- relation_id_unique: hi
+
+Checking indexes...
+Found 11 indexes:
+- context_id_unique: hi
+- entity_id_unique: hi
+- entity_type_index: hi
+- form_id_unique: hi
+- form_name_index: hi
+- index_343aff4e: hi
+- index_f7700477: hi
+- property_id_unique: hi
+- property_name_index: hi
+- relation_id_unique: hi
+- relation_type_index: hi
+
+🔧 INITIALIZING SCHEMA:
+✅ Schema initialized
+
+🔄 DEFINING RELATIONSHIP TYPES:
+Available relationship types: [
+  'HAS_PROPERTY',      'RELATES_TO',
+  'DEPENDS_ON',        'BELONGS_TO',
+  'INSTANCE_OF',       'EXTENDS',
+  'IMPLEMENTS',        'CONTAINS',
+  'REFERENCES',        'DEFINED_IN',
+  'HAS_FIELD',         'SUBMITS_TO',
+  'DERIVES_FROM',      'CONSTRAINS',
+  'VALIDATED_BY',      'PRECEDES',
+  'TRIGGERS',          'LOCATED_AT',
+  'ADJACENT_TO',       'REPORTS_TO',
+  'COLLABORATES_WITH', 'CREATED_BY'
+]
+✅ Relationship types defined
+
+📝 CREATING PROPERTY TYPE NODES:
+Connection closed

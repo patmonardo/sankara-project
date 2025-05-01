@@ -27,47 +27,16 @@ export const FormEntityStorageSchema = z.object({
 });
 
 /**
- * FormEntitySchema - The core entity representation in our Form system
- * Entities are first-class citizens in our Form Graph, representing nodes
- * in the knowledge representation.
+ * Defines constraints that can be attached to entities
+ *
  */
-export const FormEntitySchema = z.object({
+export const FormEntityConstraintSchema = z.object({
   // Identity
   id: z.string(),
   name: z.string(),
-  description: z.string(),
-
-  // Classification
-  type: z.string(),
-  tags: z.array(z.string()).optional(),
-
-  // Structure
-  schema: z.record(z.any()),
-
-  // Storage & persistence
-  mapping: FormEntityStorageSchema.optional(),
-
-  // Metadata
-  createdAt: z
-    .number()
-    .optional()
-    .default(Date.now()),
-  updatedAt: z
-    .number()
-    .optional()
-    .default(Date.now()),
-  createdBy: z.string().optional(),
-  contextId: z.string().optional(),
-});
-
-
-/**
- * EntityValidationRule schema
- * Defines validation rules that apply to entities
- */
-export const FormEntityValidationSchema = z.object({
-  field: z.string(),
-  rule: z.enum(["required", "unique", "min", "max", "pattern", "custom"]),
+  description: z.string().optional(),
+  type: z.string().optional(),
+  property: z.string().optional(),
   value: z.any().optional(),
   message: z.string().optional(),
   custom: z.function().optional(),
@@ -86,12 +55,54 @@ export const FormEntityBehaviorSchema = z.object({
 });
 
 /**
+ * EntityQuery schema
+ * Defines a query for retrieving entities
+ */
+export const FormEntityCriteriaSchema = z.object({
+  type: z.string().optional(),
+  filter: z.record(z.any()).optional(),
+  sort: z
+    .array(
+      z.object({
+        field: z.string(),
+        direction: z.enum(["asc", "desc"]).default("asc"),
+      })
+    )
+    .optional(),
+  limit: z.number().int().optional(),
+  offset: z.number().int().optional(),
+  include: z.array(z.string()).optional(),
+});
+
+/**
+ * EntityValidationRule schema
+ * Defines validation rules that apply to entities
+ */
+export const FormEntityValidationSchema = z.object({
+  field: z.string(),
+  rule: z.enum(["required", "unique", "min", "max", "pattern", "custom"]),
+  value: z.any().optional(),
+  message: z.string().optional(),
+  custom: z.function().optional(),
+});
+
+/**
  * Complete FormEntityDefinition schema
  * A comprehensive definition of an entity with validation, behaviors, and indexing
  */
-export const FormEntityDefinitionSchema = FormEntitySchema.extend({
-  validation: z.array(FormEntityValidationSchema).optional(),
+export const FormEntityDefinitionSchema = z.object({
+  // Identity
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+
+  // Classification
+  type: z.string(),
+  tags: z.array(z.string()).optional(),
+
   behaviors: z.array(FormEntityBehaviorSchema).optional(),
+  validation: z.array(FormEntityValidationSchema).optional(),
+
   indices: z
     .array(
       z.object({
@@ -105,7 +116,7 @@ export const FormEntityDefinitionSchema = FormEntitySchema.extend({
     .array(
       z.object({
         type: z.string(),
-        target: z.string(),
+        targetId: z.string(),
         cardinality: z
           .enum(["one-to-one", "one-to-many", "many-to-many"])
           .default("many-to-many"),
@@ -113,29 +124,53 @@ export const FormEntityDefinitionSchema = FormEntitySchema.extend({
       })
     )
     .optional(),
-});
 
+  // Metadata
+  createdAt: z
+    .number()
+    .optional()
+    .default(() => Date.now())
+    .optional(),
+  updatedAt: z
+    .number()
+    .optional()
+    .default(() => Date.now())
+    .optional(),
+});
 
 /**
- * EntityQuery schema
- * Defines a query for retrieving entities
+ * FormEntitySchema - The core entity representation in our Form system
+ * Entities are first-class citizens in our Form Graph, representing nodes
+ * in the knowledge representation.
  */
-export const FormEntityQuerySchema = z.object({
-  type: z.string().optional(),
-  filter: z.record(z.any()).optional(),
-  sort: z
-    .array(
-      z.object({
-        field: z.string(),
-        direction: z.enum(["asc", "desc"]).default("asc"),
-      })
-    )
-    .optional(),
-  limit: z.number().optional(),
-  offset: z.number().optional(),
-  include: z.array(z.string()).optional(),
-});
+export const FormEntitySchema = z.object({
+  // Identity
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
 
+  // Classification
+  type: z.string(),
+  tags: z.array(z.string()).optional(),
+
+  // Storage & persistence
+  mapping: FormEntityStorageSchema.optional(),
+
+  // Definition reference
+  definitionId: z.string().optional(),
+
+  // Metadata
+  createdAt: z
+    .number()
+    .optional()
+    .default(() => Date.now())
+    .optional(),
+  updatedAt: z
+    .number()
+    .optional()
+    .default(() => Date.now())
+    .optional(),
+});
 
 /**
  * Helper function to create an entity definition
@@ -143,9 +178,8 @@ export const FormEntityQuerySchema = z.object({
 export function defineFormEntity(config: {
   id: string;
   name: string;
-  type: string;
+  type?: string;
   description?: string;
-  schema: Record<string, any>;
   mapping: FormEntityStorage;
   validation?: FormEntityValidation[];
   behaviors?: FormEntityBehavior[];
@@ -157,13 +191,12 @@ export function defineFormEntity(config: {
     name: config.name,
     description: config.description || config.name,
     type: config.type,
-    schema: config.schema,
     mapping: config.mapping,
     validation: config.validation || [],
     behaviors: config.behaviors || [],
     tags: config.tags || [],
-    created: new Date(),
-    updated: new Date(),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
     contextId: config.contextId,
   });
 }
@@ -176,29 +209,30 @@ export function createFormEntity(config: {
   name: string;
   type: string;
   description?: string;
-  schema?: Record<string, any>;
+  definition?: FormEntityDefinition;
   storage?: string;
 }): FormEntity {
   return FormEntitySchema.parse({
     id: config.id,
     name: config.name,
-    description: config.description || config.name,
     type: config.type,
-    schema: config.schema || {},
+    description: config.description || config.name,
+    definition: config.definition || {},
     mapping: {
       storage: config.storage || "default",
       primaryKey: "id",
       fields: {},
     },
-    created: new Date(),
-    updated: new Date(),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
   });
 }
 
 export type FormEntityType = z.infer<typeof FormEntityTypeSchema>;
 export type FormEntityStorage = z.infer<typeof FormEntityStorageSchema>;
-export type FormEntityQuery = z.infer<typeof FormEntityQuerySchema>;
-export type FormEntityDefinition = z.infer<typeof FormEntityDefinitionSchema>;
-export type FormEntityValidation = z.infer<typeof FormEntityValidationSchema>;
+export type FormEntityConstraint = z.infer<typeof FormEntityConstraintSchema>;
 export type FormEntityBehavior = z.infer<typeof FormEntityBehaviorSchema>;
+export type FormEntityCriteria = z.infer<typeof FormEntityCriteriaSchema>;
+export type FormEntityValidation = z.infer<typeof FormEntityValidationSchema>;
+export type FormEntityDefinition = z.infer<typeof FormEntityDefinitionSchema>;
 export type FormEntity = z.infer<typeof FormEntitySchema>;

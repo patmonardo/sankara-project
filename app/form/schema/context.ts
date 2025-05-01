@@ -112,12 +112,7 @@ export const FormContextSchema = FormContextBaseSchema.extend({
   transactionState: z.enum(["none", "active", "committed", "rolledback"])
     .optional()
     .default("none"),
-});
 
-/**
- * FormExecutionContext - Context specifically for execution environments
- */
-export const FormExecutionContextSchema = FormContextBaseSchema.extend({
   // Execution environment type
   executionType: z.enum([
     "logical",    // Conceptual logic operations
@@ -155,4 +150,4 @@ export type FormContextRule = z.infer<typeof FormContextRuleSchema>;
 export type FormContextRuleType = z.infer<typeof FormContextRuleTypeSchema>;
 export type FormContextBase = z.infer<typeof FormContextBaseSchema>;
 export type FormContext = z.infer<typeof FormContextSchema>;
-export type FormExecutionContext = z.infer<typeof FormExecutionContextSchema>;
+export type FormExecutionContext = FormContext;

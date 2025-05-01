@@ -2,7 +2,7 @@ import * as React from 'react';
 import NextLink from 'next/link';
 import { createMorph, createPipeline } from '@/form/morph/core';
 import { LinkShape } from '@/form/schema/link';
-import { FormHandler } from '@/form/schema/form';
+import { FormHandler } from '@/form/schema/shape';
 import { cn } from '@/form/lib/utils';
 
 // Import Lucide icons (modern alternative to heroicons)

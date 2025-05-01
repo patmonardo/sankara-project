@@ -1,6 +1,6 @@
 import { FormExecutionContext } from "../../schema/context";
 import { FormShape, FormField, FormContext } from "./types";
-import { FormOption } from "../../schema/form";
+import { FormOption } from "../../schema/shape";
 import { createMorph } from "../core";
 
 /**

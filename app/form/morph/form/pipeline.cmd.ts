@@ -1,4 +1,4 @@
-import { FormShape, FormField } from "../../schema/form";
+import { FormShape, FormField } from "../../schema/shape";
 import { ViewContext } from "../core/mode";
 import { ViewSystemPipeline, ViewOutput, ViewField } from "./pipeline"; // Assuming ViewField is exported
 

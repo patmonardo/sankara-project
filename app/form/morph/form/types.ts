@@ -1,4 +1,4 @@
-import { FormShape, FormField } from "../../schema/form";
+import { FormShape, FormField } from "../../schema/shape";
 import { FormContext, FormExecutionContext } from "../../schema/context";
 
 /**
@@ -8,5 +8,5 @@ export function isFormContext(context: any): context is FormContext {
   return context && typeof context === "object" && "form" in context;
 }
 
-export type { FormShape, FormField } from "../../schema/form";
+export type { FormShape, FormField } from "../../schema/shape";
 export type { FormContext, FormExecutionContext } from "../../schema/context";

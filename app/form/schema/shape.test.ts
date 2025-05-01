@@ -6,7 +6,7 @@ import {
   FormLayoutSchema,
   FormStateSchema,
   FormShapeSchema,
-} from "./form";
+} from "./shape";
 
 describe("Form Schema Validation", () => {
   describe("Form Field Schema", () => {

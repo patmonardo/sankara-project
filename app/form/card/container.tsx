@@ -1,7 +1,7 @@
 import React from "react";
 import { ContainerCardMorphInput, ContainerCardPipeline } from "./card-morph";
 import type { ContainerCardShape } from "@/form/schema/card";
-import type { FormMode, FormContent, FormHandler } from "@/form/schema/form";
+import type { FormMode, FormContent, FormHandler } from "@/form/schema/shape";
 import { Card } from "./card";
 
 /**

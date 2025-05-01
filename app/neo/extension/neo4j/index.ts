@@ -1,12 +1,12 @@
 import { Neo4jConnection } from "./connection";
 import { Neo4jSchemaManager } from "./schema";
-import { PropertyRepository } from "./repositories/property";
-import { EntityRepository } from "./repositories/entity";
-import { RelationRepository } from "./repositories/relation";
-import { FormDefinitionRepository } from "./repositories/schema";
-import { FormRepository } from "./repositories/form";
-import { ContextRepository } from "./repositories/context";
-import { MorphRepository } from "./repositories/morph";
+import { PropertyRepository } from "./repository/property.";
+import { EntityRepository } from "./repository/entity";
+import { RelationRepository } from "./repository/relation";
+import { FormDefinitionRepository } from "./repository/schema";
+import { FormRepository } from "./repository/form.shape";
+import { ContextRepository } from "./repository/context.shape";
+import { MorphRepository } from "./repository/morph.shape";
 
 /**
  * Neo4j Module - Main entry point for Neo4j integration

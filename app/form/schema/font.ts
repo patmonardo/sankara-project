@@ -1,6 +1,6 @@
 //@/form/schema/font.ts
 import { z } from 'zod'
-import { FormShapeSchema } from './form'
+import { FormShapeSchema } from './shape'
 import type { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 
 // Next.js font configuration schema

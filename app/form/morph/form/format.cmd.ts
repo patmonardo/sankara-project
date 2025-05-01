@@ -1,4 +1,4 @@
-import { FormShape } from "../../schema/form";
+import { FormShape } from "../../schema/shape";
 import { ViewContext } from "../core/mode";
 import { ViewFormatMorph, AnyFormattedViewOutput } from "./format";
 import { generateView } from "./pipeline";
