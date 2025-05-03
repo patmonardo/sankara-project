@@ -1,6 +1,6 @@
 import {
   // FormDefinition, // Still removed
-  FormMatter,
+  FormData,
   FormState, // Import the correct type inferred from FormStateSchema
 } from "../schema/shape";
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,7 @@ export class Form {
   public readonly id: string;
   public readonly definitionId: string;
   public readonly definitionName: string;
-  public data?: FormMatter;
+  public data?: FormData;
   public state: FormState; // Use the correct FormState type
 
   /**
@@ -23,7 +23,7 @@ export class Form {
     id?: string;
     definitionId: string;
     definitionName: string;
-    initialData?: FormMatter;
+    initialData?: FormData;
     initialState?: FormState;
   }) {
     this.id = config.id || `form:${uuidv4()}`;

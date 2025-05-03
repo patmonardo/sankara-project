@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { createMorph, createPipeline } from '@/form/morph/core';
 import { Form } from '@/form/form/form';
-import type { FormMode, FormContent, FormHandler, FormMatter } from '@/form/schema/shape';
+import type { FormMode, FormContent, FormHandler, FormData } from '@/form/schema/shape';
 import { ListShape, ListItem } from '@/form/schema/list';
 import { renderLink } from '@/form/link/link';
 import { cn } from '@/form/lib/utils';

@@ -1,5 +1,4 @@
 import { Neo4jConnection } from "../connection";
-import { Transaction } from "neo4j-driver";
 import { FormRelation, FormRelationCriteria } from "@/form/schema/relation";
 import { RelationDefinitionRepository } from "./relation.def";
 import { v4 as uuidv4 } from "uuid";
@@ -477,7 +476,7 @@ export class RelationShapeRepository {
         name: definition.name,
         description: definition.description,
         definitionId: definitionId,
-        type: definition.type,
+        type: definition.type || "Unknown",
         sourceId: sourceId,
         targetId: targetId,
         properties: Object.keys(properties).length > 0 ? properties : undefined,

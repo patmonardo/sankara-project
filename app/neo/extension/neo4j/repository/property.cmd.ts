@@ -1,6 +1,6 @@
 import { Neo4jConnection } from "../connection";
 import { PropertyDefinitionRepository } from "./property.def";
-import { PropertyShapeRepository } from "./property.shape";
+import { PropertyShapeRepository } from "./property";
 import { FormPropertyDefinition, FormProperty } from "@/form/schema/property";
 import neo4j from "neo4j-driver";
 import { v4 as uuidv4 } from "uuid";

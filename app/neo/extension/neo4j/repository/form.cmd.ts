@@ -1,5 +1,5 @@
 import { Neo4jConnection } from "../connection";
-import { FormRepository } from "./form.shape";
+import { FormShapeRepository } from "./form";
 import {
   FormShape,
   FormField,
@@ -10,15 +10,16 @@ import {
 } from "@/form/schema/shape"; // Adjust path if needed
 import * as dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
+import { FilterShape, FilterField } from "@/form/morph/form/filter";
 
 // Load environment variables
 dotenv.config();
 
 /**
- * Test FormRepository operations
+ * Test FormShapeRepository operations
  */
-async function testFormRepository() {
-  console.log("Testing FormRepository operations...");
+async function testFormShapeRepository() {
+  console.log("Testing FormShapeRepository operations...");
   let connection: Neo4jConnection | null = null;
 
   try {
@@ -35,12 +36,15 @@ async function testFormRepository() {
     console.log("✅ Connected to Neo4j");
 
     // Create repository
-    const formRepo = new FormRepository(connection);
+    const formRepo = new FormShapeRepository(connection);
 
     // --- Test Data ---
     const formId = uuidv4();
     const fieldId1 = uuidv4();
     const fieldId2 = uuidv4();
+    const fieldId3 = uuidv4();
+    const fieldId4 = uuidv4();
+    const fieldId5= uuidv4();
     const sectionId1 = uuidv4();
     const actionId1 = uuidv4();
 
@@ -48,7 +52,7 @@ async function testFormRepository() {
     console.log("\n==== FORM OPERATIONS ====");
     console.log("\n📝 CREATING FORM:");
 
-    const sampleForm: FormShape = {
+    const sampleForm: FilterShape = {
       id: formId,
       name: "UserProfileForm",
       title: "User Profile",
@@ -62,7 +66,6 @@ async function testFormRepository() {
           required: true,
           placeholder: "Enter your username",
           validation: { minLength: 3 }, // Stored as JSON string
-          defaultValue: "user_" + Date.now(), // Stored as string/number
         },
         {
           id: fieldId2,
@@ -76,8 +79,43 @@ async function testFormRepository() {
             { label: "Viewer", value: "viewer" },
           ],
         },
+        {
+          id: fieldId2,
+          type: "select",
+          name: "role",
+          label: "Role",
+          options: [
+            // Stored as nodes + relationships
+            { label: "Admin", value: "admin" },
+            { label: "Editor", value: "editor" },
+            { label: "Viewer", value: "viewer" },
+          ],
+        },
+        {
+          id: fieldId3,
+          type: "number",
+          name: "orderPosition",
+          label: "Order Position",
+        },
+        {
+          id: fieldId4,
+          type: "string",
+          name: "orderDirection",
+          label: "Order Position",
+        },
+        {
+          id: fieldId5,
+          type: "string",
+          name: "value",
+          label: "Value",
+          value: "12345",
+        },  
+
       ],
       layout: {
+        id: uuidv4(),
+        name: "default",
+        description: "Default layout for the form.",
         // Stored as nodes + relationships
         title: "Profile Layout",
         columns: "single",
@@ -100,7 +138,7 @@ async function testFormRepository() {
       },
       data: {
         // Stored as JSON string
-        initialUsername: "prefilled_user",
+        meta: { owner: "cat1"},
       },
       state: {
         // Stored as JSON string
@@ -109,7 +147,7 @@ async function testFormRepository() {
       // meta: { // Assuming meta is not directly stored on Form node based on saveForm query
       //   createdBy: 'system',
       // },
-      // matter: { // Example matter, stored as JSON string
+      // data: { // Example matter, stored as JSON string
       //   sourceId: { type: 'entity', entityRef: { entity: 'someSchemaId', id: formId } }
       // }
     };
@@ -187,7 +225,7 @@ async function testFormRepository() {
 }
 
 // Run the test
-testFormRepository()
+testFormShapeRepository()
   .then(() => console.log("\nForm repository test completed"))
   .catch((err) =>
     console.error("\nUnhandled error during test execution:", err)

@@ -1,0 +1,168 @@
+Starting EntityShapeRepository tests...
+Initializing connection...
+Connected to Neo4j successfully
+✅ Connected to Neo4j
+Assuming FormShape with id: form-cmd-test-001 and kind: Value exists.
+
+--- Testing saveEntity (Create with fields) ---
+Attempting to save entity with fields array...
+Saved Entity (Returned by saveEntity): {
+  "formId": "form-cmd-test-001",
+  "kind": "Value",
+  "tags": [
+    "test",
+    "cmd",
+    "with-fields"
+  ],
+  "state": {
+    "status": "new",
+    "count": 1
+  },
+  "name": "Test Entity With Fields",
+  "description": "Testing fields array persistence",
+  "fields": [
+    {
+      "id": "email",
+      "value": "test@example.com"
+    },
+    {
+      "id": "age",
+      "value": 30
+    }
+  ],
+  "id": "9def62d6-afa3-4ebc-843d-d05750658aea",
+  "createdAt": "2025-05-03T19:33:41.737Z",
+  "updatedAt": "2025-05-03T19:33:41.737Z"
+}
+✅ Entity created/merged with ID: 9def62d6-afa3-4ebc-843d-d05750658aea
+
+--- Testing getEntityById ---
+Fetched Entity (Current getEntityById): {
+  "id": "9def62d6-afa3-4ebc-843d-d05750658aea",
+  "name": "Test Entity With Fields",
+  "description": "Testing fields array persistence",
+  "tags": [
+    "with-fields",
+    "cmd",
+    "test"
+  ],
+  "state": "{\"status\":\"new\",\"count\":1}",
+  "createdAt": "2025-05-03T19:33:41.737000000Z",
+  "updatedAt": "2025-05-03T19:33:41.737000000Z",
+  "kind": "Value",
+  "formId": "form-cmd-test-001",
+  "email": "test@example.com",
+  "age": 30
+}
+
+--- Testing saveEntity (Update with fields) ---
+Attempting to update entity with fields array...
+Updated Entity (Returned by saveEntity): {
+  "id": "9def62d6-afa3-4ebc-843d-d05750658aea",
+  "formId": "form-cmd-test-001",
+  "kind": "Value",
+  "tags": [
+    "test",
+    "cmd",
+    "with-fields",
+    "updated"
+  ],
+  "state": {
+    "status": "updated",
+    "count": 2
+  },
+  "name": "Test Entity With Fields - Updated",
+  "description": "Test Value Updated",
+  "fields": [
+    {
+      "id": "email",
+      "label": "Email Address",
+      "type": "email",
+      "required": true,
+      "value": "updated@example.com",
+      "originalValue": "test@example.com",
+      "changed": true,
+      "lastModified": "2025-05-03T19:33:41.764Z"
+    },
+    {
+      "id": "age",
+      "label": "Age",
+      "type": "number",
+      "value": 31,
+      "originalValue": 30,
+      "changed": true,
+      "lastModified": "2025-05-03T19:33:41.764Z"
+    }
+  ],
+  "createdAt": "2025-05-03T19:33:41.764Z",
+  "updatedAt": "2025-05-03T19:33:41.764Z"
+}
+✅ Entity updated with ID: 9def62d6-afa3-4ebc-843d-d05750658aea
+
+--- Testing getEntityById (After Update) ---
+Fetched Updated Entity (Current getEntityById): {
+  "id": "9def62d6-afa3-4ebc-843d-d05750658aea",
+  "name": "Test Entity With Fields - Updated",
+  "description": "Test Value Updated",
+  "tags": [
+    "updated",
+    "with-fields",
+    "cmd",
+    "test"
+  ],
+  "state": "{\"status\":\"updated\",\"count\":2}",
+  "createdAt": "2025-05-03T19:33:41.764000000Z",
+  "updatedAt": "2025-05-03T19:33:41.764000000Z",
+  "kind": "Value",
+  "formId": "form-cmd-test-001",
+  "email": "updated@example.com",
+  "age": 31
+}
+
+--- Testing findEntities ---
+Found 1 entities by kind 'Value'.
+First Found Entity (Current findEntities): {
+  "id": "9def62d6-afa3-4ebc-843d-d05750658aea",
+  "name": "Test Entity With Fields - Updated",
+  "description": "Test Value Updated",
+  "tags": [
+    "updated",
+    "with-fields",
+    "cmd",
+    "test"
+  ],
+  "state": "{\"status\":\"updated\",\"count\":2}",
+  "createdAt": "2025-05-03T19:33:41.764000000Z",
+  "updatedAt": "2025-05-03T19:33:41.764000000Z",
+  "kind": "Value",
+  "formId": "form-cmd-test-001",
+  "email": "updated@example.com",
+  "age": 31
+}
+Found 1 entities by kind 'Value' and tags ['test', 'updated'].
+Found Tagged Entity (Current findEntities): {
+  "id": "9def62d6-afa3-4ebc-843d-d05750658aea",
+  "name": "Test Entity With Fields - Updated",
+  "description": "Test Value Updated",
+  "tags": [
+    "updated",
+    "with-fields",
+    "cmd",
+    "test"
+  ],
+  "state": "{\"status\":\"updated\",\"count\":2}",
+  "createdAt": "2025-05-03T19:33:41.764000000Z",
+  "updatedAt": "2025-05-03T19:33:41.764000000Z",
+  "kind": "Value",
+  "formId": "form-cmd-test-001",
+  "email": "updated@example.com",
+  "age": 31
+}
+
+--- Testing deleteEntity ---
+Delete operation for ID 9def62d6-afa3-4ebc-843d-d05750658aea returned: true
+✅ Verified: Entity 9def62d6-afa3-4ebc-843d-d05750658aea successfully deleted.
+
+EntityShapeRepository tests completed successfully (with known limitations in read methods).
+
+Neo4j connection closed.

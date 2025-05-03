@@ -170,12 +170,12 @@ export interface AbsoluteGround extends Ground {
 /**
  * Create Absolute Ground - Form-Matter
  */
-export function createFormMatterGround(options: {
+export function createFormDataGround(options: {
   id?: string;
   emergesFrom?: string;
   characteristics?: Characteristic[];
 } = {}): AbsoluteGround {
-  const id = options.id || `ground:absolute-ground:form-matter:${uuidv4()}`;
+  const id = options.id || `ground:absolute-ground:form-data:${uuidv4()}`;
   
   // Create specific characteristics for form-matter
   const FORM_DETERMINATION = createCharacteristic(
@@ -241,7 +241,7 @@ export function createFormMatterGround(options: {
       standsOverAgainst: "matter"
     },
     
-    matter: {
+    data: {
       isSimpleIdentity: true,
       isVoidOfDistinction: true
     },
@@ -1024,7 +1024,7 @@ export class GroundSystem extends EventEmitter {
     
     // Create ground based on subtype
     if (subtype === 'form-matter') {
-      ground = createFormMatterGround(options);
+      ground = createFormDataGround(options);
     } else if (subtype === 'form-content') {
       ground = createFormContentGround(options);
     } else if (subtype === 'form-essence') {
@@ -1133,7 +1133,7 @@ export class GroundSystem extends EventEmitter {
       properties = {
         ...properties,
         form: absoluteGround.form,
-        matter: absoluteGround.matter,
+        data: absoluteGround.matter,
         content: absoluteGround.content
       };
     } else if (ground.type === 'formal-ground') {

@@ -4,9 +4,9 @@ import { PropertyRepository } from "./repository/property.";
 import { EntityRepository } from "./repository/entity";
 import { RelationRepository } from "./repository/relation";
 import { FormDefinitionRepository } from "./repository/schema";
-import { FormRepository } from "./repository/form.shape";
-import { ContextRepository } from "./repository/context.shape";
-import { MorphRepository } from "./repository/morph.shape";
+import { FormRepository } from "./repository/form";
+import { ContextRepository } from "./repository/context";
+import { MorphRepository } from "./repository/morph";
 
 /**
  * Neo4j Module - Main entry point for Neo4j integration

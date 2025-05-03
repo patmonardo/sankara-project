@@ -1,5 +1,5 @@
 import { Neo4jConnection } from "../connection";
-import { ContextRepository } from "./context.shape"; // Assuming the file is context.ts
+import { ContextRepository } from "./context"; // Assuming the file is context.ts
 import { FormContext } from "@/form/schema/context"; // Adjust path if needed
 import * as dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";

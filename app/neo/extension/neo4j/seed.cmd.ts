@@ -1,8 +1,8 @@
 import { Neo4jConnection } from './connection'; // Assuming real connection for seeding
 import { FormDefinitionRepository } from './repository/schema';
-import { EntityRepository } from './repository/entity.shape';
-import { ContextRepository } from './repository/context.shape';
-import { FormRepository } from './repository/form.shape';
+import { EntityRepository } from './repository/entity';
+import { ContextRepository } from './repository/context';
+import { FormRepository } from './repository/form';
 // Import other repositories if needed (Property, Relation)
 
 // Import necessary Types and Zod Schemas from app/form/schema/*

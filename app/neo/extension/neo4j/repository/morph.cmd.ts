@@ -1,5 +1,5 @@
 import { Neo4jConnection } from "../connection";
-import { MorphRepository } from "./morph.shape";
+import { MorphRepository } from "./morph";
 import { FormMorph, FormMorphPipeline } from "@/form/schema/morph";
 import * as dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";

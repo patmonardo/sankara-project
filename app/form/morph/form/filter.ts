@@ -3,7 +3,7 @@ import { createPipeline } from "../core";
 import {  ValueShape,  ValueField,  ValueContext } from "./value";
 
 export interface FilterField extends  ValueField {
-  value: any;
+  value?: any;
   filterApplied?: boolean;
   filterReasons?: string[];
   orderPosition?: number;

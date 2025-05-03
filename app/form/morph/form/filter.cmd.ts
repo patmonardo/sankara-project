@@ -1,5 +1,5 @@
 import { createCommand } from "@/form/modality/commands";
-
+import { ValuePipeline } from "@./values";
 import {
   FilterShape,
   FilterContext,
@@ -7,7 +7,6 @@ import {
   FilterWhereMorph,
   FilterOrderMorph,
   FilterLimitMorph,
-  FieldValuesPipeline,
 } from "./filter";
 
 // Sample field data for testing

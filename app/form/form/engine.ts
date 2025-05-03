@@ -2,7 +2,7 @@ import { FormRelation, FormRelationId } from "@/form/relation/relation";
 import { FormEntity, FormEntityId } from "@/form/entity/entity"; // Import FormEntityId
 import { Form } from "./form";
 import { FormDefinition } from "../schema/schema";
-import { FormMatter } from "../schema/shape";
+import { FormData } from "../schema/shape";
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating entity IDs
 
 // --- Define Form Engine Verb Subtypes ---
@@ -100,7 +100,7 @@ export class FormEngine {
                 id: formId,
                 definitionId: definition.id, // Assuming definition has an id
                 definitionName: definition.name,
-                initialData: initialData as FormMatter,
+                initialData: initialData as FormData,
                 // initialState: undefined // Or provide a default if needed
             });            this.forms.set(formId, newForm);
             console.log(`FormEngine: Form instance created: ${formId}`);

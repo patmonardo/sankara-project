@@ -1,6 +1,8 @@
+import { defaultOverrides } from "next/dist/server/require-hook";
 import { createMorph, createPipeline } from "../core";
 import { FormShape, FormField } from "./types";
 import { FormContext } from "./types";
+import { EntityShape } from "@/form/schema/entity";
 
 /**
  * ValueField – Extends the base FormField with runtime state.
@@ -9,6 +11,7 @@ export interface ValueField extends FormField {
   value?: any;
   originalValue?: any;
   displayValue?: string;
+  defaultValue?: any;
   changed?: boolean;
   lastModified?: string;
 }
@@ -16,7 +19,7 @@ export interface ValueField extends FormField {
 /**
  * ValueShape – A FormShape that contains ValueFields.
  */
-export interface ValueShape extends FormShape {
+export interface ValueShape extends EntityShape {
   fields: ValueField[];
 }
 

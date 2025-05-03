@@ -1,6 +1,6 @@
 import { Neo4jConnection } from "../connection";
 import { RelationDefinitionRepository } from "./relation.def"; // Import Definition Repo
-import { RelationShapeRepository } from "./relation.shape"; // Import Shape Repo
+import { RelationShapeRepository } from "./relation"; // Import Shape Repo
 import { FormRelationDefinition, FormRelation } from "@/form/schema/relation";
 import * as dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
